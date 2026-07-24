@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vet Neurology — Interactive Learning Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f2eb;--surface:#faf8f3;--surface2:#ede9df;--surface3:#e4e0d5;
+  --border:#d4cfc4;--border-light:#e8e4da;
+  --text:#1a1714;--text-muted:#6b6560;--text-hint:#9c9590;
+  --accent:#2b5240;--accent-light:#e8f0ec;--accent-mid:#4a7c62;--accent-dark:#1e3d2f;
+  --umn:#1d3a5f;--umn-bg:#e8f0f8;--umn-border:#b8d0e8;
+  --lmn:#6b2020;--lmn-bg:#f8eaea;--lmn-border:#e8b4b4;
+  --warn:#7a4a0a;--warn-bg:#fdf3e3;--warn-border:#f0c880;
+  --danger:#8b1a1a;--danger-bg:#fdeaea;--danger-border:#e8b4b4;
+  --success:#1a4d2e;--success-bg:#e8f5ee;--success-border:#9ecfb0;
+  --info:#1a3a5c;--info-bg:#e8f0f8;--info-border:#b8d0e8;
+  --purple:#3d2b6b;--purple-bg:#eeebf8;
+  --r:6px;--rl:10px;--rxl:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Instrument Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
+
+/* ── TOPBAR ── */
+.topbar{display:flex;align-items:center;gap:0;background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;height:52px;position:sticky;top:0;z-index:200}
+.topbar-brand{font-family:'DM Serif Display',serif;font-size:16px;margin-right:1.5rem;white-space:nowrap;cursor:pointer;color:var(--text)}
+.topbar-brand:hover{color:var(--accent)}
+.back-desmovet{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted);text-decoration:none;padding:6px 10px;border:1px solid var(--border);border-radius:6px;white-space:nowrap;margin-right:.75rem}
+.back-desmovet:hover{color:var(--accent);border-color:var(--accent)}
+.mode-tabs{display:flex;gap:3px}
+.mtab{padding:6px 14px;border-radius:var(--r);border:none;background:transparent;cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text-muted);transition:all .15s}
+.mtab:hover{background:var(--surface2);color:var(--text)}
+.mtab.active{background:var(--accent);color:#fff}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.score-pill{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted);background:var(--surface2);padding:4px 12px;border-radius:var(--r);border:1px solid var(--border-light)}
+
+/* ── LAYOUT ── */
+.app-body{display:flex;min-height:calc(100vh - 52px)}
+.sidebar{width:210px;min-width:210px;background:var(--surface);border-right:1px solid var(--border);padding:.75rem 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;flex-shrink:0}
+.main{flex:1;padding:2rem 2.5rem;overflow-y:auto}
+.nav-label{font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--text-hint);padding:0 1.25rem;margin:10px 0 4px;text-transform:uppercase}
+.nav-btn{display:flex;align-items:center;gap:8px;width:100%;padding:7px 1.25rem;border:none;background:transparent;cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;color:var(--text-muted);text-align:left;transition:all .15s;border-left:2px solid transparent}
+.nav-btn:hover{background:var(--surface2);color:var(--text)}
+.nav-btn.active{background:var(--accent-light);color:var(--accent);font-weight:500;border-left-color:var(--accent)}
+.nav-icon{font-size:13px;width:16px;flex-shrink:0}
+.tool-badge{margin-left:auto;font-size:9px;font-weight:600;letter-spacing:.06em;padding:1px 5px;border-radius:3px;background:var(--warn-bg);color:var(--warn);text-transform:uppercase}
+
+/* ── SHARED ── */
+.section{display:none;animation:fadeIn .18s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.sh{margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border-light)}
+.sh h2{font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:3px}
+.sh p{font-size:13px;color:var(--text-muted)}
+.card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);padding:1.25rem;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:600;margin-bottom:10px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:7px 10px;font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--text-hint);border-bottom:1px solid var(--border);background:var(--surface2)}
+td{padding:7px 10px;border-bottom:1px solid var(--border-light);font-size:13px;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;font-family:'DM Mono',monospace;white-space:nowrap}
+.b-umn{background:var(--umn-bg);color:var(--umn)} .b-lmn{background:var(--lmn-bg);color:var(--lmn)}
+.b-norm{background:var(--success-bg);color:var(--success)} .b-warn{background:var(--warn-bg);color:var(--warn)}
+.b-danger{background:var(--danger-bg);color:var(--danger)} .b-info{background:var(--info-bg);color:var(--info)}
+.b-success{background:var(--success-bg);color:var(--success)} .b-accent{background:var(--accent-light);color:var(--accent)}
+.kv{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--border-light);font-size:13px;gap:8px}
+.kv:last-child{border-bottom:none}
+.kv-key{color:var(--text-muted);flex-shrink:0}
+.sep{height:1px;background:var(--border-light);margin:10px 0}
+.warn-box{background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--danger);margin:10px 0;font-weight:500}
+.info-box{background:var(--accent-light);border:1px solid #b8d4c4;border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--accent);margin:10px 0}
+.pill-chain{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
+.arr{color:var(--text-hint);font-size:12px}
+.drug-row{padding:10px 0;border-bottom:1px solid var(--border-light)}
+.drug-row:last-child{border-bottom:none}
+.drug-name{font-weight:600;font-size:13px;margin-bottom:3px}
+.drug-note{font-size:12px;color:var(--text-muted)}
+.drug-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.cn-num{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text-hint)}
+
+/* ── HOMEPAGE ── */
+.home-hero{padding:3rem 0 2rem;max-width:820px}
+.home-hero h1{font-family:'DM Serif Display',serif;font-size:42px;line-height:1.15;margin-bottom:10px;color:var(--text)}
+.home-hero h1 em{font-style:italic;color:var(--accent-mid)}
+.home-hero p{font-size:15px;color:var(--text-muted);max-width:560px;line-height:1.7;margin-bottom:2rem}
+.home-stats{display:flex;gap:2rem;margin-bottom:2.5rem}
+.home-stat{text-align:center}
+.home-stat .n{font-family:'DM Serif Display',serif;font-size:32px;color:var(--accent)}
+.home-stat .l{font-size:12px;color:var(--text-hint);margin-top:2px}
+.home-section-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-hint);margin-bottom:12px}
+.home-tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:2.5rem}
+.home-card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);padding:1.25rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.home-card:hover{border-color:var(--accent-mid);transform:translateY(-1px);box-shadow:0 4px 16px rgba(43,82,64,.08)}
+.home-card .hc-icon{font-size:22px;margin-bottom:10px}
+.home-card .hc-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.home-card .hc-desc{font-size:12px;color:var(--text-muted);line-height:1.5}
+.home-card .hc-tag{position:absolute;top:10px;right:10px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;letter-spacing:.04em}
+.hc-tag-tool{background:var(--accent-light);color:var(--accent)}
+.hc-tag-ref{background:var(--surface2);color:var(--text-hint)}
+.hc-tag-new{background:var(--warn-bg);color:var(--warn)}
+.home-topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:2.5rem}
+.topic-chip{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--r);padding:10px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500}
+.topic-chip:hover{background:var(--accent-light);border-color:var(--accent-mid);color:var(--accent)}
+.topic-chip .tc-icon{font-size:15px}
+.progress-row{display:flex;align-items:center;gap:10px;font-size:13px;padding:8px 0;border-bottom:1px solid var(--border-light)}
+.progress-row:last-child{border-bottom:none}
+.progress-bar{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease}
+.progress-label{font-size:12px;font-family:'DM Mono',monospace;color:var(--text-hint);min-width:36px;text-align:right}
+
+/* ── INTERACTIVE TOOLS ── */
+
+/* Spinal cord localizer */
+.sc-wrap{max-width:760px}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px}
+.sc-diagram{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);overflow:hidden}
+.sc-diagram-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-hint);padding:10px 14px;border-bottom:1px solid var(--border-light)}
+.sc-segments{padding:8px}
+.sc-seg{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r);cursor:pointer;transition:all .15s;margin-bottom:3px;border:1.5px solid transparent}
+.sc-seg:hover{background:var(--surface2)}
+.sc-seg.selected{border-color:var(--accent-mid);background:var(--accent-light)}
+.sc-seg-label{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;min-width:48px;color:var(--text-muted)}
+.sc-seg-bar{flex:1;height:8px;border-radius:4px}
+.sc-seg-bar.c1c5{background:linear-gradient(90deg,var(--umn-bg),#b8d0e8)}
+.sc-seg-bar.c6t2{background:linear-gradient(90deg,var(--lmn-bg),#e8b4b4)}
+.sc-seg-bar.t3l3{background:linear-gradient(90deg,var(--surface2),var(--umn-bg))}
+.sc-seg-bar.l4s3{background:linear-gradient(90deg,var(--surface2),var(--lmn-bg))}
+.sc-result{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);padding:1.25rem}
+.sc-result-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-hint);margin-bottom:12px}
+.sc-limb-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.sc-limb{border-radius:var(--r);padding:12px;text-align:center}
+.sc-limb-name{font-size:11px;color:var(--text-hint);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.sc-limb-val{font-size:15px;font-weight:600}
+.sc-limb.umn{background:var(--umn-bg);border:1px solid var(--umn-border)}
+.sc-limb.umn .sc-limb-val{color:var(--umn)}
+.sc-limb.lmn{background:var(--lmn-bg);border:1px solid var(--lmn-border)}
+.sc-limb.lmn .sc-limb-val{color:var(--lmn)}
+.sc-limb.normal{background:var(--success-bg);border:1px solid var(--success-border)}
+.sc-limb.normal .sc-limb-val{color:var(--success)}
+.sc-notes{font-size:12.5px;color:var(--text-muted);line-height:1.6}
+.sc-notes strong{color:var(--text);font-weight:600}
+.sc-quiz-wrap{margin-top:16px}
+.sc-quiz-q{font-size:14px;font-weight:500;margin-bottom:10px;padding:12px 14px;background:var(--surface2);border-radius:var(--r)}
+.sc-quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sc-quiz-opt{padding:9px 14px;border-radius:var(--r);border:1.5px solid var(--border-light);background:var(--surface);cursor:pointer;font-size:13px;font-family:'Instrument Sans',sans-serif;font-weight:500;transition:all .15s;text-align:left}
+.sc-quiz-opt:hover:not([disabled]){background:var(--surface2)}
+.sc-quiz-opt.correct{background:var(--success-bg);border-color:var(--success-border);color:var(--success)}
+.sc-quiz-opt.wrong{background:var(--danger-bg);border-color:var(--danger-border);color:var(--danger)}
+.sc-quiz-opt.reveal{background:var(--success-bg);border-color:var(--success-border);color:var(--success)}
+
+/* Vestibular decision tool */
+.vd-wrap{max-width:760px}
+.vd-finder{background:var(--surface);border:1.5px solid var(--border-light);border-radius:var(--rl);overflow:hidden;margin-bottom:16px}
+.vd-finder-header{background:var(--accent);padding:14px 18px;color:#fff}
+.vd-finder-header h3{font-size:15px;font-weight:600;margin-bottom:2px}
+.vd-finder-header p{font-size:12px;opacity:.8}
+.vd-questions{padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.vd-q{font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px}
+.vd-opts{display:flex;gap:8px;flex-wrap:wrap}
+.vd-opt{padding:7px 16px;border-radius:var(--r);border:1.5px solid var(--border-light);background:var(--surface);cursor:pointer;font-size:13px;font-family:'Instrument Sans',sans-serif;transition:all .15s}
+.vd-opt:hover{background:var(--surface2)}
+.vd-opt.selected{border-color:var(--accent-mid);background:var(--accent-light);color:var(--accent);font-weight:500}
+.vd-result{padding:14px 18px;border-top:1px solid var(--border-light);background:var(--surface2)}
+.vd-result-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.vd-result-name{font-size:18px;font-weight:600;font-family:'DM Serif Display',serif;margin-bottom:4px}
+.vd-result-desc{font-size:13px;color:var(--text-muted);line-height:1.6}
+
+/* ASM table tool */
+.asm-wrap{max-width:780px}
+.asm-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.asm-filter-label{font-size:12px;color:var(--text-muted);margin-right:4px}
+.asm-filter-btn{padding:5px 12px;border-radius:var(--r);border:1px solid var(--border-light);background:var(--surface);cursor:pointer;font-size:12px;font-family:'Instrument Sans',sans-serif;transition:all .15s;color:var(--text-muted)}
+.asm-filter-btn:hover{background:var(--surface2)}
+.asm-filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.asm-table-wrap{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);overflow:hidden}
+.asm-row{display:grid;grid-template-columns:140px 80px 90px 90px 1fr;border-bottom:1px solid var(--border-light);transition:background .15s;align-items:center}
+.asm-row:last-child{border-bottom:none}
+.asm-row:hover{background:var(--surface2)}
+.asm-row.header{background:var(--surface2);font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--text-hint)}
+.asm-cell{padding:9px 12px;font-size:13px}
+.asm-row.header .asm-cell{padding:7px 12px}
+.asm-drug-name{font-weight:600}
+.asm-row.faded{opacity:.3}
+.asm-row.highlight{background:var(--accent-light)}
+.no-cats-tag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:3px;background:var(--danger-bg);color:var(--danger);margin-left:6px;font-family:'DM Mono',monospace}
+.liver-tag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:3px;background:var(--warn-bg);color:var(--warn);margin-left:6px;font-family:'DM Mono',monospace}
+
+/* Fill-in table */
+.fit-wrap{max-width:760px}
+.fit-table{width:100%;border-collapse:collapse;border:1px solid var(--border-light);border-radius:var(--rl);overflow:hidden}
+.fit-table th{text-align:left;padding:9px 12px;font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--text-hint);background:var(--surface2);border-bottom:1px solid var(--border)}
+.fit-table td{padding:7px 10px;border-bottom:1px solid var(--border-light);font-size:13px;vertical-align:middle}
+.fit-table tr:last-child td{border-bottom:none}
+.fit-input{border:1.5px dashed var(--border);border-radius:4px;padding:4px 8px;font-size:12px;font-family:'Instrument Sans',sans-serif;background:transparent;color:var(--text);outline:none;width:100%;min-width:90px;transition:border-color .15s}
+.fit-input:focus{border-color:var(--accent-mid);background:var(--accent-light)}
+.fit-input.correct{border-style:solid;border-color:var(--success-border);background:var(--success-bg);color:var(--success)}
+.fit-input.wrong{border-style:solid;border-color:var(--danger-border);background:var(--danger-bg);color:var(--danger)}
+.fit-input.revealed{border-style:solid;border-color:var(--success-border);background:var(--success-bg);color:var(--success);font-weight:600}
+.fit-actions{display:flex;gap:8px;margin-top:12px}
+.fit-btn{padding:8px 18px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text-muted);transition:all .15s}
+.fit-btn:hover{background:var(--surface2)}
+.fit-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.fit-btn.primary:hover{background:var(--accent-mid)}
+.fit-score{font-family:'DM Mono',monospace;font-size:13px;color:var(--text-muted);margin-left:auto;align-self:center}
+
+/* Vestibular cheat table with hide/reveal */
+.vct-wrap{max-width:780px}
+.vct-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.vct-ctrl-label{font-size:12px;color:var(--text-muted)}
+.vct-col-btn{padding:5px 12px;border-radius:var(--r);border:1px solid var(--border-light);background:var(--surface);cursor:pointer;font-size:12px;font-family:'Instrument Sans',sans-serif;transition:all .15s;color:var(--text-muted)}
+.vct-col-btn:hover{background:var(--surface2)}
+.vct-col-btn.hidden-col{background:var(--warn-bg);color:var(--warn);border-color:var(--warn-border)}
+.vct-hidden{background:var(--surface2);color:transparent;user-select:none;cursor:pointer;border-radius:3px;transition:all .2s;position:relative}
+.vct-hidden::after{content:'click to reveal';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:10px;color:var(--text-hint);white-space:nowrap}
+.vct-hidden.revealed{background:transparent;color:inherit;cursor:default}
+.vct-hidden.revealed::after{display:none}
+
+/* FLASHCARDS */
+.fc-deckbar{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1.5rem}
+.fc-deckbtn{padding:6px 14px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;color:var(--text-muted);transition:all .15s}
+.fc-deckbtn:hover{background:var(--surface2)}
+.fc-deckbtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.fc-wrap{perspective:1200px;margin:0 auto 20px;max-width:640px;height:270px}
+.fc-card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.fc-card.flipped{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--rl);border:1.5px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center}
+.fc-front{background:var(--surface)}
+.fc-back{background:var(--accent);transform:rotateY(180deg)}
+.fc-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--text-hint);text-transform:uppercase;margin-bottom:10px}
+.fc-q{font-size:17px;font-weight:500;line-height:1.45;color:var(--text)}
+.fc-a{font-size:15px;font-weight:500;line-height:1.5;color:#fff}
+.fc-hint{font-size:11.5px;color:rgba(255,255,255,.65);margin-top:8px}
+.fc-ctrl{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px}
+.fc-btn{padding:8px 18px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text-muted);transition:all .15s}
+.fc-btn:hover{background:var(--surface2)}
+.fc-btn.got{border-color:var(--success-border);color:var(--success);background:var(--success-bg)}
+.fc-btn.miss{border-color:var(--danger-border);color:var(--danger);background:var(--danger-bg)}
+.fc-prog{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-hint);min-width:64px;text-align:center}
+.fc-stats{display:flex;gap:14px;justify-content:center;margin-top:8px;font-family:'DM Mono',monospace;font-size:12px}
+.fc-click-hint{font-size:12px;color:var(--text-hint);text-align:center;margin-bottom:6px}
+
+/* MCQ */
+.mcq-deckbar{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1.5rem}
+.mcq-deckbtn{padding:6px 14px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;color:var(--text-muted);transition:all .15s}
+.mcq-deckbtn:hover{background:var(--surface2)}
+.mcq-deckbtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.mcq-card{background:var(--surface);border:1.5px solid var(--border-light);border-radius:var(--rl);padding:1.5rem;margin-bottom:14px;max-width:700px}
+.mcq-qnum{font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--text-hint);text-transform:uppercase;margin-bottom:8px}
+.mcq-q{font-size:15px;font-weight:500;line-height:1.5;margin-bottom:1.1rem}
+.mcq-opts{display:flex;flex-direction:column;gap:8px}
+.mcq-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:var(--r);border:1.5px solid var(--border-light);background:var(--surface);cursor:pointer;transition:all .15s;text-align:left;font-family:'Instrument Sans',sans-serif;font-size:13px;color:var(--text);line-height:1.4}
+.mcq-opt:hover:not([disabled]){background:var(--surface2);border-color:var(--border)}
+.mcq-opt[disabled]{cursor:default}
+.mcq-opt.correct{background:var(--success-bg);border-color:var(--success-border);color:var(--success)}
+.mcq-opt.wrong{background:var(--danger-bg);border-color:var(--danger-border);color:var(--danger)}
+.mcq-opt.reveal{background:var(--success-bg);border-color:var(--success-border);color:var(--success)}
+.opt-let{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;min-width:20px;flex-shrink:0;margin-top:1px}
+.mcq-exp{margin-top:12px;background:var(--info-bg);border-radius:var(--r);padding:12px 14px;font-size:13px;color:var(--info);display:none;border:1px solid var(--info-border);line-height:1.5}
+.mcq-exp.show{display:block}
+.mcq-nav{display:flex;gap:8px;margin-top:8px;align-items:center;max-width:700px}
+.mcq-nav-btn{padding:8px 18px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text-muted);transition:all .15s}
+.mcq-nav-btn:hover{background:var(--surface2)}
+.mcq-nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.mcq-counter{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-hint);margin-left:auto}
+
+/* DND */
+.dnd-selbar{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1.5rem}
+.dnd-selbtn{padding:6px 14px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;color:var(--text-muted);transition:all .15s}
+.dnd-selbtn:hover{background:var(--surface2)}
+.dnd-selbtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.dnd-board{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:700px;margin-bottom:12px}
+.dnd-items{display:flex;flex-direction:column;gap:8px}
+.dnd-item{padding:10px 14px;border:1.5px dashed var(--border);border-radius:var(--r);font-size:13px;cursor:grab;background:var(--surface);transition:all .15s;user-select:none}
+.dnd-item:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.dnd-item.dragging{opacity:.35}
+.dnd-zones{display:flex;flex-direction:column;gap:8px}
+.dnd-zone{border:1.5px solid var(--border-light);border-radius:var(--r);background:var(--surface);transition:border-color .15s}
+.dnd-zone.over{border-color:var(--accent-mid);background:var(--accent-light)}
+.dnd-zone-hdr{font-size:12px;font-weight:600;padding:8px 12px;border-bottom:1px solid var(--border-light);color:var(--text-muted)}
+.dnd-drop{min-height:44px;padding:6px;display:flex;flex-direction:column;gap:4px}
+.dnd-pi{padding:7px 10px;border-radius:4px;font-size:12.5px;cursor:pointer}
+.dnd-pi.neutral{background:var(--surface2);color:var(--text)}
+.dnd-pi.correct{background:var(--success-bg);color:var(--success)}
+.dnd-pi.wrong{background:var(--danger-bg);color:var(--danger)}
+.dnd-actions{display:flex;gap:8px;margin-top:2px;max-width:700px}
+.dnd-btn{padding:8px 18px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text-muted);transition:all .15s}
+.dnd-btn:hover{background:var(--surface2)}
+.dnd-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* CASES */
+.case-selbar{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1.5rem}
+.case-selbtn{padding:6px 14px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;color:var(--text-muted);transition:all .15s}
+.case-selbtn:hover{background:var(--surface2)}
+.case-selbtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.case-card{background:var(--surface);border:1.5px solid var(--border-light);border-radius:var(--rl);overflow:hidden;max-width:760px;margin-bottom:14px}
+.case-banner{padding:1rem 1.25rem;background:var(--surface2);border-bottom:1px solid var(--border-light)}
+.case-banner h3{font-size:15px;font-weight:600;margin-bottom:4px}
+.case-body{padding:1.25rem}
+.case-step-lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-hint);margin-bottom:6px}
+.case-text{font-size:13px;line-height:1.7}
+.case-textarea{width:100%;min-height:58px;resize:vertical;border:1.5px solid var(--border-light);border-radius:var(--r);padding:10px;font-family:'Instrument Sans',sans-serif;font-size:13px;background:var(--surface);color:var(--text);outline:none;transition:border-color .15s;margin-top:8px}
+.case-textarea:focus{border-color:var(--accent-mid)}
+.case-reveal-box{background:var(--accent-light);border:1px solid #b8d4c4;border-radius:var(--r);padding:12px 14px;margin-top:10px;display:none}
+.case-reveal-box.show{display:block}
+.case-reveal-lbl{font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;margin-bottom:5px}
+.case-reveal-text{font-size:13px;line-height:1.6}
+.case-btn{padding:8px 16px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text-muted);transition:all .15s;margin-right:7px;margin-top:8px}
+.case-btn:hover{background:var(--surface2)}
+.case-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.case-steps-row{display:flex;gap:5px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.cstep{width:26px;height:5px;border-radius:3px;background:var(--border);cursor:pointer;transition:background .15s}
+.cstep.done{background:var(--accent)}
+.cstep.active{background:var(--accent-mid)}
+
+/* ── LOCALIZATION TOOL ── */
+.loc-wrap{max-width:960px}
+.loc-tabs{display:flex;gap:6px;margin-bottom:20px;border-bottom:1px solid var(--border-light);padding-bottom:12px}
+.loc-tab{padding:7px 18px;border-radius:var(--r);border:1.5px solid var(--border-light);background:var(--surface);cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text-muted);transition:all .15s}
+.loc-tab:hover{background:var(--surface2)}
+.loc-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Brain section */
+.brain-layout{display:grid;grid-template-columns:240px 1fr;gap:20px;margin-bottom:16px}
+.brain-diagram{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);overflow:hidden}
+.brain-region{cursor:pointer;transition:all .2s}
+.brain-region:hover rect,.brain-region:hover ellipse,.brain-region:hover path{opacity:.85}
+.brain-region.active rect,.brain-region.active ellipse,.brain-region.active path{stroke-width:2.5}
+.brain-panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);padding:1.25rem;transition:all .2s}
+.brain-panel-name{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:4px}
+.brain-panel-sub{font-size:12px;color:var(--text-hint);margin-bottom:14px;font-family:'DM Mono',monospace}
+.brain-finding-row{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border-light);font-size:13px}
+.brain-finding-row:last-child{border-bottom:none}
+.brain-finding-label{font-weight:500;min-width:130px;color:var(--text-muted);flex-shrink:0;font-size:12px}
+.brain-finding-val{color:var(--text);line-height:1.5}
+.brain-region-list{display:flex;flex-direction:column;gap:4px;padding:12px}
+.brain-sel-btn{padding:8px 12px;border-radius:var(--r);border:1.5px solid var(--border-light);background:var(--surface);cursor:pointer;font-family:'Instrument Sans',sans-serif;font-size:13px;text-align:left;transition:all .15s;display:flex;align-items:center;gap:8px}
+.brain-sel-btn:hover{background:var(--surface2)}
+.brain-sel-btn.active{border-color:currentColor}
+.brain-sel-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* Spinal section — new layout */
+.spine-layout{display:grid;grid-template-columns:160px 1fr;gap:20px;align-items:start}
+.spine-column{display:flex;flex-direction:column;gap:4px;background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);overflow:hidden}
+.spine-col-hdr{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-hint);padding:10px 14px;border-bottom:1px solid var(--border-light);background:var(--surface2)}
+.spine-seg-btn{display:flex;align-items:center;gap:0;cursor:pointer;border:none;background:transparent;width:100%;transition:background .15s;padding:0;border-bottom:1px solid var(--border-light)}
+.spine-seg-btn:last-child{border-bottom:none}
+.spine-seg-btn:hover{background:var(--surface2)}
+.spine-seg-btn.active{background:var(--accent-light)}
+.spine-seg-color{width:6px;align-self:stretch;flex-shrink:0}
+.spine-seg-inner{padding:10px 12px;text-align:left;flex:1}
+.spine-seg-name{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px}
+.spine-seg-hint{font-size:11px;color:var(--text-hint)}
+.spine-seg-btn.active .spine-seg-name{color:var(--accent)}
+.spine-panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);overflow:hidden}
+.spine-panel-header{padding:14px 16px;border-bottom:1px solid var(--border-light)}
+.spine-panel-title{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:2px}
+.spine-panel-sub{font-size:12px;color:var(--text-hint);font-family:'DM Mono',monospace}
+.spine-limb-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border-light)}
+.spine-limb-card{border-radius:var(--r);padding:12px;text-align:center;border:1px solid transparent}
+.spine-limb-card.umn{background:var(--umn-bg);border-color:var(--umn-border)}
+.spine-limb-card.lmn{background:var(--lmn-bg);border-color:var(--lmn-border)}
+.spine-limb-card.normal{background:var(--success-bg);border-color:var(--success-border)}
+.spine-limb-name{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+.spine-limb-card.umn .spine-limb-name{color:var(--umn)}
+.spine-limb-card.lmn .spine-limb-name{color:var(--lmn)}
+.spine-limb-card.normal .spine-limb-name{color:var(--success)}
+.spine-limb-val{font-size:16px;font-weight:600}
+.spine-limb-card.umn .spine-limb-val{color:var(--umn)}
+.spine-limb-card.lmn .spine-limb-val{color:var(--lmn)}
+.spine-limb-card.normal .spine-limb-val{color:var(--success)}
+.spine-detail-rows{padding:14px 16px}
+.spine-detail-row{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--border-light);font-size:13px;align-items:flex-start}
+.spine-detail-row:last-child{border-bottom:none}
+.spine-detail-label{font-size:11px;font-weight:600;color:var(--text-hint);min-width:110px;flex-shrink:0;padding-top:2px}
+.spine-detail-val{color:var(--text);line-height:1.5}
+
+/* UMN/LMN signs */
+.sign-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.sign-col{border-radius:var(--rl);overflow:hidden;border:1px solid transparent}
+.sign-col.umn{border-color:var(--umn-border)}
+.sign-col.lmn{border-color:var(--lmn-border)}
+.sign-col-hdr{padding:10px 14px;font-size:12px;font-weight:600;letter-spacing:.04em}
+.sign-col.umn .sign-col-hdr{background:var(--umn-bg);color:var(--umn)}
+.sign-col.lmn .sign-col-hdr{background:var(--lmn-bg);color:var(--lmn)}
+.sign-col-body{background:var(--surface);padding:10px 14px}
+.sign-row{font-size:13px;padding:4px 0;border-bottom:1px solid var(--border-light);display:flex;justify-content:space-between;gap:8px}
+.sign-row:last-child{border-bottom:none}
+.sign-key{color:var(--text-muted);font-size:12px}
+
+/* NM section */
+.nm-loc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.nm-loc-card{border-radius:var(--rl);border:1.5px solid var(--border-light);background:var(--surface);cursor:pointer;transition:all .2s;overflow:hidden}
+.nm-loc-card:hover{border-color:var(--accent-mid);transform:translateY(-1px)}
+.nm-loc-card.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.nm-loc-hdr{padding:10px 12px;font-size:12px;font-weight:600;border-bottom:1px solid var(--border-light)}
+.nm-loc-body{padding:10px 12px;font-size:12px;color:var(--text-muted);line-height:1.5}
+.nm-panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);overflow:hidden}
+.nm-panel-hdr{padding:14px 16px;border-bottom:1px solid var(--border-light);background:var(--surface2)}
+.nm-panel-title{font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:2px}
+.nm-panel-sub{font-size:12px;color:var(--text-hint)}
+.nm-panel-body{padding:14px 16px}
+.nm-feat-row{display:grid;grid-template-columns:130px 1fr;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-light);font-size:13px}
+.nm-feat-row:last-child{border-bottom:none}
+.nm-feat-label{font-size:11px;font-weight:600;color:var(--text-hint);padding-top:2px}
+
+/* Loss order */
+.loss-chain{display:flex;align-items:stretch;gap:0;margin:14px 0;border-radius:var(--rl);overflow:hidden;border:1px solid var(--border)}
+.loss-step{flex:1;text-align:center;padding:12px 8px;border-right:1px solid var(--border);position:relative}
+.loss-step:last-child{border-right:none}
+.loss-step-n{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;opacity:.6;margin-bottom:4px}
+.loss-step-name{font-size:13px;font-weight:500}
+.loss-step-note{font-size:11px;opacity:.7;margin-top:3px}
+.loss-step.s1{background:var(--info-bg);color:var(--info)}
+.loss-step.s2{background:#eef4fb;color:#1e4a7c}
+.loss-step.s3{background:var(--warn-bg);color:var(--warn)}
+.loss-step.s4{background:var(--danger-bg);color:var(--danger)}
+
+/* Quiz inside localize */
+.loc-quiz-wrap{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);padding:1.25rem;margin-top:16px}
+.loc-quiz-q{font-size:14px;font-weight:500;padding:12px 14px;background:var(--surface2);border-radius:var(--r);margin-bottom:12px;line-height:1.5}
+.loc-quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.loc-quiz-opt{padding:9px 14px;border-radius:var(--r);border:1.5px solid var(--border-light);background:var(--surface);cursor:pointer;font-size:13px;font-family:'Instrument Sans',sans-serif;font-weight:500;transition:all .15s;text-align:left}
+.loc-quiz-opt:hover:not([disabled]){background:var(--surface2)}
+.loc-quiz-opt.correct{background:var(--success-bg);border-color:var(--success-border);color:var(--success)}
+.loc-quiz-opt.wrong{background:var(--danger-bg);border-color:var(--danger-border);color:var(--danger)}
+.loc-quiz-opt.reveal{background:var(--success-bg);border-color:var(--success-border);color:var(--success)}
+.loc-quiz-score{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-hint);margin-top:10px}
+
+@media(max-width:700px){
+  .sidebar{width:160px;min-width:160px}
+  .main{padding:1.25rem}
+  .g2,.g3,.sc-grid,.dnd-board,.sc-quiz-opts{grid-template-columns:1fr}
+  .home-tools{grid-template-columns:1fr 1fr}
+  .asm-row{grid-template-columns:120px 70px 80px 80px 1fr}
+  .brain-layout,.spine-layout{grid-template-columns:1fr}
+  .nm-loc-grid{grid-template-columns:1fr 1fr}
+  .loss-chain{flex-direction:column}
+  .loss-step{border-right:none;border-bottom:1px solid var(--border)}
+  .loss-step:last-child{border-bottom:none}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand" onclick="goHome()">Vet Neurology</div>
+  <div class="mode-tabs" id="mode-tabs">
+    <button class="mtab active" onclick="setMode('home',this)">Home</button>
+    <button class="mtab" onclick="setMode('tools',this)">Interactive tools</button>
+    <button class="mtab" onclick="setMode('flashcards',this)">Flashcards</button>
+    <button class="mtab" onclick="setMode('quiz',this)">Quiz</button>
+    <button class="mtab" onclick="setMode('match',this)">Match</button>
+    <button class="mtab" onclick="setMode('cases',this)">Cases</button>
+    <button class="mtab" onclick="setMode('reference',this)">Reference</button>
+  </div>
+  <div class="topbar-right">
+    <a class="back-desmovet" href="index.html">← desmoVet</a>
+    <div class="score-pill" id="score-pill">Score: 0 / 0</div>
+  </div>
+</div>
+
+<div class="app-body">
+<nav class="sidebar" id="sidebar" style="display:none">
+  <div class="nav-label">Topics</div>
+  <button class="nav-btn active" onclick="showTopic('localize',this)"><span class="nav-icon">⊕</span>Localization</button>
+  <button class="nav-btn" onclick="showTopic('spinal',this)"><span class="nav-icon">⊘</span>Spinal cord</button>
+  <button class="nav-btn" onclick="showTopic('vestibular',this)"><span class="nav-icon">⟳</span>Vestibular</button>
+  <button class="nav-btn" onclick="showTopic('cranialnerves',this)"><span class="nav-icon">⊛</span>Cranial nerves</button>
+  <button class="nav-btn" onclick="showTopic('brain',this)"><span class="nav-icon">◈</span>Brain disease</button>
+  <button class="nav-btn" onclick="showTopic('seizures',this)"><span class="nav-icon">⚡</span>Seizures</button>
+  <button class="nav-btn" onclick="showTopic('nm',this)"><span class="nav-icon">◎</span>Neuromuscular</button>
+  <button class="nav-btn" onclick="showTopic('tbi',this)"><span class="nav-icon">⊞</span>TBI</button>
+  <button class="nav-btn" onclick="showTopic('mic',this)"><span class="nav-icon">◇</span>Micturition</button>
+</nav>
+
+<main class="main" id="main"></main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let mode='home', topic='localize';
+let gScore={c:0,t:0};
+const topicProgress={};
+function addScore(c,t){gScore.c+=c;gScore.t+=t;document.getElementById('score-pill').textContent=`Score: ${gScore.c} / ${gScore.t}`;}
+
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+function goHome(){setMode('home',document.querySelector('.mtab'))}
+function setMode(m,btn){
+  mode=m;
+  document.querySelectorAll('.mtab').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const sidebar=document.getElementById('sidebar');
+  sidebar.style.display=(m==='reference'||m==='tools')?'':'none';
+  render();
+}
+function showTopic(t,btn){
+  topic=t;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  render();
+}
+function render(){
+  const m=document.getElementById('main');
+  if(mode==='home') m.innerHTML=renderHome();
+  else if(mode==='tools') m.innerHTML=renderTool(topic);
+  else if(mode==='reference') m.innerHTML=renderRef(topic);
+  else if(mode==='flashcards'){renderFlashcards();return;}
+  else if(mode==='quiz'){renderQuiz();return;}
+  else if(mode==='match'){renderDnD();return;}
+  else if(mode==='cases'){renderCases();return;}
+  afterRender();
+}
+function afterRender(){
+  if(mode==='tools'){
+    if(topic==='localize') initLocalizeTool();
+    if(topic==='vestibular') initVestTool();
+    if(topic==='seizures') initASMTool();
+    if(topic==='nm') initFillTool();
+    if(topic==='spinal') initSpinalFill();
+    if(topic==='cranialnerves') initCNFill();
+    if(topic==='tbi') initTBITool();
+    if(topic==='mic') initMicTool();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════════════════════
+function renderHome(){
+  return `
+<div class="home-hero">
+  <h1>Veterinary<br><em>Neurology</em></h1>
+  <p>A day-one clinical guide for vet students. Learn through interactive tools, flashcards, case simulations, and quizzes — all in one place.</p>
+  <div class="home-stats">
+    <div class="home-stat"><div class="n">9</div><div class="l">topics</div></div>
+    <div class="home-stat"><div class="n">6</div><div class="l">interactive tools</div></div>
+    <div class="home-stat"><div class="n">4</div><div class="l">clinical cases</div></div>
+    <div class="home-stat"><div class="n">40+</div><div class="l">practice questions</div></div>
+  </div>
+
+  <div class="home-section-label">Learning modes</div>
+  <div class="home-tools">
+    <div class="home-card" onclick="setMode('tools',document.querySelectorAll('.mtab')[1]);showTopic('localize',document.querySelectorAll('.nav-btn')[0])">
+      <div class="hc-icon">🧠</div>
+      <div class="hc-tag hc-tag-tool">Interactive</div>
+      <div class="hc-title">Spinal cord localizer</div>
+      <div class="hc-desc">Click a segment, see UMN/LMN pattern instantly. Quiz mode included.</div>
+    </div>
+    <div class="home-card" onclick="setMode('tools',document.querySelectorAll('.mtab')[1]);showTopic('vestibular',document.querySelectorAll('.nav-btn')[2])">
+      <div class="hc-icon">⟳</div>
+      <div class="hc-tag hc-tag-tool">Interactive</div>
+      <div class="hc-title">Vestibular decision tool</div>
+      <div class="hc-desc">Answer 3 questions about the patient and identify peripheral vs central vs paradoxical.</div>
+    </div>
+    <div class="home-card" onclick="setMode('tools',document.querySelectorAll('.mtab')[1]);showTopic('seizures',document.querySelectorAll('.nav-btn')[6])">
+      <div class="hc-icon">⚡</div>
+      <div class="hc-tag hc-tag-tool">Interactive</div>
+      <div class="hc-title">ASM comparison tool</div>
+      <div class="hc-desc">Filter anti-seizure medications by species, clearance, and contraindications.</div>
+    </div>
+    <div class="home-card" onclick="setMode('tools',document.querySelectorAll('.mtab')[1]);showTopic('nm',document.querySelectorAll('.nav-btn')[7])">
+      <div class="hc-icon">◎</div>
+      <div class="hc-tag hc-tag-tool">Fill-in</div>
+      <div class="hc-title">NMJ disease fill-in</div>
+      <div class="hc-desc">Complete the mechanism table for botulism, tetanus, MG, and tick paralysis.</div>
+    </div>
+    <div class="home-card" onclick="setMode('flashcards',document.querySelectorAll('.mtab')[2])">
+      <div class="hc-icon">🃏</div>
+      <div class="hc-tag hc-tag-ref">Study</div>
+      <div class="hc-title">Flashcards</div>
+      <div class="hc-desc">Flip cards with Got it / Missed tracking across 6 decks.</div>
+    </div>
+    <div class="home-card" onclick="setMode('quiz',document.querySelectorAll('.mtab')[3])">
+      <div class="hc-icon">✏️</div>
+      <div class="hc-tag hc-tag-ref">Study</div>
+      <div class="hc-title">Multiple choice quiz</div>
+      <div class="hc-desc">Case-based MCQs with explanations. 6 topic banks.</div>
+    </div>
+    <div class="home-card" onclick="setMode('match',document.querySelectorAll('.mtab')[4])">
+      <div class="hc-icon">🧩</div>
+      <div class="hc-tag hc-tag-ref">Study</div>
+      <div class="hc-title">Drag & match</div>
+      <div class="hc-desc">Match lesions, signs, and mechanisms to the right category.</div>
+    </div>
+    <div class="home-card" onclick="setMode('cases',document.querySelectorAll('.mtab')[5])">
+      <div class="hc-icon">🩺</div>
+      <div class="hc-tag hc-tag-new">New</div>
+      <div class="hc-title">Clinical cases</div>
+      <div class="hc-desc">4 full step-by-step cases. Write answers before revealing — great for group teaching.</div>
+    </div>
+  </div>
+
+  <div class="home-section-label">Browse by topic</div>
+  <div class="home-topics">
+    ${[
+      ['localize','⊕','Localization'],
+      ['spinal','⊘','Spinal cord'],
+      ['vestibular','⟳','Vestibular'],
+      ['cranialnerves','⊛','Cranial nerves'],
+      ['brain','◈','Brain disease'],
+      ['seizures','⚡','Seizures'],
+      ['nm','◎','Neuromuscular'],
+      ['tbi','⊞','TBI'],
+      ['mic','◇','Micturition'],
+    ].map(([t,ic,lb])=>`<div class="topic-chip" onclick="setMode('reference',document.querySelectorAll('.mtab')[6]);showTopic('${t}',null)"><span class="tc-icon">${ic}</span>${lb}</div>`).join('')}
+  </div>
+</div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// INTERACTIVE TOOLS
+// ═══════════════════════════════════════════════════════
+function renderTool(t){
+  const tools={
+    localize: renderLocalizeTool,
+    vestibular: renderVestTool,
+    seizures: renderASMTool,
+    nm: renderFillNM,
+    spinal: renderSpinalFill,
+    cranialnerves: renderCNFill,
+    tbi: renderTBITool,
+    mic: renderMicTool,
+  };
+  if(tools[t]) return tools[t]();
+  return `<div class="sh"><h2>Interactive tool</h2><p>Select a topic from the sidebar.</p></div>
+  <div class="info-box">👈 Pick a topic in the sidebar to open its interactive learning tool.</div>`;
+}
+
+
+// ═══════════════════════════════════════════════════════
+// TBI TOOL — MGCS calculator + management
+// ═══════════════════════════════════════════════════════
+const MGCS_MOTOR=[
+  {score:6,label:'Normal gait, normal spinal reflexes'},
+  {score:5,label:'Hemiparesis, tetraparesis, or decerebrate rigidity'},
+  {score:4,label:'Recumbent, intermittent extensor rigidity'},
+  {score:3,label:'Recumbent, constant extensor rigidity'},
+  {score:2,label:'Recumbent, constant extensor rigidity with opisthotonus'},
+  {score:1,label:'Recumbent, hypotonia of muscles — depressed or absent spinal reflexes'},
+];
+const MGCS_BS=[
+  {score:6,label:'Normal PLR and oculocephalic reflexes'},
+  {score:5,label:'Slow PLR and normal to reduced oculocephalic reflexes'},
+  {score:4,label:'Bilateral unresponsive miosis with normal to reduced oculocephalic reflexes'},
+  {score:3,label:'Pinpoint pupils with reduced to absent oculocephalic reflexes'},
+  {score:2,label:'Unilateral unresponsive mydriasis with reduced to absent oculocephalic reflexes'},
+  {score:1,label:'Bilateral unresponsive mydriasis with reduced to absent oculocephalic reflexes'},
+];
+const MGCS_LOC=[
+  {score:6,label:'Occasional periods of alertness and responsive to environment'},
+  {score:5,label:'Depression or delirium — capable of responding but response may be inappropriate'},
+  {score:4,label:'Semicomatose — responsive to visual stimuli'},
+  {score:3,label:'Semicomatose — responsive to auditory stimuli'},
+  {score:2,label:'Semicomatose — responsive only to repeated noxious stimuli'},
+  {score:1,label:'Comatose — unresponsive to repeated noxious stimuli'},
+];
+let tbiScores={motor:null,bs:null,loc:null};
+
+function renderTBITool(){
+  const total=(tbiScores.motor||0)+(tbiScores.bs||0)+(tbiScores.loc||0);
+  const allSet=tbiScores.motor&&tbiScores.bs&&tbiScores.loc;
+  let prog='',progColor='var(--text-hint)',progBg='var(--surface2)';
+  if(allSet){
+    if(total<=8){prog='Grave';progColor='var(--danger)';progBg='var(--danger-bg)';}
+    else if(total<=14){prog='Guarded';progColor='var(--warn)';progBg='var(--warn-bg)';}
+    else{prog='Good';progColor='var(--success)';progBg='var(--success-bg)';}
+  }
+
+  function catHtml(label,data,key){
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span>${label}</span>
+        ${tbiScores[key]?`<span class="badge b-info">Score: ${tbiScores[key]}</span>`:'<span style="font-size:11px;color:var(--text-hint)">select one</span>'}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        ${data.map(r=>`<button onclick="tbiSet('${key}',${r.score})" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r);border:1.5px solid ${tbiScores[key]===r.score?'var(--accent-mid)':'var(--border-light)'};background:${tbiScores[key]===r.score?'var(--accent-light)':'var(--surface)'};cursor:pointer;font-family:inherit;font-size:13px;text-align:left;transition:all .15s;width:100%">
+          <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;min-width:18px;color:${tbiScores[key]===r.score?'var(--accent)':'var(--text-hint)'}">${r.score}</span>
+          <span style="color:${tbiScores[key]===r.score?'var(--accent)':'var(--text)'}">${r.label}</span>
+        </button>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  return `<div class="sh"><h2>TBI — MGCS calculator</h2><p>Select one finding per category. Score updates live.</p></div>
+<div style="max-width:840px">
+  <div style="display:grid;grid-template-columns:1fr 200px;gap:16px;align-items:start">
+    <div>
+      ${catHtml('Motor activity',MGCS_MOTOR,'motor')}
+      ${catHtml('Brainstem reflexes',MGCS_BS,'bs')}
+      ${catHtml('Level of consciousness',MGCS_LOC,'loc')}
+    </div>
+    <div style="position:sticky;top:70px">
+      <div style="background:${allSet?progBg:'var(--surface)'};border:1.5px solid ${allSet?progColor:'var(--border-light)'};border-radius:var(--rl);padding:1.25rem;text-align:center;transition:all .3s;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-hint);margin-bottom:6px">MGCS Total</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:52px;line-height:1;color:${allSet?progColor:'var(--border)'};transition:all .3s">${allSet?total:'—'}</div>
+        <div style="font-size:15px;font-weight:600;color:${progColor};margin-top:6px">${prog||'Complete all 3'}</div>
+        ${allSet&&total>8?`<div style="font-size:12px;color:var(--text-muted);margin-top:4px">&gt;8 = 50% survival rate</div>`:''}
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);overflow:hidden;margin-bottom:12px">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-hint);padding:8px 12px;border-bottom:1px solid var(--border-light)">Score guide</div>
+        <div style="padding:10px 12px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;font-size:13px"><span>3–8</span><span class="badge b-danger">Grave</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px"><span>9–14</span><span class="badge b-warn">Guarded</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px"><span>15–18</span><span class="badge b-success">Good</span></div>
+        </div>
+      </div>
+      <button onclick="tbiReset()" style="width:100%;padding:8px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit;font-size:13px;color:var(--text-muted)">Reset</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:4px">
+    <div class="card-title">Management priorities</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-hint);margin-bottom:8px">Stabilization</div>
+        ${[
+          ['1','ABC\'s — airway, breathing, circulation'],
+          ['2','Elevate head/neck 30–45° — avoid jugular compression'],
+          ['3','Fluid resuscitation for hypovolemic shock — do NOT volume limit'],
+          ['4','Oxygenation — nasal cannula or oxygen catheter preferred'],
+        ].map(([n,t])=>`<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-light);font-size:13px"><span class="badge b-info">${n}</span><span>${t}</span></div>`).join('')}
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-hint);margin-bottom:8px">Medical treatment</div>
+        <div style="font-size:13px;display:flex;flex-direction:column;gap:6px">
+          <div style="padding:8px 10px;background:var(--success-bg);border-radius:var(--r);border:1px solid var(--success-border)"><strong style="color:var(--success)">Mannitol</strong> — ↑ICP treatment. ↓blood viscosity → ↓CVR → vasoconstriction. Avoid if hypovolemic or electrolyte abnormalities. Reserve for MGCS &lt;8.</div>
+          <div style="padding:8px 10px;background:var(--info-bg);border-radius:var(--r);border:1px solid var(--info-border)"><strong style="color:var(--info)">Hypertonic saline</strong> — also treats ↑ICP. Improves hemodynamics (volume expansion, positive inotrope). Can use if hypovolemic.</div>
+          <div style="padding:8px 10px;background:var(--danger-bg);border-radius:var(--r);border:1px solid var(--danger-border)"><strong style="color:var(--danger)">NO STEROIDS</strong> — contraindicated in head trauma patients. Do not give regardless of severity.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Autoregulation physiology</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px">
+      <div style="padding:10px 12px;background:var(--surface2);border-radius:var(--r)">
+        <div style="font-size:11px;font-weight:600;color:var(--text-hint);margin-bottom:5px">Key equations</div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;line-height:1.9">CPP = MAP − ICP<br>CBF = CPP / CVR</div>
+      </div>
+      <div style="padding:10px 12px;background:var(--surface2);border-radius:var(--r)">
+        <div style="font-size:11px;font-weight:600;color:var(--text-hint);margin-bottom:5px">Cushing reflex</div>
+        <div style="color:var(--text-muted);line-height:1.6">Arterial hypertension + bradycardia = ↑ICP. HR &lt;60 + systolic BP &gt;250 mmHg = critical sign.</div>
+      </div>
+      <div style="padding:10px 12px;background:var(--surface2);border-radius:var(--r)">
+        <div style="font-size:11px;font-weight:600;color:var(--text-hint);margin-bottom:5px">Swelling timeline</div>
+        <div style="color:var(--text-muted);line-height:1.6">Worsens up to 72 hrs post-trauma. After 72 hrs stabilizes then slowly recovers. Trend over first 48 hrs is most valuable.</div>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+function tbiSet(k,v){tbiScores[k]=v;document.getElementById('main').innerHTML=renderTBITool();}
+function tbiReset(){tbiScores={motor:null,bs:null,loc:null};document.getElementById('main').innerHTML=renderTBITool();}
+function initTBITool(){}
+
+// ═══════════════════════════════════════════════════════
+// MICTURITION TOOL — innervation + drug selector
+// ═══════════════════════════════════════════════════════
+let micTab='anatomy'; // 'anatomy' | 'drugs' | 'quiz'
+let micBladder=null; // 'umn' | 'lmn' | 'autonomic'
+let micQuiz={q:null,answered:false,score:0,total:0};
+
+const MIC_DRUGS=[
+  {name:'Phenoxybenzamine',class:'α-antagonist',indication:'umn',target:'Relax internal urethral sphincter',note:'Reduces smooth muscle tone at internal sphincter. Use for UMN hypertonic bladder.'},
+  {name:'Prazosin',class:'α-antagonist',indication:'umn',target:'Relax internal urethral sphincter',note:'Similar to phenoxybenzamine. Used for functional urethral obstruction in UMN bladder.'},
+  {name:'Diazepam',class:'Striated muscle relaxant',indication:'umn',target:'Relax external urethral sphincter',note:'Reduces striated muscle tone. Targets the external sphincter which is under somatic (pudendal n.) control.'},
+  {name:'Bethanechol',class:'Parasympathomimetic',indication:'lmn',target:'↑ Detrusor contraction',note:'Stimulates muscarinic receptors → contracts detrusor muscle. Use when detrusor is too weak (LMN).'},
+  {name:'PPA (phenylpropanolamine)',class:'α-agonist',indication:'lmn_si',target:'↑ Internal sphincter tone',note:'Increases urethral sphincter tone. Used for urinary incontinence due to sphincter incompetence.'},
+];
+
+const MIC_QUIZ_Q=[
+  {stem:'A T3–L3 lesion causes what type of bladder dysfunction?',opts:['LMN bladder — flaccid, easy to express','UMN bladder — hypertonic, difficult to express','Autonomic dysfunction — stranguria','No bladder dysfunction'],ans:1,explain:'T3–L3 = UMN lesion. Lesion above the sacral segments causes loss of higher coordination → hypertonic detrusor and increased sphincter tone. Difficult to express.'},
+  {stem:'An L4–S3 lesion causes what type of bladder?',opts:['UMN bladder — hypertonic','LMN bladder — flaccid, easily expressed','UMN bladder with dyssynergia','Normal bladder'],ans:1,explain:'L4–S3 = LMN lesion. Sacral segments contain the pelvic nerve and pudendal nerve cell bodies. Damaged → flaccid detrusor + reduced sphincter tone = easy expression / dribbling.'},
+  {stem:'Which drug increases detrusor contraction in an LMN bladder?',opts:['Phenoxybenzamine','Prazosin','Bethanechol','Diazepam'],ans:2,explain:'Bethanechol is a parasympathomimetic (muscarinic agonist) that stimulates detrusor contraction. Used when the detrusor is too weak due to LMN damage.'},
+  {stem:'A dog with a UMN bladder cannot void. Which drug relaxes the internal urethral sphincter?',opts:['Bethanechol','Diazepam','Phenoxybenzamine','PPA'],ans:2,explain:'Phenoxybenzamine and prazosin are α-antagonists that relax the smooth muscle of the internal urethral sphincter — the main resistance in UMN bladder.'},
+  {stem:'Which drug targets the EXTERNAL urethral sphincter specifically in UMN bladder dysfunction?',opts:['Phenoxybenzamine','Bethanechol','Prazosin','Diazepam'],ans:3,explain:'Diazepam is a striated muscle relaxant. The external urethral sphincter is striated muscle under somatic (pudendal nerve) control. Diazepam relaxes it to allow voiding.'},
+  {stem:'A dog dribbles urine continuously from a flaccid bladder. Which nerve is damaged?',opts:['Hypogastric nerve (sympathetic)','Pelvic nerve (parasympathetic)','Pudendal nerve (somatic)','Both pelvic and pudendal nerves'],ans:3,explain:'LMN bladder requires damage to both the pelvic nerve (detrusor contraction) and pudendal nerve (external sphincter tone). Loss of both = dribbling from inability to hold urine.'},
+];
+
+function renderMicTool(){
+  return `<div class="sh"><h2>Micturition</h2><p>Bladder innervation, UMN vs LMN dysfunction, and pharmacologic management.</p></div>
+<div style="max-width:860px">
+  <div style="display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid var(--border-light);padding-bottom:12px">
+    <button class="loc-tab${micTab==='anatomy'?' active':''}" onclick="micSetTab('anatomy')">Innervation & anatomy</button>
+    <button class="loc-tab${micTab==='drugs'?' active':''}" onclick="micSetTab('drugs')">Drug selector</button>
+    <button class="loc-tab${micTab==='quiz'?' active':''}" onclick="micSetTab('quiz')">Quiz</button>
+  </div>
+  <div id="mic-body"></div>
+</div>`;
+}
+
+function initMicTool(){renderMicTab();}
+function micSetTab(t){micTab=t;document.getElementById('main').innerHTML=renderMicTool();renderMicTab();}
+
+function renderMicTab(){
+  const el=document.getElementById('mic-body');
+  if(!el)return;
+  if(micTab==='anatomy') el.innerHTML=renderMicAnatomy();
+  else if(micTab==='drugs') el.innerHTML=renderMicDrugs();
+  else if(micTab==='quiz') el.innerHTML=renderMicQuizUI();
+}
+
+function renderMicAnatomy(){
+  const phases=[
+    {phase:'Storage (filling)',sys:'Sympathetic',nerve:'Hypogastric nerve',effect:'Relaxes detrusor muscle + stimulates internal urethral sphincter (constriction)',color:'var(--umn)',bg:'var(--umn-bg)',border:'var(--umn-border)'},
+    {phase:'Storage (filling)',sys:'Somatic',nerve:'Pudendal nerve',effect:'Stimulates external urethral sphincter (constriction)',color:'var(--purple)',bg:'var(--purple-bg)',border:'#c8c0e8'},
+    {phase:'Micturition (voiding)',sys:'Parasympathetic',nerve:'Pelvic nerve',effect:'Stimulates detrusor muscle to contract — initiates voiding',color:'var(--success)',bg:'var(--success-bg)',border:'var(--success-border)'},
+  ];
+
+  const bladderTypes=[
+    {k:'umn',label:'UMN bladder',sub:'Lesion at T3–L3',color:'var(--umn)',bg:'var(--umn-bg)',border:'var(--umn-border)',
+      rows:[
+        ['Reflexes','Normal or increased'],
+        ['Muscle tone','Normal or hypertonic'],
+        ['Manual expression','Difficult — high resistance'],
+        ['Overflow','Occurs when massive distension activates reflex arc → urine release'],
+        ['Mechanism','Loss of coordination between detrusor and sphincter. Detrusor cannot overcome hypertonic external sphincter.'],
+        ['Risk','Bladder atony if overdistended >24–48 hrs'],
+      ]
+    },
+    {k:'lmn',label:'LMN bladder',sub:'Lesion at L3–L4 (sacral segments)',color:'var(--lmn)',bg:'var(--lmn-bg)',border:'var(--lmn-border)',
+      rows:[
+        ['Reflexes','Reduced or absent'],
+        ['Muscle tone','Flaccid — hypotonic detrusor'],
+        ['Manual expression','Very easy — minimal resistance'],
+        ['Overflow','Urine leaks continuously — reduced sphincter tone cannot hold urine'],
+        ['Mechanism','Inability to contract detrusor + inability to constrict sphincters → dribbling'],
+        ['Risk','UTI, urine scald, bladder atony from distension'],
+      ]
+    },
+  ];
+
+  return `
+  <div class="card">
+    <div class="card-title">Bladder innervation — phase by phase</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${phases.map(p=>`<div style="display:grid;grid-template-columns:120px 110px 140px 1fr;gap:0;border-radius:var(--r);overflow:hidden;border:1px solid ${p.border}">
+        <div style="padding:10px 12px;background:${p.bg};border-right:1px solid ${p.border}"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-hint);margin-bottom:2px">Phase</div><div style="font-size:13px;font-weight:600;color:${p.color}">${p.phase}</div></div>
+        <div style="padding:10px 12px;background:var(--surface2);border-right:1px solid ${p.border}"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-hint);margin-bottom:2px">System</div><div style="font-size:13px">${p.sys}</div></div>
+        <div style="padding:10px 12px;background:var(--surface2);border-right:1px solid ${p.border}"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-hint);margin-bottom:2px">Nerve</div><div style="font-size:13px;font-weight:600">${p.nerve}</div></div>
+        <div style="padding:10px 12px;background:var(--surface)"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-hint);margin-bottom:2px">Effect</div><div style="font-size:13px;color:var(--text-muted)">${p.effect}</div></div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    ${bladderTypes.map(bt=>`<div style="border:1.5px solid ${bt.border};border-radius:var(--rl);overflow:hidden">
+      <div style="padding:12px 14px;background:${bt.bg};border-bottom:1px solid ${bt.border}">
+        <div style="font-size:15px;font-weight:600;color:${bt.color}">${bt.label}</div>
+        <div style="font-size:12px;color:var(--text-hint)">${bt.sub}</div>
+      </div>
+      <div style="background:var(--surface)">
+        ${bt.rows.map(([k,v])=>`<div style="display:flex;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border-light);font-size:13px"><span style="font-weight:500;min-width:110px;flex-shrink:0;font-size:12px;color:var(--text-hint);padding-top:1px">${k}</span><span>${v}</span></div>`).join('')}
+      </div>
+    </div>`).join('')}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Sequelae of bladder dysfunction</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      ${[
+        ['Bacterial cystitis','Urine stasis → infection — monitor UA regularly'],
+        ['Urine scald','Continuous dribbling damages perineal skin'],
+        ['Bladder atony','Prolonged distension >24–48 hrs damages detrusor muscle — manual express regularly'],
+        ['Bladder rupture','More common with mechanical obstruction than neurogenic disease'],
+      ].map(([t,d])=>`<div style="background:var(--surface2);border-radius:var(--r);padding:10px 12px"><div style="font-size:12px;font-weight:600;margin-bottom:4px">${t}</div><div style="font-size:12px;color:var(--text-muted);line-height:1.5">${d}</div></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderMicDrugs(){
+  const types=[
+    {k:'all',label:'All drugs'},
+    {k:'umn',label:'UMN bladder'},
+    {k:'lmn',label:'LMN bladder'},
+  ];
+  const filtered=micBladder&&micBladder!=='all'
+    ? MIC_DRUGS.filter(d=>d.indication===micBladder||d.indication===micBladder+'_si')
+    : MIC_DRUGS;
+
+  return `
+  <div style="margin-bottom:14px">
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Filter by bladder type:</div>
+    <div style="display:flex;gap:7px">
+      ${types.map(t=>`<button class="loc-tab${(!micBladder||micBladder===t.k)&&(t.k==='all'?!micBladder:micBladder===t.k)?' active':''}" style="padding:6px 16px" onclick="micFilterDrugs('${t.k}')">${t.label}</button>`).join('')}
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+    ${filtered.map(d=>{
+      const isUMN=d.indication==='umn';
+      const col=isUMN?'var(--umn)':'var(--success)';
+      const bg=isUMN?'var(--umn-bg)':'var(--success-bg)';
+      const border=isUMN?'var(--umn-border)':'var(--success-border)';
+      return `<div style="border:1px solid ${border};border-radius:var(--rl);overflow:hidden;background:var(--surface)">
+        <div style="display:grid;grid-template-columns:160px 150px 1fr;background:${bg};border-bottom:1px solid ${border}">
+          <div style="padding:10px 14px;border-right:1px solid ${border}"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-hint);margin-bottom:2px">Drug</div><div style="font-size:14px;font-weight:600;color:${col}">${d.name}</div></div>
+          <div style="padding:10px 14px;border-right:1px solid ${border}"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-hint);margin-bottom:2px">Class</div><div style="font-size:13px">${d.class}</div></div>
+          <div style="padding:10px 14px"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-hint);margin-bottom:2px">Target</div><div style="font-size:13px;font-weight:500">${d.target}</div></div>
+        </div>
+        <div style="padding:10px 14px;font-size:13px;color:var(--text-muted)">${d.note}</div>
+      </div>`;
+    }).join('')}
+  </div>
+  <div class="info-box">💡 <strong>Key principle:</strong> UMN = too much tone → use relaxants (α-blockers for internal sphincter, diazepam for external). LMN = too little tone → use stimulants (bethanechol for detrusor).</div>`;
+}
+
+function micFilterDrugs(k){micBladder=(k==='all'?null:k);document.getElementById('mic-body').innerHTML=renderMicDrugs();}
+
+function renderMicQuizUI(){
+  if(!micQuiz.q) micNextQ();
+  const q=micQuiz.q;
+  if(!q) return '<div style="color:var(--text-muted)">Loading...</div>';
+  return `<div class="loc-quiz-q">${q.stem}</div>
+  <div class="loc-quiz-opts" id="mic-opts">
+    ${q.opts.map((o,i)=>`<button class="loc-quiz-opt" id="mq-${i}" onclick="micAnswer(${i})">${o}</button>`).join('')}
+  </div>
+  <div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-hint)">Score: ${micQuiz.score} / ${micQuiz.total}</div>
+  <div id="mic-exp"></div>`;
+}
+
+function micNextQ(){
+  const pool=MIC_QUIZ_Q;
+  micQuiz.q=pool[Math.floor(Math.random()*pool.length)];
+  micQuiz.answered=false;
+  const el=document.getElementById('mic-body');
+  if(el) el.innerHTML=renderMicQuizUI();
+}
+
+function micAnswer(i){
+  if(micQuiz.answered)return;
+  micQuiz.answered=true;
+  const q=micQuiz.q;
+  const correct=(i===q.ans);
+  micQuiz.total++; if(correct)micQuiz.score++;
+  addScore(correct?1:0,1);
+  document.querySelectorAll('.loc-quiz-opt').forEach(b=>b.disabled=true);
+  document.getElementById('mq-'+i)?.classList.add(correct?'correct':'wrong');
+  if(!correct) document.getElementById('mq-'+q.ans)?.classList.add('reveal');
+  const exp=document.getElementById('mic-exp');
+  if(exp) exp.innerHTML=`
+    <div style="margin-top:10px;padding:10px 14px;background:${correct?'var(--success-bg)':'var(--info-bg)'};border-radius:var(--r);font-size:13px;color:${correct?'var(--success)':'var(--info)'};border:1px solid ${correct?'var(--success-border)':'var(--info-border)'};line-height:1.5">
+      <strong>${correct?'✓ Correct!':'✗ Incorrect.'}</strong> ${q.explain}
+    </div>
+    <button class="loc-quiz-opt" style="margin-top:8px;border-color:var(--accent);color:var(--accent)" onclick="micNextQ()">Next question →</button>`;
+  const scoreEl=document.querySelector('#mic-body [style*="DM Mono"]');
+  if(scoreEl) scoreEl.textContent=`Score: ${micQuiz.score} / ${micQuiz.total}`;
+}
+
+// ═══════════════════════════════════════════════════════
+// LOCALIZATION TOOL — full rebuild
+// ═══════════════════════════════════════════════════════
+let locTab='brain'; // 'brain' | 'spinal' | 'nm'
+let brainSel='forebrain';
+let spineSel='T3-L3';
+let nmSel='neuropathy';
+let locQuiz={q:null,answered:false,score:0,total:0};
+
+// ── BRAIN DATA ──
+const BRAIN_DATA={
+  forebrain:{
+    label:'Forebrain',sub:'Cerebrum + Diencephalon',color:'#4a7c62',bg:'#e8f0ec',border:'#b8d4c4',
+    findings:[
+      {label:'Weakness',val:'Contralateral hemi-paresis (crossed pathways)'},
+      {label:'Ataxia',val:'None — forebrain does not produce ataxia'},
+      {label:'Mental status',val:'Behavioral change, dementia, depression, aggression'},
+      {label:'Cranial nerves',val:'Contralateral blindness · Contralateral menace deficit'},
+      {label:'Posture / gait',val:'Ipsilateral head turn, head pressing, circling toward lesion'},
+      {label:'Postural reactions',val:'Contralateral deficits'},
+      {label:'Seizures',val:'Yes — common with forebrain disease'},
+    ],
+    tip:'Remember: forebrain = CONTRALATERAL signs for CN (optic) and postural reactions, but IPSILATERAL circling/head turn.',
+    causes:'Neoplasia · MUO/GME · FIP · Canine distemper · Hydrocephalus · Hepatic encephalopathy · Vascular infarct'
+  },
+  brainstem:{
+    label:'Brainstem',sub:'Midbrain · Pons · Medulla',color:'#1d3a5f',bg:'#e8f0f8',border:'#b8d0e8',
+    findings:[
+      {label:'Weakness',val:'Ipsilateral or bilateral hemi/tetraparesis (UMN)'},
+      {label:'Ataxia',val:'Vestibular ataxia · General proprioceptive (GP) ataxia'},
+      {label:'Mental status',val:'Altered — ARAS (ascending reticular activating system) affected → obtundation, stupor'},
+      {label:'Cranial nerves',val:'Ipsilateral CN deficits (III–XII depending on level)'},
+      {label:'Postural reactions',val:'Ipsilateral deficits'},
+      {label:'Nystagmus',val:'Possible — if vestibular nuclei involved'},
+      {label:'Other',val:'+/− Horner\'s syndrome (sympathetic tract involvement)'},
+    ],
+    tip:'Brainstem = ipsilateral weakness + CN deficits + ataxia. Mentation change distinguishes it from peripheral vestibular disease.',
+    causes:'GME/MUO · Infectious encephalitis · Neoplasia · Vascular infarct · Metronidazole toxicity'
+  },
+  cerebellum:{
+    label:'Cerebellum',sub:'Cerebellar cortex + Peduncles',color:'#7a4a0a',bg:'#fdf3e3',border:'#f0c880',
+    findings:[
+      {label:'Weakness',val:'None — cerebellar disease does NOT cause weakness'},
+      {label:'Ataxia',val:'Cerebellar ataxia — dysmetria (hypermetria), intention tremor, truncal sway'},
+      {label:'Mental status',val:'Normal — cerebellum does not affect consciousness'},
+      {label:'Cranial nerves',val:'Ipsilateral menace deficit (requires cerebellar integration)'},
+      {label:'Postural reactions',val:'Normal to mildly delayed'},
+      {label:'Nystagmus',val:'Possible — vestibular component'},
+      {label:'Stance',val:'Base-wide stance; may fall to affected side'},
+    ],
+    tip:'Key teaching point: cerebellar disease = NO weakness + NO mentation change. Pure coordination deficits only.',
+    causes:'Cerebellar hypoplasia (FPV in cats) · Cerebellar abiotrophy (Kerry Blue Terrier) · Neoplasia · Vascular infarct · Cerebellar inflammation'
+  },
+  vestibular:{
+    label:'Vestibular system',sub:'Peripheral (CN VIII) or Central (nuclei)',color:'#3d2b6b',bg:'#eeebf8',border:'#c8c0e8',
+    findings:[
+      {label:'Weakness',val:'None (peripheral) or Ipsilateral UMN paresis (central)'},
+      {label:'Ataxia',val:'Vestibular ataxia — lean, list, fall, roll to affected side'},
+      {label:'Head tilt',val:'Toward the lesion (peripheral + central) · Away (paradoxical)'},
+      {label:'Nystagmus',val:'Peripheral: horizontal/rotary only · Central: can be vertical'},
+      {label:'Strabismus',val:'Ventral/ventrolateral forced strabismus — ipsilateral side'},
+      {label:'CN deficits',val:'Peripheral: CN VII only · Central: CN V, VII, IX, X, XII'},
+      {label:'Horner\'s',val:'Peripheral — sympathetic trunk runs near CN VIII'},
+    ],
+    tip:'The key peripheral vs central differentiator: proprioceptive deficits. Peripheral = NONE. Central = YES (ipsilateral).',
+    causes:'Peripheral: otitis media/interna · idiopathic (old dog) · hypothyroidism\nCentral: GME/MUO · neoplasia · vascular · metro toxicity'
+  },
+  multifocal:{
+    label:'Multifocal / Diffuse',sub:'Multiple CNS regions',color:'#6b2020',bg:'#f8eaea',border:'#e8b4b4',
+    findings:[
+      {label:'Pattern',val:'Signs referable to more than one neuroanatomical location simultaneously'},
+      {label:'Onset',val:'Often subacute to chronic; may wax and wane'},
+      {label:'Mental status',val:'Variable — can be normal or severely affected'},
+      {label:'Cranial nerves',val:'Variable — multiple CN deficits possible'},
+      {label:'Gait / posture',val:'Variable — asymmetric, multifocal pattern'},
+      {label:'Seizures',val:'Common — especially with inflammatory or infectious disease'},
+      {label:'Key clue',val:'Cannot explain all signs with a single anatomical lesion'},
+    ],
+    tip:'When signs cannot be explained by one lesion location, think multifocal. The lesion list drives the differential: GME, infectious, neoplastic, metabolic.',
+    causes:'GME/MUO · Canine distemper · FIP · Neospora · Cryptococcus · Neoplasia (metastatic) · Metabolic (HE, hypo/hypernatremia)'
+  }
+};
+
+// ── SPINAL DATA ──
+const SPINE_DATA={
+  'C1-C5':{color:'#1d3a5f',tl:'UMN',pl:'UMN',tlcls:'umn',plcls:'umn',
+    reflexes:'All reflexes increased (hyperreflexia) in all 4 limbs',
+    tone:'Increased extensor tone in all 4 limbs',
+    ataxia:'GP ataxia in all 4 limbs',
+    bladder:'UMN bladder — hypertonic, difficult to express',
+    atrophy:'Slow disuse atrophy (no denervation)',
+    causes:'Wobbler syndrome (CCSM) · IVDD C-spine · Atlantoaxial instability · FCE',
+    tip:'All 4 limbs affected = C1–C5 OR a diffuse/multifocal disease. Check mentation (brainstem) and CN function to distinguish.'
+  },
+  'C6-T2':{color:'#9b3a1a',tl:'LMN',pl:'UMN',tlcls:'lmn',plcls:'umn',
+    reflexes:'TL: reduced/absent. PL: increased (hyperreflexia)',
+    tone:'TL: decreased/flaccid. PL: increased extensor tone',
+    ataxia:'LMN paresis TL + UMN GP ataxia PL',
+    bladder:'UMN bladder — hypertonic, difficult to express',
+    atrophy:'Rapid denervation atrophy of TL; slow disuse atrophy PL',
+    causes:'IVDD C6–T2 · Brachial plexus avulsion (TL LMN) · FCE · Neoplasia (nerve root)',
+    tip:'LMN TL + UMN PL = C6–T2. The forelimb intumescence is being destroyed (LMN), while descending tracts to PL are only interrupted (UMN).'
+  },
+  'T3-L3':{color:'#2b5240',tl:'Normal',pl:'UMN',tlcls:'normal',plcls:'umn',
+    reflexes:'TL: normal. PL: increased (hyperreflexia)',
+    tone:'TL: normal. PL: increased extensor tone',
+    ataxia:'Normal TL. UMN GP ataxia PL.',
+    bladder:'UMN bladder — hypertonic, difficult to express',
+    atrophy:'TL: no atrophy. PL: slow disuse atrophy',
+    causes:'Type I/II IVDD (T11–L2 most common) · FCE · Neoplasia · Discospondylitis · Degenerative myelopathy',
+    tip:'Most common spinal cord localization in small animal practice. Normal forelimbs + UMN hindlimbs = T3–L3. The intercapital ligament ends at T10, making T11–L2 the most vulnerable zone.'
+  },
+  'L4-S3':{color:'#6b2020',tl:'Normal',pl:'LMN',tlcls:'normal',plcls:'lmn',
+    reflexes:'TL: normal. PL: reduced/absent (patellar, withdrawal)',
+    tone:'TL: normal. PL: decreased/flaccid',
+    ataxia:'Normal TL. LMN flaccid paresis PL.',
+    bladder:'LMN bladder — flaccid detrusor, reduced sphincter tone. Easily expressed.',
+    atrophy:'TL: none. PL: rapid denervation atrophy',
+    causes:'IVDD L4–L5 · Lumbosacral syndrome (L7–S2) · FCE · Degenerative myelopathy (late) · Cauda equina compression',
+    tip:'Normal TL + LMN PL + easy bladder expression = L4–S3. The pelvic limb intumescence is here. Loss of deep pain = grave prognosis.'
+  }
+};
+
+// ── NM DATA ──
+const NM_DATA={
+  neuropathy:{
+    label:'Neuropathy',sub:'Peripheral nerve disease',color:'#1d3a5f',bg:'#e8f0f8',
+    features:[
+      {label:'Weakness',val:'Severe flaccid paresis or paralysis'},
+      {label:'Reflexes',val:'Reduced or absent (hyporeflexia/areflexia)'},
+      {label:'Atrophy',val:'Rapid neurogenic (denervation) atrophy'},
+      {label:'Sensation',val:'May have sensory deficits if mixed nerve affected'},
+      {label:'Tone',val:'Decreased — flaccid'},
+      {label:'Distribution',val:'Focal (traumatic) or generalized (polyradiculoneuritis)'},
+    ],
+    diffs:'Acute: polyradiculoneuritis (APRN) · Traumatic nerve injury\nChronic: hypothyroidism · diabetic neuropathy · FATE'
+  },
+  junctionopathy:{
+    label:'Junctionopathy',sub:'Neuromuscular junction disease',color:'#2b5240',bg:'#e8f0ec',
+    features:[
+      {label:'Weakness',val:'Generalized — exercise-induced fatigue or acute flaccid paralysis'},
+      {label:'Reflexes',val:'Normal or mildly reduced'},
+      {label:'Atrophy',val:'Absent or minimal (NMJ only — muscle intact)'},
+      {label:'Sensation',val:'Normal — NMJ disease is purely motor'},
+      {label:'Tone',val:'Normal to mildly decreased'},
+      {label:'Key clue',val:'Fatigable weakness (MG) OR acute ascending paralysis (botulism/tick)'},
+    ],
+    diffs:'MG (acquired/congenital) · Botulism · Tick paralysis · Aminoglycoside toxicity'
+  },
+  myopathy:{
+    label:'Myopathy',sub:'Primary muscle disease',color:'#7a4a0a',bg:'#fdf3e3',
+    features:[
+      {label:'Weakness',val:'Generalized or focal — symmetric'},
+      {label:'Reflexes',val:'Normal or mildly reduced'},
+      {label:'Atrophy',val:'Present — can also see hypertrophy (myotonia)'},
+      {label:'Sensation',val:'Normal — sensation is intact'},
+      {label:'Tone',val:'Variable — may have dimple contractures (myotonia)'},
+      {label:'Key clue',val:'Myalgia (pain on palpation) · Elevated CK/AST · Stiff reluctant gait'},
+    ],
+    diffs:'Polymyositis (immune-mediated) · Masticatory muscle myositis · Hypokalemic myopathy · Neospora myositis'
+  },
+  combined:{
+    label:'Diffuse NMD',sub:'Mixed neuropathy + myopathy',color:'#3d2b6b',bg:'#eeebf8',
+    features:[
+      {label:'Pattern',val:'Signs of both neuropathy AND myopathy — hard to distinguish clinically'},
+      {label:'Reflexes',val:'Reduced (neuropathic component)'},
+      {label:'Atrophy',val:'Present — both neurogenic and myopathic components'},
+      {label:'CK/AST',val:'Elevated — suggests myopathic involvement'},
+      {label:'EMG',val:'Abnormal in both nerve and muscle — key diagnostic tool'},
+      {label:'Key clue',val:'Think about this with systemic or metabolic disease affecting multiple sites'},
+    ],
+    diffs:'Neospora caninum (radiculoneuritis + myositis) · Hypothyroidism · Paraneoplastic syndrome · Immune-mediated polyneuropathy'
+  }
+};
+
+// ── QUIZ DATA ──
+const LOC_QUIZ_ALL=[
+  // Brain
+  {stem:'A cat circles to the left, presses its head, and has right-sided postural reaction deficits. No ataxia. Where is the lesion?',opts:['Left forebrain','Right forebrain','Left brainstem','Cerebellum'],ans:0,explain:'Forebrain: ipsilateral circling/pressing, CONTRALATERAL postural reaction deficits, no ataxia.'},
+  {stem:'A dog has UMN hemiparesis, altered mentation, and ipsilateral CN VII and CN V deficits. No postural reaction deficits on the other side. Where is the lesion?',opts:['Forebrain','Brainstem','Cerebellum','Peripheral vestibular'],ans:1,explain:'Brainstem: ipsilateral CN deficits + UMN weakness + mentation change (ARAS). CN deficits from the brainstem nuclei are ipsilateral.'},
+  {stem:'A dog presents with dysmetria, intention tremor, and base-wide stance. No weakness. Normal mentation. Where is the lesion?',opts:['Forebrain','Brainstem','Cerebellum','Vestibular system'],ans:2,explain:'Cerebellum: NO weakness, NO mentation change, pure coordination deficits (dysmetria, intention tremor, truncal sway). Classic cerebellar presentation.'},
+  {stem:'A 12-year-old dog has acute head tilt right, horizontal nystagmus (fast phase LEFT), and NO proprioceptive deficits. Where is the lesion?',opts:['Central vestibular — right','Peripheral vestibular — right','Peripheral vestibular — left','Forebrain — right'],ans:1,explain:'Peripheral vestibular disease: no proprioceptive deficits (key!), horizontal nystagmus, fast phase away from lesion. Head tilt and fast phase away = right side lesion.'},
+  {stem:'A Pug presents with seizures, behavioral changes, and signs referable to both the forebrain and cerebellum simultaneously. What category is this?',opts:['Focal forebrain disease','Multifocal / diffuse CNS disease','Brainstem disease','Peripheral vestibular disease'],ans:1,explain:'Multifocal: cannot explain all signs with a single anatomical lesion. Pugs with MUO/GME classically present with multifocal inflammatory CNS disease.'},
+  // Spinal
+  {stem:'Normal TL. UMN pelvic limbs. UMN bladder. Where is the lesion?',opts:['C1–C5','C6–T2','T3–L3','L4–S3'],ans:2,explain:'T3–L3: normal thoracic limbs (segment above), UMN pelvic limbs (descending tracts interrupted). UMN bladder is consistent with this location.'},
+  {stem:'LMN thoracic limbs. UMN pelvic limbs. Which segment?',opts:['C1–C5','C6–T2','T3–L3','L4–S3'],ans:1,explain:'C6–T2: the forelimb intumescence. Destroyed here → LMN in TL. Descending tracts to PL still interrupted → UMN in PL. Key differentiator: TL hyporeflexia, PL hyperreflexia.'},
+  {stem:'Normal TL. Flaccid pelvic limbs. Absent patellar and withdrawal reflexes PL. Easy bladder expression. Where?',opts:['C1–C5','C6–T2','T3–L3','L4–S3'],ans:3,explain:'L4–S3: pelvic limb intumescence. LMN signs in PL — flaccid paresis, areflexia, easy bladder expression (flaccid LMN bladder).'},
+  {stem:'A dog has rapid forelimb muscle atrophy, hyperreflexia in hindlimbs, and no thoracic limb reflexes. Where is the lesion?',opts:['C1–C5','C6–T2','T3–L3','Multifocal'],ans:1,explain:'C6–T2: rapid (denervation) TL atrophy = LMN. PL hyperreflexia = UMN. This combination = C6–T2 lesion.'},
+  // NM
+  {stem:'A dog has rapid symmetric muscle atrophy, absent reflexes, and flaccid paresis. Sensation is impaired. Which category of NMD?',opts:['Neuropathy','Junctionopathy','Myopathy','UMN disease'],ans:0,explain:'Neuropathy: absent reflexes, rapid neurogenic atrophy, sensory deficits possible (mixed nerve). Flaccid LMN pattern with denervation atrophy.'},
+  {stem:'A dog fatigues dramatically with exercise but recovers with rest. Reflexes are normal. Sensation is normal. Elevated AChR antibodies. Which NMD category?',opts:['Neuropathy','Junctionopathy (MG)','Myopathy','Brainstem disease'],ans:1,explain:'Junctionopathy: fatigable weakness with exercise, normal reflexes, normal sensation, no atrophy. Anti-AChR antibodies confirm acquired myasthenia gravis.'},
+  {stem:'A dog is stiff, reluctant to move, has elevated CK, and is painful on muscle palpation. Reflexes are normal. Which NMD category?',opts:['Neuropathy','Junctionopathy','Myopathy','Multifocal CNS'],ans:2,explain:'Myopathy: myalgia (pain on palpation), elevated CK/AST, normal reflexes, normal sensation. Think polymyositis or masticatory muscle myositis.'},
+];
+let locQuizPool=[];
+
+function renderLocalizeTool(){
+  return `
+<div class="sh"><h2>Neuroanatomical localization</h2><p>Click any region to explore findings. Use the quiz to test yourself across all localization types.</p></div>
+<div class="loc-wrap">
+  <div class="loc-tabs">
+    <button class="loc-tab${locTab==='brain'?' active':''}" onclick="locSetTab('brain')">Brain lesions</button>
+    <button class="loc-tab${locTab==='spinal'?' active':''}" onclick="locSetTab('spinal')">Spinal cord</button>
+    <button class="loc-tab${locTab==='nm'?' active':''}" onclick="locSetTab('nm')">Neuromuscular</button>
+    <button class="loc-tab${locTab==='umvlmn'?' active':''}" onclick="locSetTab('umvlmn')">UMN vs LMN</button>
+    <button class="loc-tab${locTab==='loss'?' active':''}" onclick="locSetTab('loss')">Loss order</button>
+  </div>
+  <div id="loc-body"></div>
+  <div class="loc-quiz-wrap">
+    <div class="card-title" style="margin-bottom:10px">Quiz — localize the lesion <span style="font-weight:400;color:var(--text-hint);font-size:12px">(all regions)</span></div>
+    <div id="loc-quiz-inner"></div>
+  </div>
+</div>`;
+}
+
+function initLocalizeTool(){
+  renderLocTab();
+  locQuizPool=[...LOC_QUIZ_ALL].sort(()=>Math.random()-.5);
+  locNewQuestion();
+}
+
+function locSetTab(t){
+  locTab=t;
+  renderLocTab();
+}
+
+function renderLocTab(){
+  const el=document.getElementById('loc-body');
+  if(!el)return;
+  if(locTab==='brain') el.innerHTML=renderBrainTab();
+  else if(locTab==='spinal') el.innerHTML=renderSpineTab();
+  else if(locTab==='nm') el.innerHTML=renderNMTab();
+  else if(locTab==='umvlmn') el.innerHTML=renderUMNLMN();
+  else if(locTab==='loss') el.innerHTML=renderLossOrder();
+  // update active tabs
+  document.querySelectorAll('.loc-tab').forEach((b,i)=>{
+    const tabs=['brain','spinal','nm','umvlmn','loss'];
+    b.classList.toggle('active',tabs[i]===locTab);
+  });
+}
+
+// ── BRAIN TAB ──
+function renderBrainTab(){
+  const d=BRAIN_DATA[brainSel];
+  const regions=[
+    {k:'forebrain',label:'Forebrain',sub:'Cerebrum + Diencephalon'},
+    {k:'brainstem',label:'Brainstem',sub:'Midbrain · Pons · Medulla'},
+    {k:'cerebellum',label:'Cerebellum',sub:'Coordination'},
+    {k:'vestibular',label:'Vestibular system',sub:'Peripheral + Central'},
+    {k:'multifocal',label:'Multifocal / Diffuse',sub:'Multiple regions'},
+  ];
+  return `<div class="brain-layout">
+  <div class="brain-diagram">
+    <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-hint);padding:10px 14px;border-bottom:1px solid var(--border-light)">Select brain region</div>
+    <div class="brain-region-list">
+      ${regions.map(r=>{
+        const rd=BRAIN_DATA[r.k];
+        return `<button class="brain-sel-btn${brainSel===r.k?' active':''}" onclick="brainSelect('${r.k}')" style="${brainSel===r.k?`color:${rd.color};border-color:${rd.color};background:${rd.bg}`:''}">
+          <div class="brain-sel-dot" style="background:${rd.color}"></div>
+          <div><div style="font-weight:600;font-size:13px">${r.label}</div><div style="font-size:11px;color:var(--text-hint)">${r.sub}</div></div>
+        </button>`;
+      }).join('')}
+    </div>
+  </div>
+  <div class="brain-panel" style="border-color:${d.border}">
+    <div style="padding:14px 16px;border-bottom:1px solid ${d.border};background:${d.bg}">
+      <div class="brain-panel-name" style="color:${d.color}">${d.label}</div>
+      <div class="brain-panel-sub">${d.sub}</div>
+    </div>
+    <div style="padding:14px 16px;border-bottom:1px solid var(--border-light)">
+      ${d.findings.map(f=>`<div class="brain-finding-row">
+        <div class="brain-finding-label">${f.label}</div>
+        <div class="brain-finding-val">${f.val}</div>
+      </div>`).join('')}
+    </div>
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border-light)">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-hint);margin-bottom:6px">Clinical tip</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">${d.tip}</div>
+    </div>
+    <div style="padding:12px 16px">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-hint);margin-bottom:6px">Common causes</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.6;white-space:pre-line">${d.causes}</div>
+    </div>
+  </div>
+</div>`;
+}
+
+function brainSelect(k){
+  brainSel=k;
+  document.getElementById('loc-body').innerHTML=renderBrainTab();
+}
+
+// ── SPINAL TAB ──
+function renderSpineTab(){
+  const d=SPINE_DATA[spineSel];
+  const segs=[
+    {k:'C1-C5',hint:'All 4 limbs UMN'},
+    {k:'C6-T2',hint:'LMN TL · UMN PL'},
+    {k:'T3-L3',hint:'Normal TL · UMN PL'},
+    {k:'L4-S3',hint:'Normal TL · LMN PL'},
+  ];
+  return `<div class="spine-layout">
+  <div class="spine-column">
+    <div class="spine-col-hdr">Spinal segment</div>
+    ${segs.map(s=>`<button class="spine-seg-btn${spineSel===s.k?' active':''}" onclick="spineSelect('${s.k}')">
+      <div class="spine-seg-color" style="background:${SPINE_DATA[s.k].color}"></div>
+      <div class="spine-seg-inner">
+        <div class="spine-seg-name">${s.k}</div>
+        <div class="spine-seg-hint">${s.hint}</div>
+      </div>
+    </button>`).join('')}
+  </div>
+  <div class="spine-panel">
+    <div class="spine-panel-header" style="border-left:4px solid ${d.color}">
+      <div class="spine-panel-title" style="color:${d.color}">${spineSel}</div>
+      <div class="spine-panel-sub">${spineSel==='C1-C5'?'Cervical — cranial':spineSel==='C6-T2'?'Cervical — caudal / brachial plexus':spineSel==='T3-L3'?'Thoracolumbar — most common zone':'Lumbosacral / pelvic plexus'}</div>
+    </div>
+    <div class="spine-limb-row">
+      <div class="spine-limb-card ${d.tlcls}">
+        <div class="spine-limb-name">Thoracic limbs</div>
+        <div class="spine-limb-val">${d.tl}</div>
+      </div>
+      <div class="spine-limb-card ${d.plcls}">
+        <div class="spine-limb-name">Pelvic limbs</div>
+        <div class="spine-limb-val">${d.pl}</div>
+      </div>
+    </div>
+    <div class="spine-detail-rows">
+      <div class="spine-detail-row"><div class="spine-detail-label">Reflexes</div><div class="spine-detail-val">${d.reflexes}</div></div>
+      <div class="spine-detail-row"><div class="spine-detail-label">Muscle tone</div><div class="spine-detail-val">${d.tone}</div></div>
+      <div class="spine-detail-row"><div class="spine-detail-label">Ataxia type</div><div class="spine-detail-val">${d.ataxia}</div></div>
+      <div class="spine-detail-row"><div class="spine-detail-label">Bladder</div><div class="spine-detail-val">${d.bladder}</div></div>
+      <div class="spine-detail-row"><div class="spine-detail-label">Atrophy</div><div class="spine-detail-val">${d.atrophy}</div></div>
+      <div class="spine-detail-row"><div class="spine-detail-label">Common causes</div><div class="spine-detail-val" style="color:var(--text-muted)">${d.causes}</div></div>
+      <div class="spine-detail-row" style="background:var(--surface2);border-radius:var(--r);padding:10px;margin-top:4px;border:none">
+        <div class="spine-detail-label" style="color:var(--accent)">Clinical tip</div>
+        <div class="spine-detail-val" style="font-style:italic;color:var(--accent)">${d.tip}</div>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+function spineSelect(k){
+  spineSel=k;
+  document.getElementById('loc-body').innerHTML=renderSpineTab();
+}
+
+// ── NM TAB ──
+function renderNMTab(){
+  const d=NM_DATA[nmSel];
+  const cats=[
+    {k:'neuropathy',label:'Neuropathy',sub:'Peripheral nerve'},
+    {k:'junctionopathy',label:'Junctionopathy',sub:'NMJ disease'},
+    {k:'myopathy',label:'Myopathy',sub:'Muscle disease'},
+    {k:'combined',label:'Diffuse NMD',sub:'Mixed pattern'},
+  ];
+  return `<div class="nm-loc-grid">
+  ${cats.map(c=>{
+    const cd=NM_DATA[c.k];
+    return `<div class="nm-loc-card${nmSel===c.k?' active':''}" onclick="nmLocSelect('${c.k}')" style="${nmSel===c.k?`border-color:${cd.color}`:''}">
+      <div class="nm-loc-hdr" style="${nmSel===c.k?`background:${cd.bg};color:${cd.color}`:''}">${c.label}</div>
+      <div class="nm-loc-body">${c.sub}</div>
+    </div>`;
+  }).join('')}
+</div>
+<div class="nm-panel">
+  <div class="nm-panel-hdr">
+    <div class="nm-panel-title" style="color:${d.color}">${d.label}</div>
+    <div class="nm-panel-sub">${d.sub}</div>
+  </div>
+  <div class="nm-panel-body">
+    ${d.features.map(f=>`<div class="nm-feat-row">
+      <div class="nm-feat-label">${f.label}</div>
+      <div style="font-size:13px">${f.val}</div>
+    </div>`).join('')}
+    <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:var(--r);font-size:12.5px;color:var(--text-muted);line-height:1.6;white-space:pre-line">
+      <strong style="color:var(--text);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase">Differentials · </strong>${d.diffs}
+    </div>
+  </div>
+</div>`;
+}
+
+function nmLocSelect(k){
+  nmSel=k;
+  document.getElementById('loc-body').innerHTML=renderNMTab();
+}
+
+// ── UMN vs LMN TAB ──
+function renderUMNLMN(){
+  const rows=[
+    {feat:'Stride length',umn:'↑ Increased',lmn:'↓ Decreased'},
+    {feat:'Extensor tone',umn:'↑ Increased (spastic)',lmn:'↓ Decreased (flaccid)'},
+    {feat:'Reflexes',umn:'Normal or ↑ (hyperreflexia)',lmn:'↓ or absent (hyporeflexia)'},
+    {feat:'Muscle atrophy',umn:'Slow — disuse atrophy only',lmn:'Rapid — denervation atrophy'},
+    {feat:'Gait character',umn:'Stiff, spastic — dorsum standing, nail wear',lmn:'Flaccid, weak, knuckling'},
+    {feat:'Bladder tone',umn:'Hypertonic — difficult to express',lmn:'Flaccid — easy to express, dribbling'},
+    {feat:'Babinski response',umn:'May be present',lmn:'Absent'},
+    {feat:'Cause',umn:'Lesion above the motor neuron in the spinal cord or brain',lmn:'Lesion at or below the motor neuron — nerve root, peripheral nerve'},
+  ];
+  return `<div class="sign-compare">
+  <div class="sign-col umn">
+    <div class="sign-col-hdr">Upper Motor Neuron (UMN)</div>
+    <div class="sign-col-body">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-style:italic">Loss of signal — the motor neuron still exists but receives no instructions from above</div>
+      ${rows.map(r=>`<div class="sign-row"><span class="sign-key">${r.feat}</span><span style="font-weight:500">${r.umn}</span></div>`).join('')}
+    </div>
+  </div>
+  <div class="sign-col lmn">
+    <div class="sign-col-hdr">Lower Motor Neuron (LMN)</div>
+    <div class="sign-col-body">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;font-style:italic">Loss of power — the final common pathway to the muscle is damaged or destroyed</div>
+      ${rows.map(r=>`<div class="sign-row"><span class="sign-key">${r.feat}</span><span style="font-weight:500">${r.lmn}</span></div>`).join('')}
+    </div>
+  </div>
+</div>
+<div style="background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);padding:1rem 1.25rem">
+  <div style="font-size:12px;font-weight:600;color:var(--text-hint);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase">Ataxia types</div>
+  <table><tr><th>Type</th><th>Limbs affected</th><th>Key signs</th><th>Indicates</th></tr>
+  <tr><td><strong>Cerebellar</strong></td><td>All 4</td><td>Hypermetria, over-flexion, intention tremor (head)</td><td>Cerebellar disease</td></tr>
+  <tr><td><strong>Vestibular</strong></td><td>All 4, asymmetric</td><td>Head tilt, spontaneous nystagmus, lean/fall</td><td>Vestibular system (peripheral or central)</td></tr>
+  <tr><td><strong>GP (proprioceptive)</strong></td><td>All 4</td><td>Overreaching, over-extension, knuckling, "soldier march"</td><td>Spinal cord or brainstem disease</td></tr>
+  </table>
+</div>`;
+}
+
+// ── LOSS ORDER TAB ──
+function renderLossOrder(){
+  return `<div class="loss-chain">
+  <div class="loss-step s1">
+    <div class="loss-step-n">Lost first</div>
+    <div class="loss-step-name">Proprioception</div>
+    <div class="loss-step-note">Postural reaction deficits · knuckling</div>
+  </div>
+  <div class="loss-step s2">
+    <div class="loss-step-n">2nd</div>
+    <div class="loss-step-name">Voluntary motor</div>
+    <div class="loss-step-note">Paresis → paralysis</div>
+  </div>
+  <div class="loss-step s3">
+    <div class="loss-step-n">3rd</div>
+    <div class="loss-step-name">Superficial pain</div>
+    <div class="loss-step-note">Skin pinch absent</div>
+  </div>
+  <div class="loss-step s4">
+    <div class="loss-step-n">Lost last</div>
+    <div class="loss-step-name">Deep pain</div>
+    <div class="loss-step-note">Bone pinch absent → grave prognosis</div>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px">
+  <div style="background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);padding:1.25rem">
+    <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text-hint);text-transform:uppercase;letter-spacing:.06em">Why this order?</div>
+    <p style="font-size:13px;color:var(--text-muted);line-height:1.7">Larger, more myelinated fibres are more vulnerable to compression. Proprioceptive fibres are the most sensitive; unmyelinated deep pain C-fibres are the most resistant. This gradient predicts how bad a lesion is.</p>
+  </div>
+  <div style="background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:var(--rl);padding:1.25rem">
+    <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:var(--danger);text-transform:uppercase;letter-spacing:.06em">Prognosis guide</div>
+    <div style="font-size:13px;line-height:1.8">
+      <div><span style="font-weight:600">Proprioception lost only:</span> <span style="color:var(--success)">Good</span></div>
+      <div><span style="font-weight:600">Voluntary motor lost:</span> <span style="color:var(--warn)">Guarded to good</span></div>
+      <div><span style="font-weight:600">Superficial pain lost:</span> <span style="color:var(--warn)">Guarded</span></div>
+      <div><span style="font-weight:600;color:var(--danger)">Deep pain lost:</span> <span style="color:var(--danger);font-weight:600">Grave — act immediately</span></div>
+    </div>
+  </div>
+</div>
+<div style="background:var(--surface);border:1px solid var(--border-light);border-radius:var(--rl);padding:1.25rem;margin-top:14px">
+  <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text-hint);text-transform:uppercase;letter-spacing:.06em">Recovery order (reverse of loss)</div>
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px">
+    <span class="badge b-danger">Deep pain returns first</span>
+    <span style="color:var(--text-hint)">→</span>
+    <span class="badge b-warn">Superficial pain</span>
+    <span style="color:var(--text-hint)">→</span>
+    <span class="badge b-info">Voluntary motor</span>
+    <span style="color:var(--text-hint)">→</span>
+    <span class="badge b-success">Proprioception last</span>
+  </div>
+  <p style="font-size:12px;color:var(--text-muted);margin-top:8px">Recovery after surgical decompression follows the reverse order of loss. This is why patients may regain DPP before they can walk.</p>
+</div>`;
+}
+
+// ── QUIZ ──
+function locNewQuestion(){
+  if(locQuizPool.length===0) locQuizPool=[...LOC_QUIZ_ALL].sort(()=>Math.random()-.5);
+  const q=locQuizPool.pop();
+  locQuiz.q=q; locQuiz.answered=false;
+  const shuffled=[...q.opts].map((o,i)=>({o,i})).sort(()=>Math.random()-.5);
+  const correctShuffled=shuffled.findIndex(x=>x.i===q.ans);
+  const el=document.getElementById('loc-quiz-inner');
+  if(!el)return;
+  el.innerHTML=`
+    <div class="loc-quiz-q">${q.stem}</div>
+    <div class="loc-quiz-opts">
+      ${shuffled.map((x,si)=>`<button class="loc-quiz-opt" id="lqo-${si}" onclick="locQuizAnswer(${si},${x.i},${correctShuffled})">${x.o}</button>`).join('')}
+    </div>
+    <div class="loc-quiz-score">Score: ${locQuiz.score} / ${locQuiz.total}</div>`;
+}
+
+function locQuizAnswer(si, origIdx, correctSi){
+  if(locQuiz.answered)return;
+  locQuiz.answered=true;
+  const correct=(origIdx===locQuiz.q.ans);
+  locQuiz.total++; if(correct)locQuiz.score++;
+  addScore(correct?1:0,1);
+  document.querySelectorAll('.loc-quiz-opt').forEach((b,i)=>{b.disabled=true;});
+  document.getElementById('lqo-'+si)?.classList.add(correct?'correct':'wrong');
+  if(!correct) document.getElementById('lqo-'+correctSi)?.classList.add('reveal');
+  const el=document.getElementById('loc-quiz-inner');
+  if(el) el.innerHTML+=`
+    <div style="margin-top:10px;padding:10px 14px;background:${correct?'var(--success-bg)':'var(--info-bg)'};border-radius:var(--r);font-size:13px;color:${correct?'var(--success)':'var(--info)'};border:1px solid ${correct?'var(--success-border)':'var(--info-border)'};line-height:1.5">
+      <strong>${correct?'✓ Correct!':'✗ Incorrect.'}</strong> ${locQuiz.q.explain}
+    </div>
+    <button class="loc-quiz-opt" style="margin-top:8px;border-color:var(--accent);color:var(--accent)" onclick="locNewQuestion()">Next question →</button>`;
+  document.querySelector('.loc-quiz-score').textContent=`Score: ${locQuiz.score} / ${locQuiz.total}`;
+}
+
+// ── VESTIBULAR DECISION TOOL ──
+const VEST_RULES=[
+  {nystype:'vertical',result:'central'},
+  {nystype:'horizontal_rotary',poschange:'yes',result:'central_or_paradoxical'},
+  {nystype:'horizontal_rotary',poschange:'no',headdirection:'toward',result:'peripheral'},
+  {nystype:'horizontal_rotary',poschange:'yes',headdirection:'toward',result:'central'},
+  {nystype:'horizontal_rotary',poschange:'yes',headdirection:'away',result:'paradoxical'},
+];
+const VEST_RESULTS={
+  peripheral:{name:'Peripheral vestibular',color:'var(--success)',desc:'Head tilt TOWARD lesion · Fast phase AWAY from lesion · No proprioceptive deficits · CN VII possible · Horner\'s possible · No mentation change.\n\nDifferentials: Otitis media/interna, idiopathic (old dog) vestibular disease, hypothyroidism.'},
+  central:{name:'Central vestibular',color:'var(--umn)',desc:'Head tilt toward lesion · Nystagmus may change direction · Proprioceptive deficits present (ipsilateral) · Multiple CN deficits possible · Mentation may be affected.\n\nDifferentials: GME/MUO, neoplasia, vascular infarct, metronidazole toxicity, infectious encephalitis.'},
+  central_or_paradoxical:{name:'Central or Paradoxical',color:'var(--warn)',desc:'Positional change suggests central or cerebellar (paradoxical) involvement. Evaluate head tilt direction to differentiate: toward lesion = central, away = paradoxical.'},
+  paradoxical:{name:'Paradoxical vestibular',color:'var(--purple)',desc:'Head tilt AWAY from lesion · Circling/falling AWAY from lesion · Fast phase TOWARD lesion — the opposite of what you\'d expect.\n\nCause: cerebellar involvement (caudal cerebellar peduncle / flocculonodular lobe). Proprioceptive deficits present ipsilateral to lesion.'},
+};
+let vestAnswers={};
+
+function renderVestTool(){
+  return `<div class="sh"><h2>Vestibular decision tool</h2><p>Answer questions about your patient to identify the vestibular disease type.</p></div>
+<div class="vd-wrap">
+  <div class="vd-finder">
+    <div class="vd-finder-header">
+      <h3>Patient finding interpreter</h3>
+      <p>Answer each question based on your exam findings</p>
+    </div>
+    <div class="vd-questions">
+      <div>
+        <div class="vd-q">1. What type of nystagmus is present?</div>
+        <div class="vd-opts">
+          <div class="vd-opt${vestAnswers.nystype==='horizontal_rotary'?' selected':''}" onclick="vestAns('nystype','horizontal_rotary')">Horizontal or rotary</div>
+          <div class="vd-opt${vestAnswers.nystype==='vertical'?' selected':''}" onclick="vestAns('nystype','vertical')">Vertical</div>
+          <div class="vd-opt${vestAnswers.nystype==='none'?' selected':''}" onclick="vestAns('nystype','none')">None / absent</div>
+        </div>
+      </div>
+      <div>
+        <div class="vd-q">2. Does the nystagmus change direction with positional changes?</div>
+        <div class="vd-opts">
+          <div class="vd-opt${vestAnswers.poschange==='no'?' selected':''}" onclick="vestAns('poschange','no')">No — fixed direction</div>
+          <div class="vd-opt${vestAnswers.poschange==='yes'?' selected':''}" onclick="vestAns('poschange','yes')">Yes — changes with position</div>
+        </div>
+      </div>
+      <div>
+        <div class="vd-q">3. Which direction is the head tilt relative to the suspected lesion side?</div>
+        <div class="vd-opts">
+          <div class="vd-opt${vestAnswers.headdirection==='toward'?' selected':''}" onclick="vestAns('headdirection','toward')">Toward the lesion</div>
+          <div class="vd-opt${vestAnswers.headdirection==='away'?' selected':''}" onclick="vestAns('headdirection','away')">Away from the lesion</div>
+        </div>
+      </div>
+    </div>
+    <div class="vd-result" id="vest-result" style="display:none"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Full comparison table — hide columns to self-test</div>
+    ${renderVestTable()}
+  </div>
+</div>`;
+}
+
+function renderVestTable(){
+  const rows=[
+    ['Nystagmus type','Horizontal / rotary','Horiz / rotary / <strong>vertical</strong>','Horiz / rotary / vertical'],
+    ['Fast phase','Away from lesion','Away from lesion','<strong style="color:var(--warn)">Towards lesion</strong>'],
+    ['Positional change','No','Yes','Yes'],
+    ['Head tilt','Toward lesion','Toward lesion','<strong style="color:var(--warn)">Away from lesion</strong>'],
+    ['Strabismus','Ipsilateral (ventral)','Ipsilateral (usually)','Contralateral (usually)'],
+    ['Proprioceptive deficits','<strong style="color:var(--success)">None</strong>','Yes — ipsilateral','Yes — ipsilateral'],
+    ['CN deficits','VII only','V–VII, IX–XII','None'],
+  ];
+  const cols=['Peripheral','Central','Paradoxical'];
+  return `<div class="vct-wrap">
+  <div class="vct-controls">
+    <span class="vct-ctrl-label">Hide column:</span>
+    ${cols.map((c,i)=>`<button class="vct-col-btn" id="vct-hide-${i}" onclick="vctToggle(${i})">${c}</button>`).join('')}
+    <button class="vct-col-btn" onclick="vctRevealAll()" style="margin-left:8px">Show all</button>
+  </div>
+  <table><tr><th>Feature</th>${cols.map((c,i)=>`<th id="vct-hdr-${i}">${c}</th>`).join('')}</tr>
+  ${rows.map(r=>`<tr><td>${r[0]}</td>${cols.map((_,i)=>`<td class="vct-cell-${i}" id="vct-cell-${rows.indexOf(r)}-${i}">${r[i+1]}</td>`).join('')}</tr>`).join('')}
+  </table></div>`;
+}
+
+const vctHidden=[false,false,false];
+function vctToggle(i){
+  vctHidden[i]=!vctHidden[i];
+  const btn=document.getElementById('vct-hide-'+i);
+  if(btn)btn.classList.toggle('hidden-col',vctHidden[i]);
+  document.querySelectorAll('.vct-cell-'+i).forEach(el=>{
+    el.classList.toggle('vct-hidden',vctHidden[i]);
+    if(!vctHidden[i])el.classList.add('revealed');
+  });
+}
+function vctRevealAll(){
+  [0,1,2].forEach(i=>{vctHidden[i]=false;document.getElementById('vct-hide-'+i)?.classList.remove('hidden-col');document.querySelectorAll('.vct-cell-'+i).forEach(el=>{el.classList.remove('vct-hidden');el.classList.remove('revealed');});});
+}
+
+function initVestTool(){vestAnswers={};updateVestResult();}
+function vestAns(k,v){vestAnswers[k]=v;document.getElementById('main').innerHTML=renderTool('vestibular');initVestTool();}
+
+function updateVestResult(){
+  const el=document.getElementById('vest-result');if(!el)return;
+  if(Object.keys(vestAnswers).length<2){el.style.display='none';return;}
+  let result=null;
+  if(vestAnswers.nystype==='vertical'){result='central';}
+  else if(vestAnswers.nystype==='none'){el.style.display='block';el.innerHTML=`<div class="vd-result-label">Result</div><div class="vd-result-name" style="color:var(--text-muted)">Nystagmus absent</div><div class="vd-result-desc">Absent nystagmus is not typical of active vestibular disease. Consider post-acute phase (nystagmus resolves before head tilt). If chronic, static vestibular lesion is possible.</div>`;return;}
+  else if(vestAnswers.poschange==='no'){result='peripheral';}
+  else if(vestAnswers.poschange==='yes'&&vestAnswers.headdirection==='away'){result='paradoxical';}
+  else if(vestAnswers.poschange==='yes'&&vestAnswers.headdirection==='toward'){result='central';}
+  else{result='central_or_paradoxical';}
+  const r=VEST_RESULTS[result];
+  el.style.display='block';
+  el.innerHTML=`<div class="vd-result-label">Interpretation</div><div class="vd-result-name" style="color:${r.color}">${r.name}</div><div class="vd-result-desc" style="white-space:pre-line">${r.desc}</div>`;
+}
+
+// ── ASM COMPARISON TOOL ──
+const ASMS=[
+  {name:'Phenobarbital',ss:'3 weeks',clear:'Liver',cats:true,notes:'1st line. Sedation, PU/PD (dose). Blood dyscrasias (idiosyncratic). Avoid liver insufficiency.',liver:true},
+  {name:'Potassium bromide',ss:'3 months',clear:'Kidney',cats:false,notes:'1st line. Fatal pneumonitis in cats — absolute CI. Reduce dose in renal/cardiac disease.',liver:false},
+  {name:'Levetiracetam',ss:'1 day',clear:'Kidney',cats:true,notes:'Minimal side effects. Excellent add-on. Reduce dose in renal disease.',liver:false},
+  {name:'Zonisamide',ss:'1 week',clear:'Liver>kidney',cats:true,notes:'KCS, hepatopathy (idiosyncratic). Adjust in renal disease.',liver:true},
+  {name:'Diazepam',ss:'Minutes',clear:'Liver',cats:true,notes:'Rescue only. Duration 20–30 min. Risk of tolerance with repeated use.',liver:true},
+];
+let asmFilters={cats:null,liver:null};
+
+function renderASMTool(){
+  return `<div class="sh"><h2>Anti-seizure medication tool</h2><p>Filter and compare ASMs by patient constraints.</p></div>
+<div class="asm-wrap">
+  <div class="asm-filter-row">
+    <span class="asm-filter-label">Species:</span>
+    <button class="asm-filter-btn${asmFilters.cats===null?' active':''}" onclick="asmFilter('cats',null)">All</button>
+    <button class="asm-filter-btn${asmFilters.cats===true?' active':''}" onclick="asmFilter('cats',true)">OK in cats</button>
+    <button class="asm-filter-btn${asmFilters.cats===false?' active':''}" onclick="asmFilter('cats',false)">Dogs only</button>
+  </div>
+  <div class="asm-filter-row">
+    <span class="asm-filter-label">Liver disease:</span>
+    <button class="asm-filter-btn${asmFilters.liver===null?' active':''}" onclick="asmFilter('liver',null)">All</button>
+    <button class="asm-filter-btn${asmFilters.liver===false?' active':''}" onclick="asmFilter('liver',false)">Avoid liver-cleared</button>
+  </div>
+  <div class="asm-table-wrap">
+    <div class="asm-row header">
+      <div class="asm-cell">Drug</div>
+      <div class="asm-cell">SS time</div>
+      <div class="asm-cell">Clearance</div>
+      <div class="asm-cell">Cats?</div>
+      <div class="asm-cell">Key notes</div>
+    </div>
+    ${ASMS.map(a=>{
+      let faded=false;
+      if(asmFilters.cats===true&&!a.cats)faded=true;
+      if(asmFilters.cats===false&&a.cats)faded=true;
+      if(asmFilters.liver===false&&a.liver)faded=true;
+      return `<div class="asm-row${faded?' faded':''}">
+        <div class="asm-cell"><span class="asm-drug-name">${a.name}</span></div>
+        <div class="asm-cell"><span class="badge b-info">${a.ss}</span></div>
+        <div class="asm-cell">${a.clear}${a.liver?'<span class="liver-tag">LIVER</span>':''}</div>
+        <div class="asm-cell">${a.cats?'<span class="badge b-success">Yes</span>':'<span class="badge b-danger">NO</span><span class="no-cats-tag">CI</span>'}</div>
+        <div class="asm-cell" style="font-size:12px;color:var(--text-muted)">${a.notes}</div>
+      </div>`;
+    }).join('')}
+  </div>
+  <div class="info-box" style="margin-top:14px">💡 <strong>Quick rule:</strong> Cat + seizures = Levetiracetam or Zonisamide. Liver disease = KBr or Levetiracetam. New onset = Phenobarbital (dog) or Levetiracetam (cat).</div>
+</div>`;
+}
+function initASMTool(){}
+function asmFilter(k,v){asmFilters[k]=v;document.getElementById('main').innerHTML=renderTool('seizures');initASMTool();}
+
+// ── NM FILL-IN TABLE ──
+const NM_FILL=[
+  {disease:'Botulism',site:'Presynaptic',mechanism:'Prevents vesicle fusion → no ACh release',signs:'Flaccid tetraparesis, mydriasis, GI signs, dysautonomia',tx:'Supportive — 1–3 weeks'},
+  {disease:'Tetanus',site:'Presynaptic (Renshaw cells)',mechanism:'Blocks glycine/GABA → prolonged contraction',signs:'Rigidity, risus sardonicus, trismus, sawhorse stance',tx:'Anti-toxin, metronidazole ≥10d, benzodiazepines'},
+  {disease:'Myasthenia gravis',site:'Postsynaptic',mechanism:'Anti-AChR Abs block NMJ',signs:'Fatigable weakness, megaesophagus, exercise intolerance',tx:'AChE inhibitors (pyridostigmine), immunosuppression'},
+  {disease:'Tick paralysis',site:'Presynaptic',mechanism:'Saliva neurotoxin blocks ACh release',signs:'Ascending flaccid paralysis, reduced reflexes',tx:'Remove tick — recovery 24–72 hours'},
+];
+const NM_HIDE_COLS=['mechanism','signs','tx'];
+let nmRevealed={};
+
+function renderFillNM(){
+  const headers=['Disease','NMJ site','Mechanism (hidden)','Clinical signs (hidden)','Treatment (hidden)'];
+  return `<div class="sh"><h2>NMJ disease fill-in table</h2><p>Test yourself — click any grey cell to reveal the answer.</p></div>
+<div class="fit-wrap">
+  <table class="fit-table">
+    <tr>${['Disease','NMJ site','Mechanism','Clinical signs','Treatment'].map(h=>`<th>${h}</th>`).join('')}</tr>
+    ${NM_FILL.map((row,ri)=>`<tr>
+      <td><strong>${row.disease}</strong></td>
+      <td>${row.site}</td>
+      ${['mechanism','signs','tx'].map(f=>{
+        const key=`nm_${ri}_${f}`;
+        const revealed=nmRevealed[key];
+        return `<td class="vct-hidden${revealed?' revealed':''}" onclick="nmReveal('${key}')" style="min-width:120px">${revealed?row[f==='signs'?'signs':f==='tx'?'tx':'mechanism'].replace('mechanism','mechanism'):(f==='mechanism'?row.mechanism:f==='signs'?row.signs:row.tx)}</td>`;
+      }).join('')}
+    </tr>`).join('')}
+  </table>
+  <div class="fit-actions">
+    <button class="fit-btn primary" onclick="nmRevealAll()">Reveal all</button>
+    <button class="fit-btn" onclick="nmReset()">Reset</button>
+  </div>
+  <div class="info-box" style="margin-top:14px">Key distinction: <strong>Botulism & tick paralysis = flaccid</strong> (no ACh released). <strong>Tetanus = rigid/spastic</strong> (no inhibition). <strong>MG = fatigable</strong> (Abs block receptor).</div>
+</div>`;
+}
+function nmReveal(k){nmRevealed[k]=true;document.getElementById('main').innerHTML=renderTool('nm');}
+function nmRevealAll(){NM_FILL.forEach((_,ri)=>['mechanism','signs','tx'].forEach(f=>{nmRevealed[`nm_${ri}_${f}`]=true;}));document.getElementById('main').innerHTML=renderTool('nm');}
+function nmReset(){nmRevealed={};document.getElementById('main').innerHTML=renderTool('nm');}
+function initFillTool(){}
+
+// ── SPINAL CORD FILL-IN ──
+const SPINAL_FILL_ROWS=[
+  {condition:'Hansen type I IVDD',signalment:'Young, chondrodystrophic breeds',pathophys:'NP calcifies → extrudes through annulus fibrosus',location:'T11–L2 most common',tx:'Cage rest 4–8 wks; surgery for faster recovery'},
+  {condition:'Hansen type II IVDD',signalment:'Large breeds >7 yrs (GSD)',pathophys:'Annulus thickens/protrudes — slower onset',location:'C-spine or TL junction',tx:'Surgery; less recovery chance than type I'},
+  {condition:'Discospondylitis',signalment:'Any; systemic signs',pathophys:'Bacterial infection (Staph, Strep, Brucella)',location:'Any disc space',tx:'Cephalosporins 8–12 months'},
+  {condition:'Degenerative myelopathy',signalment:'GSDs, Boxers, Corgis >7 yrs',pathophys:'SOD1 mutation; progressive white matter degeneration',location:'T3–L3 spinal cord',tx:'Supportive / physiotherapy'},
+  {condition:'Atlantoaxial instability',signalment:'Toy breeds >1 yr',pathophys:'C2 luxates dorsal to C1; congenital or trauma',location:'C1–C2 junction',tx:'Surgical fusion C1–C2'},
+];
+let spinalRevealed={};
+function renderSpinalFill(){
+  return `<div class="sh"><h2>Spinal cord disease — fill-in</h2><p>Click grey cells to reveal answers one at a time.</p></div>
+<div class="fit-wrap">
+  <table class="fit-table">
+    <tr><th>Condition</th><th>Signalment</th><th>Pathophys</th><th>Location</th><th>Treatment</th></tr>
+    ${SPINAL_FILL_ROWS.map((row,ri)=>`<tr>
+      <td><strong>${row.condition}</strong></td>
+      ${['signalment','pathophys','location','tx'].map(f=>{
+        const key=`sp_${ri}_${f}`;
+        const rev=spinalRevealed[key];
+        return `<td class="vct-hidden${rev?' revealed':''}" onclick="spReveal('${key}')" style="min-width:100px">${rev?row[f]:row[f]}</td>`;
+      }).join('')}
+    </tr>`).join('')}
+  </table>
+  <div class="fit-actions">
+    <button class="fit-btn primary" onclick="spRevealAll()">Reveal all</button>
+    <button class="fit-btn" onclick="spReset()">Reset</button>
+  </div>
+</div>`;
+}
+function spReveal(k){spinalRevealed[k]=true;document.getElementById('main').innerHTML=renderTool('spinal');}
+function spRevealAll(){SPINAL_FILL_ROWS.forEach((_,ri)=>['signalment','pathophys','location','tx'].forEach(f=>{spinalRevealed[`sp_${ri}_${f}`]=true;}));document.getElementById('main').innerHTML=renderTool('spinal');}
+function spReset(){spinalRevealed={};document.getElementById('main').innerHTML=renderTool('spinal');}
+function initSpinalFill(){}
+
+// ── CN FILL-IN ──
+const CN_DATA=[
+  {n:'I',name:'Olfactory',fn:'Olfaction',deficit:'Anosmia'},
+  {n:'II',name:'Optic',fn:'Vision, PLR',deficit:'↓ vision, ↓ PLR'},
+  {n:'III',name:'Oculomotor',fn:'Eye movement (most extraocular mm)',deficit:'Strabismus, mydriasis'},
+  {n:'IV',name:'Trochlear',fn:'Medial rotation of eye',deficit:'Strabismus'},
+  {n:'V3',name:'Trigeminal (mandibular)',fn:'Mastication mm, rostral 2/3 tongue sensation',deficit:'Dropped jaw, masticatory atrophy'},
+  {n:'VI',name:'Abducent',fn:'Lateral eye movement / abduction',deficit:'Medial strabismus'},
+  {n:'VII',name:'Facial',fn:'Facial expression mm, lacrimal gland, taste rostral 2/3',deficit:'Facial paralysis, KCS, no taste'},
+  {n:'VIII',name:'Vestibulocochlear',fn:'Hearing + vestibular sense',deficit:'Deafness, head tilt, nystagmus'},
+  {n:'IX',name:'Glossopharyngeal',fn:'Pharyngeal mm, taste caudal 1/3 tongue',deficit:'Dysphagia, absent gag'},
+  {n:'X',name:'Vagus',fn:'Laryngeal mm, autonomic viscera',deficit:'Laryngeal hemiplegia'},
+  {n:'XI',name:'Accessory',fn:'Strap mm',deficit:'Mm atrophy'},
+  {n:'XII',name:'Hypoglossal',fn:'Tongue mm',deficit:'Tongue paralysis, deviation toward lesion'},
+];
+let cnRevealed={};
+function renderCNFill(){
+  return `<div class="sh"><h2>Cranial nerves — fill-in</h2><p>Click grey cells to test yourself. Reveal one at a time or show all.</p></div>
+<div class="fit-wrap">
+  <table class="fit-table">
+    <tr><th>#</th><th>Name</th><th>Function</th><th>Signs of dysfunction</th></tr>
+    ${CN_DATA.map((row,ri)=>`<tr>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-hint)">${row.n}</td>
+      <td><strong>${row.name}</strong></td>
+      ${['fn','deficit'].map(f=>{
+        const key=`cn_${ri}_${f}`;const rev=cnRevealed[key];
+        return `<td class="vct-hidden${rev?' revealed':''}" onclick="cnReveal('${key}')" style="min-width:120px">${rev?row[f]:row[f]}</td>`;
+      }).join('')}
+    </tr>`).join('')}
+  </table>
+  <div class="fit-actions">
+    <button class="fit-btn primary" onclick="cnRevealAll()">Reveal all</button>
+    <button class="fit-btn" onclick="cnReset()">Reset</button>
+  </div>
+</div>`;
+}
+function cnReveal(k){cnRevealed[k]=true;document.getElementById('main').innerHTML=renderTool('cranialnerves');}
+function cnRevealAll(){CN_DATA.forEach((_,ri)=>['fn','deficit'].forEach(f=>{cnRevealed[`cn_${ri}_${f}`]=true;}));document.getElementById('main').innerHTML=renderTool('cranialnerves');}
+function cnReset(){cnRevealed={};document.getElementById('main').innerHTML=renderTool('cranialnerves');}
+function initCNFill(){}
+
+// ═══════════════════════════════════════════════════════
+// REFERENCE
+// ═══════════════════════════════════════════════════════
+const REF={
+localize:`<div class="sh"><h2>Localization</h2><p>UMN vs LMN, spinal cord segments, ataxia types</p></div>
+<div class="g2"><div class="card"><div class="card-title">UMN vs LMN</div><table><tr><th>Feature</th><th>UMN</th><th>LMN</th></tr><tr><td>Stride length</td><td><span class="badge b-umn">↑</span></td><td><span class="badge b-lmn">↓</span></td></tr><tr><td>Extensor tone</td><td><span class="badge b-umn">↑</span></td><td><span class="badge b-lmn">↓</span></td></tr><tr><td>Reflexes</td><td><span class="badge b-umn">Normal/↑</span></td><td><span class="badge b-lmn">↓/absent</span></td></tr><tr><td>Atrophy</td><td>Slow (disuse)</td><td>Rapid (denervation)</td></tr></table></div>
+<div class="card"><div class="card-title">Spinal cord localization</div><table><tr><th>Lesion</th><th>Thoracic</th><th>Pelvic</th></tr><tr><td>C1–C5</td><td><span class="badge b-umn">UMN</span></td><td><span class="badge b-umn">UMN</span></td></tr><tr><td>C6–T2</td><td><span class="badge b-lmn">LMN</span></td><td><span class="badge b-umn">UMN</span></td></tr><tr><td>T3–L3</td><td><span class="badge b-norm">Normal</span></td><td><span class="badge b-umn">UMN</span></td></tr><tr><td>L4–S3</td><td><span class="badge b-norm">Normal</span></td><td><span class="badge b-lmn">LMN</span></td></tr></table></div></div>
+<div class="card"><div class="card-title">Ataxia types</div><div class="g3" style="margin:0"><div><h4 style="font-size:12px;margin-bottom:5px;color:var(--info)">Cerebellar</h4><ul style="padding-left:14px;font-size:12.5px;color:var(--text-muted)"><li>Hypermetria / over-flexion</li><li>Intention tremor (head)</li><li>Truncal sway, base-wide</li></ul></div><div><h4 style="font-size:12px;margin-bottom:5px;color:var(--warn)">Vestibular</h4><ul style="padding-left:14px;font-size:12.5px;color:var(--text-muted)"><li>Asymmetric, head tilt</li><li>Spontaneous nystagmus</li></ul></div><div><h4 style="font-size:12px;margin-bottom:5px;color:var(--purple)">GP / proprioceptive</h4><ul style="padding-left:14px;font-size:12.5px;color:var(--text-muted)"><li>Overreaching / knuckling</li><li>Over-extension joints</li></ul></div></div></div>
+<div class="card"><div class="card-title">Functional loss order</div><div class="pill-chain"><span class="badge b-info">Proprioception</span><span class="arr">→</span><span class="badge b-info">Voluntary motor</span><span class="arr">→</span><span class="badge b-warn">Superficial pain</span><span class="arr">→</span><span class="badge b-danger">Deep pain</span></div><div class="warn-box" style="margin-top:10px">Loss of deep pain = grave prognosis</div></div>`,
+
+vestibular:`<div class="sh"><h2>Vestibular disease</h2></div>
+<div class="card"><div class="card-title">Cheat chart</div><table><tr><th>Feature</th><th>Peripheral</th><th>Central</th><th>Paradoxical</th></tr><tr><td>Nystagmus</td><td>Horiz/rotary</td><td>Horiz/rotary/<strong>vertical</strong></td><td>H/R/vertical</td></tr><tr><td>Fast phase</td><td>Away</td><td>Away</td><td><strong style="color:var(--warn)">Towards</strong></td></tr><tr><td>Positional</td><td>No</td><td>Yes</td><td>Yes</td></tr><tr><td>Head tilt</td><td>Toward</td><td>Toward</td><td><strong style="color:var(--warn)">Away</strong></td></tr><tr><td>Proprioception</td><td>None</td><td>Yes, ipsi</td><td>Yes, ipsi</td></tr><tr><td>CN deficits</td><td>VII</td><td>V–VII, IX–XII</td><td>None</td></tr></table></div>
+<div class="g2"><div class="card"><div class="card-title">Peripheral diseases</div><div class="drug-row"><div class="drug-name">Otitis media/interna</div><div class="drug-note">Bacterial/yeast/mites · Tx: prednisone 3–4d + abx ≥3 months</div></div><div class="drug-row"><div class="drug-name">Idiopathic (old dog)</div><div class="drug-note">Self-limiting · recovery 1–3 weeks</div></div><div class="drug-row"><div class="drug-name">Hypothyroidism</div><div class="drug-note">↓T4, ↑TSH + clinical signs</div></div></div>
+<div class="card"><div class="card-title">Central diseases</div><div class="drug-row"><div class="drug-name">GME/MUO, infectious</div><div class="drug-note">Distemper, FIP, toxoplasma, cryptococcus</div></div><div class="drug-row"><div class="drug-name">Neoplasia</div><div class="drug-note">Cerebellar meningioma, choroid plexus papilloma</div></div><div class="drug-row"><div class="drug-name">Metro toxicity</div><div class="drug-note">&gt;15 mg/kg BID → blocks GABA · Tx: discontinue + diazepam</div></div></div></div>`,
+
+spinal:`<div class="sh"><h2>Spinal cord disease</h2></div>
+<div class="g2"><div class="card"><div class="card-title">Hansen type I</div><div class="kv"><span class="kv-key">Signalment</span><span>Young chondrodystrophic breeds</span></div><div class="kv"><span class="kv-key">Pathophys</span><span>NP calcifies → extrudes</span></div><div class="kv"><span class="kv-key">Location</span><span>T11–L2 most common</span></div><div class="kv"><span class="kv-key">Tx</span><span>Cage rest 4–8 wks; surgery</span></div></div>
+<div class="card"><div class="card-title">Hansen type II</div><div class="kv"><span class="kv-key">Signalment</span><span>Large breeds >7 yrs</span></div><div class="kv"><span class="kv-key">Pathophys</span><span>Annulus thickens → protrudes slowly</span></div><div class="kv"><span class="kv-key">Tx</span><span>Surgery; less chance recovery</span></div></div></div>
+<div class="card"><div class="card-title">Other syndromes</div><table><tr><th>Condition</th><th>Key feature</th><th>Tx</th></tr><tr><td>Schiff–Sherrington</td><td>TL extensor rigidity; normal gait; border cells L1–L5</td><td>Treat underlying</td></tr><tr><td>Discospondylitis</td><td>Fever + pain; Staph/Strep/Brucella</td><td>Cephalosporins 8–12 months</td></tr><tr><td>Atlantoaxial instability</td><td>Toy breeds; C2 luxates dorsal to C1</td><td>Fuse C1–C2</td></tr><tr><td>Degenerative myelopathy</td><td>GSDs >7yr; SOD1 mutation; T3–L3</td><td>Supportive</td></tr></table></div>`,
+
+cranialnerves:`<div class="sh"><h2>Cranial nerves</h2></div>
+<div class="card"><table><tr><th style="width:38px">#</th><th>Function</th><th>Dysfunction signs</th></tr>
+<tr><td class="cn-num">I</td><td>Olfaction</td><td>Anosmia</td></tr>
+<tr><td class="cn-num">II</td><td>Vision, PLR</td><td>↓ vision, ↓ PLR</td></tr>
+<tr><td class="cn-num">III</td><td>Eye movement (most extraocular mm)</td><td>Strabismus, mydriasis</td></tr>
+<tr><td class="cn-num">IV</td><td>Medial rotation of eye</td><td>Strabismus</td></tr>
+<tr><td class="cn-num">V3</td><td>Mastication mm + rostral 2/3 tongue sensation</td><td>Dropped jaw, masticatory atrophy</td></tr>
+<tr><td class="cn-num">VI</td><td>Abduction + lateral eye movement</td><td>Medial strabismus</td></tr>
+<tr><td class="cn-num">VII</td><td>Facial expression, lacrimal gland, taste rostral 2/3</td><td>Facial paralysis, KCS, no taste</td></tr>
+<tr><td class="cn-num">VIII</td><td>Hearing + vestibular sense</td><td>Deafness, head tilt, nystagmus</td></tr>
+<tr><td class="cn-num">IX</td><td>Pharyngeal mm, taste caudal 1/3 tongue</td><td>Dysphagia, absent gag</td></tr>
+<tr><td class="cn-num">X</td><td>Laryngeal mm, autonomic viscera</td><td>Laryngeal hemiplegia</td></tr>
+<tr><td class="cn-num">XI</td><td>Strap mm</td><td>Mm atrophy</td></tr>
+<tr><td class="cn-num">XII</td><td>Tongue mm</td><td>Tongue paralysis, deviation toward lesion</td></tr></table></div>`,
+
+brain:`<div class="sh"><h2>Brain disease</h2></div>
+<div class="card"><div class="card-title">Forebrain findings</div><table><tr><th>Category</th><th>Finding</th></tr><tr><td>Mental status</td><td>Behavioral change, seizures</td></tr><tr><td>Cranial nerves</td><td>Contralateral blindness/menace</td></tr><tr><td>Posture/gait</td><td>Ipsilateral head turn, pressing, circling toward lesion</td></tr><tr><td>Postural reactions</td><td>Contralateral deficits</td></tr></table></div>
+<div class="card"><div class="card-title">Multifocal CNS</div><table><tr><th>Disease</th><th>Signalment</th><th>Tx</th></tr><tr><td><strong>MUO/GME</strong></td><td>Pugs; multifocal</td><td>Prednisolone ± immunosuppressants; grave</td></tr><tr><td><strong>SRMA</strong></td><td>Neck pain + neutrophilic pleocytosis</td><td>Steroids 4–6 months</td></tr><tr><td><strong>FIP</strong></td><td>Cats &lt;2yr; dry form</td><td>Remdesivir / GS-441524</td></tr><tr><td><strong>Neospora</strong></td><td>Paresis, ↑CK, head tilt</td><td>Clindamycin / TMPS + pyrimethamine</td></tr><tr><td><strong>Rabies</strong></td><td>Ascending LMN; furious or dumb</td><td>Core vaccine; no treatment</td></tr><tr><td><strong>Canine distemper</strong></td><td>Young: seizures; mature: vestibular/cerebellar</td><td>CSF mononuclear pleocytosis; supportive</td></tr></table></div>`,
+
+seizures:`<div class="sh"><h2>Seizures</h2></div>
+<div class="g2"><div class="card"><div class="card-title">When to treat</div><ul style="padding-left:14px;font-size:13px;color:var(--text-muted)"><li style="margin-bottom:5px">≥2 seizures in 6 months</li><li style="margin-bottom:5px">Status epilepticus or cluster</li><li style="margin-bottom:5px">Identifiable brain disease</li><li style="margin-bottom:5px">Severe post-ictal signs &gt;24h</li><li>Increasing frequency</li></ul></div>
+<div class="card"><div class="card-title">Epilepsy by age</div><table><tr><th>Age</th><th>Type</th></tr><tr><td>&lt;6 months</td><td>Reactive (PSS, hypoglycemia, toxins)</td></tr><tr><td>6m–6yr</td><td>Idiopathic epilepsy</td></tr><tr><td>&gt;6 yr</td><td>Structural (neoplasia, vascular)</td></tr></table></div></div>
+<div class="card"><div class="card-title">Anti-seizure medications</div><table><tr><th>Drug</th><th>SS time</th><th>Clearance</th><th>Key notes</th></tr><tr><td><strong>Phenobarbital</strong></td><td>3 weeks</td><td>Liver</td><td>1st line; avoid liver disease; blood dyscrasias</td></tr><tr><td><strong>KBr</strong></td><td>3 months</td><td>Kidney</td><td><strong style="color:var(--danger)">NEVER cats</strong> — fatal pneumonitis</td></tr><tr><td><strong>Levetiracetam</strong></td><td>1 day</td><td>Kidney</td><td>Minimal SE; excellent add-on</td></tr><tr><td><strong>Zonisamide</strong></td><td>1 week</td><td>Liver&gt;kidney</td><td>KCS, hepatopathy</td></tr><tr><td><strong>Diazepam</strong></td><td>Minutes</td><td>Liver</td><td>Rescue only</td></tr></table></div>`,
+
+nm:`<div class="sh"><h2>Neuromuscular disease</h2></div>
+<div class="card"><div class="card-title">Category comparison</div><table><tr><th>Category</th><th>Features</th><th>Differentials</th></tr><tr><td><strong>Neuropathy</strong></td><td>Flaccid paresis, neurogenic atrophy, ↓/absent reflexes</td><td>APRN, traumatic</td></tr><tr><td><strong>Junctionopathy</strong></td><td>Fatigue-based weakness, normal sensation</td><td>MG, botulism, tick, tetanus</td></tr><tr><td><strong>Myopathy</strong></td><td>Atrophy/hypertrophy, myalgia, dimple contractures</td><td>Polymyositis</td></tr></table></div>
+<div class="card"><div class="card-title">Junctionopathy mechanisms</div><table><tr><th>Disease</th><th>Mechanism</th><th>Signs</th><th>Tx</th></tr><tr><td><strong>Botulism</strong></td><td>Prevents vesicle fusion → no ACh (presynaptic)</td><td>Flaccid, mydriasis, dysautonomia</td><td>Supportive 1–3 wks</td></tr><tr><td><strong>Tick paralysis</strong></td><td>Saliva toxin blocks ACh (presynaptic)</td><td>Ascending flaccid paresis</td><td>Remove tick; 24–72h</td></tr><tr><td><strong>Tetanus</strong></td><td>Blocks glycine/GABA → rigid contraction</td><td>Risus sardonicus, trismus, rigidity</td><td>Anti-toxin, metro, BZD</td></tr><tr><td><strong>MG (acquired)</strong></td><td>Anti-AChR Abs (postsynaptic)</td><td>Fatigable weakness, megaesophagus</td><td>AChE inhibitors, immunosuppression</td></tr></table></div>`,
+
+tbi:`<div class="sh"><h2>Traumatic brain injury</h2></div>
+<div class="g2"><div class="card"><div class="card-title">Physiology</div><div class="kv"><span class="kv-key">CPP</span><span>MAP − ICP</span></div><div class="kv"><span class="kv-key">CBF</span><span>CPP / CVR</span></div><div class="kv"><span class="kv-key">Cushing reflex</span><span>HTN + bradycardia = ↑ICP</span></div></div>
+<div class="card"><div class="card-title">Management</div><div class="kv"><span class="kv-key"><span class="badge b-info">1</span></span><span>ABC + elevate 30–45°</span></div><div class="kv"><span class="kv-key"><span class="badge b-info">2</span></span><span>Fluids — do NOT volume limit</span></div><div class="kv"><span class="kv-key"><span class="badge b-success">Mannitol</span></span><span>↑ICP; MGCS &lt;8 only</span></div><div class="warn-box">NO steroids in head trauma</div></div></div>
+<div class="card"><div class="card-title">MGCS scores</div><div class="g3" style="margin:0"><div><p style="font-size:10px;font-weight:600;color:var(--text-hint);margin-bottom:4px">MOTOR</p><div style="font-size:12px"><div>Normal gait: 6</div><div>Hemiparesis/tetraparesis: 5</div><div>Intermittent ext. rigidity: 4</div><div>Constant ext. rigidity: 3</div><div>+ Opisthotonus: 2</div><div>Flaccid, absent reflexes: 1</div></div></div><div><p style="font-size:10px;font-weight:600;color:var(--text-hint);margin-bottom:4px">BRAINSTEM</p><div style="font-size:12px"><div>Normal PLR + oculocephalic: 6</div><div>Slow PLR: 5</div><div>Unilateral unresponsive miosis: 4</div><div>Pinpoint pupils: 3</div><div>Unilateral mydriasis: 2</div><div>Bilateral mydriasis: 1</div></div></div><div><p style="font-size:10px;font-weight:600;color:var(--text-hint);margin-bottom:4px">CONSCIOUSNESS</p><div style="font-size:12px"><div>Alert, responsive: 6</div><div>Depression/delirium: 5</div><div>Responsive to visual: 4</div><div>Responsive to auditory: 3</div><div>Responsive to noxious: 2</div><div>Comatose: 1</div></div></div></div><div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><span class="badge b-danger">3–8 Grave</span><span class="badge b-warn">9–14 Guarded</span><span class="badge b-success">15–18 Good</span></div></div>`,
+
+mic:`<div class="sh"><h2>Micturition</h2></div>
+<div class="g2"><div class="card"><div class="card-title">UMN vs LMN bladder</div><table><tr><th>Feature</th><th>UMN (T3–L3)</th><th>LMN (L3–L4)</th></tr><tr><td>Reflexes</td><td>Normal/↑</td><td>↓/absent</td></tr><tr><td>Muscle tone</td><td>Hypertonic</td><td>Flaccid</td></tr><tr><td>Expression</td><td>Difficult — overflow</td><td>Very easy</td></tr></table></div>
+<div class="card"><div class="card-title">Pharmacology</div><table><tr><th>Drug</th><th>Use</th></tr><tr><td>Phenoxybenzamine/Prazosin</td><td>UMN — relax internal sphincter</td></tr><tr><td>Diazepam</td><td>UMN — relax external sphincter</td></tr><tr><td>Bethanechol</td><td>LMN — ↑ detrusor contraction</td></tr></table></div></div>`
+};
+function renderRef(t){return REF[t]||REF['localize'];}
+
+// ═══════════════════════════════════════════════════════
+// FLASHCARDS DATA + RENDER
+// ═══════════════════════════════════════════════════════
+const FC_DECKS={
+  localize:{name:'Localization',cards:[
+    {q:'A dog has normal TL but UMN signs in PL. Where is the lesion?',a:'T3–L3',hint:'What\'s normal vs affected?'},
+    {q:'What reflexes with a C6–T2 lesion?',a:'LMN thoracic limbs (↓), UMN pelvic limbs (↑)',hint:'Two different limb regions'},
+    {q:'Order of functional loss in spinal cord compression?',a:'Proprioception → Voluntary motor → Superficial pain → Deep pain',hint:'Most sensitive to least'},
+    {q:'UMN vs LMN atrophy: key difference?',a:'UMN = slow disuse atrophy. LMN = rapid denervation atrophy.',hint:'Think about nerve supply to muscle'},
+    {q:'Forebrain lesion: deficits are on which side of body?',a:'Contralateral to the lesion',hint:'Forebrain = crossed pathways'},
+    {q:'What ataxia has hypermetria + intention tremor?',a:'Cerebellar ataxia',hint:'Structure that coordinates smooth movement'},
+  ]},
+  vestibular:{name:'Vestibular',cards:[
+    {q:'Peripheral vestibular: fast phase direction?',a:'Away from the lesion',hint:'Intact side "wins"'},
+    {q:'What makes central nystagmus different?',a:'Can be vertical; may change direction with positional changes',hint:'Central = more variable'},
+    {q:'Paradoxical: head tilt toward or away from lesion?',a:'Away from the lesion — opposite of what you expect',hint:'Para = paradox'},
+    {q:'CN deficits: peripheral vs central?',a:'Peripheral: CN VII only. Central: CN V, VII, IX, X, XII.',hint:'How many CN nuclei are near the lesion?'},
+    {q:'Metronidazole toxicity mechanism and threshold?',a:'>15 mg/kg BID — binds GABA receptors → central vestibular signs',hint:'Common antibiotic, neuro side effect'},
+  ]},
+  spinal:{name:'Spinal cord',cards:[
+    {q:'Hansen type I IVDD: signalment?',a:'Young, chondrodystrophic breeds (Dachshund, Beagle, Pekingese)',hint:'Disc calcifies and extrudes'},
+    {q:'Why T11–L2 for type I disc extrusion?',a:'No intercapital ligament caudal to T10 — less structural support',hint:'Anatomical protection is absent'},
+    {q:'Schiff–Sherrington syndrome: what happens and what is the gait?',a:'Severe TL extension from loss of border cell (L1–L5) inhibition. Gait is NORMAL.',hint:'Looks dramatic but gait is preserved'},
+    {q:'Discospondylitis: organisms and treatment duration?',a:'Staphylococcus, Streptococcus, Brucella. Cephalosporins 8–12 months.',hint:'Long treatment duration is key'},
+    {q:'What DNA test confirms degenerative myelopathy?',a:'SOD1 gene mutation test',hint:'GSDs, Boxers, Corgis predisposed'},
+  ]},
+  nm:{name:'Neuromuscular',cards:[
+    {q:'Gold standard test for acquired MG?',a:'Acetylcholine receptor (AChR) antibody test',hint:'Test detects what is being attacked'},
+    {q:'Botulism vs tetanus mechanism?',a:'Botulism: prevents ACh release (presynaptic). Tetanus: prevents glycine/GABA → sustained contraction.',hint:'One flaccid, one rigid'},
+    {q:'Why no corticosteroids in APRN?',a:'Primary demyelinating neuropathy — immune modulation does not improve outcome. Supportive care only.',hint:'Mechanism doesn\'t respond to steroids'},
+    {q:'Tetanus susceptibility order across species?',a:'Horses > humans > dogs > cats',hint:'Horses most sensitive, cats most resistant'},
+    {q:'Tick paralysis: recovery time after tick removal?',a:'24–72 hours after removal',hint:'Remove source, remove toxin'},
+  ]},
+  seizures:{name:'Seizures',cards:[
+    {q:'When to start anti-seizure medication?',a:'≥2 seizures in 6 months; status epilepticus; cluster seizures; identifiable brain disease; severe post-ictal >24h; increasing frequency',hint:'Not after every first seizure'},
+    {q:'Potassium bromide: why not in cats?',a:'Fatal pneumonitis in cats — absolute contraindication',hint:'Absolute CI'},
+    {q:'SS time: phenobarbital vs levetiracetam?',a:'Phenobarbital: 3 weeks. Levetiracetam: 1 day.',hint:'One is used as emergency add-on'},
+    {q:'Status epilepticus time threshold?',a:'Permanent brain damage begins at 30 minutes',hint:'Act before this threshold'},
+    {q:'Clearance: phenobarbital vs KBr?',a:'Phenobarbital: liver. KBr: kidney.',hint:'Determines where you cannot use each'},
+  ]},
+  cn:{name:'Cranial nerves',cards:[
+    {q:'CN controlling muscles of mastication?',a:'CN V3 — mandibular branch of trigeminal',hint:'Other V branches are purely sensory'},
+    {q:'Dropped jaw, normal gag + tongue: which CN?',a:'CN V (trigeminal) — idiopathic bilateral trigeminal neuropathy',hint:'Motor branch to mastication = V3'},
+    {q:'Dry eye (KCS) after facial paralysis: which CN?',a:'CN VII (facial) — lacrimal gland innervated by facial nerve',hint:'CN VII carries parasympathetic to lacrimal gland'},
+    {q:'Laryngeal hemiplegia: which CN?',a:'CN X — Vagus nerve',hint:'Vagus innervates the larynx'},
+    {q:'Dysphagia but NOT dysphonia: which CN?',a:'CN IX — glossopharyngeal (pharyngeal mm)',hint:'CN X = larynx; CN IX = pharynx'},
+  ]}
+};
+let fcState={deck:'localize',idx:0,flipped:false,got:0,missed:0,seen:new Set()};
+function renderFlashcards(){
+  const deck=FC_DECKS[fcState.deck];
+  const card=deck.cards[fcState.idx];
+  const total=deck.cards.length;
+  const deckBtns=Object.keys(FC_DECKS).map(k=>`<button class="fc-deckbtn${fcState.deck===k?' active':''}" onclick="fcDeck('${k}')">${FC_DECKS[k].name}</button>`).join('');
+  document.getElementById('main').innerHTML=`
+<div class="sh"><h2>Flashcards</h2><p>Click a card to flip it. Mark each to track your progress.</p></div>
+<div class="fc-deckbar">${deckBtns}</div>
+<div class="fc-click-hint">Click the card to reveal the answer</div>
+<div class="fc-wrap"><div class="fc-card${fcState.flipped?' flipped':''}" id="fc-c" onclick="fcFlip()">
+  <div class="fc-front"><div class="fc-lbl">Question ${fcState.idx+1} of ${total}</div><div class="fc-q">${card.q}</div></div>
+  <div class="fc-back"><div class="fc-a">${card.a}</div>${card.hint?`<div class="fc-hint">Hint: ${card.hint}</div>`:''}</div>
+</div></div>
+<div class="fc-ctrl">
+  <button class="fc-btn miss" onclick="fcMark(false)" ${!fcState.flipped?'disabled':''}>✗ Missed</button>
+  <button class="fc-btn" onclick="fcPrev()">← Prev</button>
+  <div class="fc-prog">${fcState.idx+1} / ${total}</div>
+  <button class="fc-btn" onclick="fcNext()">Next →</button>
+  <button class="fc-btn got" onclick="fcMark(true)" ${!fcState.flipped?'disabled':''}>✓ Got it</button>
+</div>
+<div class="fc-stats">
+  <span style="color:var(--success)">✓ ${fcState.got}</span>
+  <span style="color:var(--danger)">✗ ${fcState.missed}</span>
+  <span style="color:var(--text-hint)">Seen: ${fcState.seen.size}/${total}</span>
+</div>`;
+}
+function fcFlip(){fcState.flipped=!fcState.flipped;renderFlashcards();}
+function fcNext(){const d=FC_DECKS[fcState.deck];fcState.seen.add(fcState.idx);fcState.idx=(fcState.idx+1)%d.cards.length;fcState.flipped=false;renderFlashcards();}
+function fcPrev(){const d=FC_DECKS[fcState.deck];fcState.idx=(fcState.idx-1+d.cards.length)%d.cards.length;fcState.flipped=false;renderFlashcards();}
+function fcMark(c){fcState.seen.add(fcState.idx);if(c)fcState.got++;else fcState.missed++;addScore(c?1:0,1);fcNext();}
+function fcDeck(k){fcState={deck:k,idx:0,flipped:false,got:0,missed:0,seen:new Set()};renderFlashcards();}
+
+// ═══════════════════════════════════════════════════════
+// MCQ DATA + RENDER
+// ═══════════════════════════════════════════════════════
+const MCQ_BANKS={
+  localize:{name:'Localization',questions:[
+    {q:'A Lab has LMN thoracic limbs and UMN pelvic limbs. Where is the lesion?',opts:['C1–C5','C6–T2','T3–L3','L4–S3'],correct:1,explain:'C6–T2 is the intumescence for forelimb nerves. Destroyed here → LMN TL. Descending tracts to PL still interrupted → UMN PL.'},
+    {q:'All four limbs: overreaching gait, knuckling, over-extension. No head tilt, no intention tremor. Which ataxia?',opts:['Cerebellar','Vestibular','General proprioceptive (GP)','UMN paresis'],correct:2,explain:'GP ataxia: overreaching (soldier march), over-extension, knuckling in all 4 limbs. No head tilt distinguishes from vestibular; no intention tremor distinguishes from cerebellar.'},
+    {q:'A cat circles left, head turns left, and has RIGHT-sided postural reaction deficits. Where is the lesion?',opts:['Left forebrain','Right forebrain','Left brainstem','Right cerebellum'],correct:0,explain:'Forebrain: ipsilateral head turn and circling, contralateral postural reaction deficits. Circles left + left head turn → left forebrain.'},
+    {q:'Spinal cord compression: deep pain present but voluntary motor and proprioception are lost. Prognosis?',opts:['Grave','Guarded — some recovery possible','Good — full recovery expected','Excellent'],correct:1,explain:'Deep pain is last to be lost. Its presence = guarded to fair prognosis with treatment. Loss of DPP = grave.'},
+  ]},
+  vestibular:{name:'Vestibular',questions:[
+    {q:'11-yr-old dog: acute head tilt right, horizontal nystagmus (fast phase left), no proprioceptive deficits. Most likely diagnosis?',opts:['Central vestibular disease','Paradoxical vestibular','Idiopathic (old dog) vestibular','Otitis media/interna'],correct:2,explain:'Acute peripheral vestibular signs + old dog + no proprioceptive deficits = idiopathic old dog vestibular disease. Peripheral = no PD deficits. Self-limiting.'},
+    {q:'Head tilt LEFT, leaning RIGHT, fast phase nystagmus to the LEFT. Which vestibular type?',opts:['Peripheral','Central','Paradoxical','Cerebellar without vestibular'],correct:2,explain:'Paradoxical: head tilt AWAY from lesion, circling/falling AWAY, fast phase TOWARDS lesion. All opposite to typical vestibular signs.'},
+    {q:'Which nystagmus type is ONLY seen in central vestibular disease?',opts:['Horizontal','Rotary','Vertical','Positional'],correct:2,explain:'Vertical nystagmus = central vestibular disease only. High-yield distinguishing feature.'},
+    {q:'A cat on metronidazole develops central vestibular signs. Mechanism?',opts:['Direct cerebellar toxicity','Blocks GABA receptors at >15 mg/kg BID','Inhibits acetylcholinesterase','Causes thiamine deficiency'],correct:1,explain:'Metronidazole >15 mg/kg BID binds and blocks GABA receptors → central vestibular signs. Tx: discontinue + diazepam if seizures.'},
+  ]},
+  spinal:{name:'Spinal cord',questions:[
+    {q:'4-yr-old Dachshund: acute paraplegia, deep pain still present. #1 recommendation?',opts:['Immediate surgical decompression','Cage rest 4–8 weeks','IV corticosteroids','MRI then cage rest 2 weeks'],correct:0,explain:'Acute paraplegia in chondrodystrophic breed = surgical decompression for best recovery. Cage rest is #1 to PREVENT worsening in mild cases; once paraplegia occurs, surgery is recommended.'},
+    {q:'Dog with severe T3–L3 lesion has rigid TL extension but normal TL gait. What syndrome?',opts:['Decerebrate rigidity','Schiff–Sherrington syndrome','Cerebellar rigidity','UMN spasticity'],correct:1,explain:'Schiff–Sherrington: severe thoracic/lumbar lesion releases border cell (L1–L5) inhibition on TL → extensor rigidity. Gait is NORMAL — it looks alarming but does not indicate cervical lesion.'},
+    {q:'Gold standard imaging for all types of IVDD?',opts:['Plain radiographs','Myelogram','CT scan','MRI'],correct:3,explain:'MRI is gold standard for all IVDD types. CT is good for calcified (type I). Plain radiographs are least useful. Myelogram confirms compression but is invasive.'},
+  ]},
+  nm:{name:'Neuromuscular',questions:[
+    {q:'Progressive ascending flaccid tetraparesis, absent reflexes, dysphonia, raccoon contact. Diagnosis?',opts:['Myasthenia gravis','Botulism','Acute polyradiculoneuritis (APRN)','Tick paralysis'],correct:2,explain:'APRN (coonhound paralysis): raccoon contact, progressive flaccid tetraparesis, absent reflexes, dysphonia, NO sensory deficits. Steroids do NOT help — supportive care only.'},
+    {q:'Key distinguishing feature between botulism and tetanus?',opts:['Tetanus affects dogs; botulism cats','Botulism = flaccid; tetanus = rigid/spastic','Botulism treated with abx; tetanus not','Tetanus = sensory; botulism = motor'],correct:1,explain:'Botulism: no ACh release → flaccid. Tetanus: no glycine/GABA → sustained contraction and rigidity. Opposite motor effects.'},
+    {q:'Gold standard test for acquired myasthenia gravis?',opts:['Edrophonium (Tensilon) test','Repetitive nerve stimulation','AChR antibody test','Muscle biopsy'],correct:2,explain:'AChR antibody test is gold standard for acquired MG. Anti-AChR antibodies bind postsynaptic membrane, blocking NMJ transmission.'},
+  ]},
+  seizures:{name:'Seizures',questions:[
+    {q:'2-yr-old Golden, 3 seizures in 4 months, unremarkable workup. Diagnosis + treat?',opts:['Reactive — treat underlying cause','Idiopathic epilepsy — treat (≥2 in 6 months)','Structural — MRI + surgery','Idiopathic — monitor, no tx yet'],correct:1,explain:'6m–6yr = idiopathic epilepsy. ≥2 seizures in 6 months = treatment indicated. Start phenobarbital (dog).'},
+    {q:'Cat started on KBr for seizures, develops severe respiratory signs. What happened?',opts:['KBr CNS depression','Fatal pneumonitis — cats absolute CI','Aspiration pneumonia from seizure','Phenobarbital hepatotoxicity'],correct:1,explain:'KBr causes fatal pneumonitis in cats — absolute contraindication. Always use levetiracetam or zonisamide in cats.'},
+    {q:'After how long does status epilepticus cause permanent brain damage?',opts:['15 minutes','30 minutes','60 minutes','5 minutes'],correct:1,explain:'Permanent brain damage begins at 30 minutes of continuous seizure. Benzodiazepines must be given immediately.'},
+  ]},
+};
+let mcqState={deck:'localize',idx:0,answered:false,chosen:null,correct:false,score:0,total:0};
+function renderQuiz(){
+  const bank=MCQ_BANKS[mcqState.deck];
+  const q=bank.questions[mcqState.idx];
+  const total=bank.questions.length;
+  const deckBtns=Object.keys(MCQ_BANKS).map(k=>`<button class="mcq-deckbtn${mcqState.deck===k?' active':''}" onclick="mcqDeck('${k}')">${MCQ_BANKS[k].name}</button>`).join('');
+  const opts=q.opts.map((o,i)=>{
+    let cls='mcq-opt';
+    if(mcqState.answered){if(i===q.correct)cls+=' reveal';else if(mcqState.chosen===i)cls+=' wrong';}
+    const let_=String.fromCharCode(65+i);
+    return `<button class="${cls}" onclick="mcqAnswer(${i})" ${mcqState.answered?'disabled':''}>${`<span class="opt-let">${let_}.</span>`}${o}</button>`;
+  }).join('');
+  document.getElementById('main').innerHTML=`
+<div class="sh"><h2>Multiple choice quiz</h2><p>Select the best answer.</p></div>
+<div class="mcq-deckbar">${deckBtns}</div>
+<div class="mcq-card">
+  <div class="mcq-qnum">Question ${mcqState.idx+1} of ${total} · ${bank.name}</div>
+  <div class="mcq-q">${q.q}</div>
+  <div class="mcq-opts">${opts}</div>
+  <div class="mcq-exp${mcqState.answered?' show':''}">${mcqState.answered?`<strong>${mcqState.correct?'✓ Correct!':'✗ Incorrect.'}</strong> ${q.explain}`:''}</div>
+</div>
+<div class="mcq-nav">
+  <button class="mcq-nav-btn" onclick="mcqPrev()">← Back</button>
+  ${mcqState.answered?`<button class="mcq-nav-btn primary" onclick="mcqNext()">Next →</button>`:''}
+  <span class="mcq-counter">Score: ${mcqState.score} / ${mcqState.total}</span>
+</div>`;
+}
+function mcqAnswer(i){if(mcqState.answered)return;const q=MCQ_BANKS[mcqState.deck].questions[mcqState.idx];mcqState.answered=true;mcqState.chosen=i;mcqState.correct=(i===q.correct);mcqState.total++;if(mcqState.correct)mcqState.score++;addScore(mcqState.correct?1:0,1);renderQuiz();}
+function mcqNext(){const b=MCQ_BANKS[mcqState.deck];mcqState.idx=(mcqState.idx+1)%b.questions.length;mcqState.answered=false;mcqState.chosen=null;mcqState.correct=false;renderQuiz();}
+function mcqPrev(){const b=MCQ_BANKS[mcqState.deck];mcqState.idx=(mcqState.idx-1+b.questions.length)%b.questions.length;mcqState.answered=false;mcqState.chosen=null;mcqState.correct=false;renderQuiz();}
+function mcqDeck(k){mcqState={deck:k,idx:0,answered:false,chosen:null,correct:false,score:0,total:0};renderQuiz();}
+
+// ═══════════════════════════════════════════════════════
+// DRAG & DROP DATA + RENDER
+// ═══════════════════════════════════════════════════════
+const DND_EX={
+  spinal:{name:'Spinal localization',instructions:'Drag each clinical finding to the correct spinal cord segment.',
+    items:[{id:'a',text:'Normal TL + UMN PL'},{id:'b',text:'UMN all 4 limbs'},{id:'c',text:'Normal TL + LMN PL'},{id:'d',text:'LMN TL + UMN PL'}],
+    zones:[{id:'C1-C5',label:'C1–C5',correct:'b'},{id:'C6-T2',label:'C6–T2',correct:'d'},{id:'T3-L3',label:'T3–L3',correct:'a'},{id:'L4-S3',label:'L4–S3',correct:'c'}]},
+  vestib:{name:'Vestibular features',instructions:'Match each feature to the correct vestibular disease type.',
+    items:[{id:'a',text:'Vertical nystagmus'},{id:'b',text:'CN VII deficit only'},{id:'c',text:'Head tilt AWAY from lesion'},{id:'d',text:'Ipsilateral proprioceptive deficits'}],
+    zones:[{id:'peripheral',label:'Peripheral',correct:'b'},{id:'central',label:'Central',correct:'a'},{id:'paradoxical',label:'Paradoxical',correct:'c'},{id:'both_c_p',label:'Central or Paradoxical',correct:'d'}]},
+  nm:{name:'NMJ mechanisms',instructions:'Match each disease to its mechanism at the NMJ.',
+    items:[{id:'a',text:'Prevents vesicle fusion → no ACh'},{id:'b',text:'Anti-AChR Abs block receptor'},{id:'c',text:'Blocks glycine/GABA → rigid contraction'},{id:'d',text:'Tick saliva toxin blocks ACh'}],
+    zones:[{id:'botulism',label:'Botulism',correct:'a'},{id:'mg',label:'Myasthenia gravis',correct:'b'},{id:'tetanus',label:'Tetanus',correct:'c'},{id:'tick',label:'Tick paralysis',correct:'d'}]},
+  cn:{name:'Cranial nerve signs',instructions:'Match each clinical sign to the cranial nerve responsible.',
+    items:[{id:'a',text:'Dropped jaw, cannot close mouth'},{id:'b',text:'Dry eye + facial droop'},{id:'c',text:'Head tilt + nystagmus'},{id:'d',text:'Laryngeal hemiplegia'}],
+    zones:[{id:'V',label:'CN V — Trigeminal',correct:'a'},{id:'VII',label:'CN VII — Facial',correct:'b'},{id:'VIII',label:'CN VIII — Vestibulocochlear',correct:'c'},{id:'X',label:'CN X — Vagus',correct:'d'}]},
+};
+let dndState={ex:'spinal',dragging:null,placements:{},checked:false};
+function renderDnD(){
+  const ex=DND_EX[dndState.ex];
+  const selBtns=Object.keys(DND_EX).map(k=>`<button class="dnd-selbtn${dndState.ex===k?' active':''}" onclick="dndSel('${k}')">${DND_EX[k].name}</button>`).join('');
+  const placed=Object.values(dndState.placements);
+  const avail=ex.items.filter(i=>!placed.includes(i.id));
+  const items=avail.map(i=>`<div class="dnd-item" draggable="true" id="dnd-i-${i.id}" data-id="${i.id}" ondragstart="dndStart(event,'${i.id}')" ondragend="dndEnd(event)">${i.text}</div>`).join('');
+  const zones=ex.zones.map(z=>{
+    const pid=dndState.placements[z.id];
+    const pi=pid?ex.items.find(i=>i.id===pid):null;
+    let piHtml='';
+    if(pi){
+      const cls=dndState.checked?(pid===z.correct?'correct':'wrong'):'neutral';
+      const extra=dndState.checked&&pid!==z.correct?` ✗ (→${ex.items.find(i=>i.id===z.correct)?.text})`:'';
+      piHtml=`<div class="dnd-pi ${cls}" onclick="dndRemove('${z.id}')">${pi.text}${dndState.checked?'':' <span style="font-size:10px;color:var(--text-hint)">×</span>'}${extra}</div>`;
+    }
+    return `<div class="dnd-zone" id="dnd-z-${z.id.replace(/[^a-z0-9]/gi,'_')}" ondragover="dndOver(event,'${z.id}')" ondragleave="dndLeave(event,'${z.id}')" ondrop="dndDrop(event,'${z.id}')">
+      <div class="dnd-zone-hdr">${z.label}</div><div class="dnd-drop">${piHtml}</div></div>`;
+  }).join('');
+  const allPlaced=ex.zones.every(z=>dndState.placements[z.id]);
+  document.getElementById('main').innerHTML=`
+<div class="sh"><h2>Drag & match</h2><p>Drag items into the correct category.</p></div>
+<div class="dnd-selbar">${selBtns}</div>
+<div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;padding:9px 12px;background:var(--surface2);border-radius:var(--r)">${ex.instructions}</div>
+<div class="dnd-board"><div class="dnd-items"><div style="font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--text-hint);text-transform:uppercase;margin-bottom:6px">Drag these</div>${items||'<div style="font-size:13px;color:var(--text-hint);padding:8px">All placed!</div>'}</div><div class="dnd-zones">${zones}</div></div>
+<div class="dnd-actions">${allPlaced?`<button class="dnd-btn primary" onclick="dndCheck()">Check answers</button>`:''}<button class="dnd-btn" onclick="dndReset()">Reset</button></div>`;
+}
+function dndSel(k){dndState={ex:k,dragging:null,placements:{},checked:false};renderDnD();}
+function dndStart(e,id){dndState.dragging=id;setTimeout(()=>document.getElementById('dnd-i-'+id)?.classList.add('dragging'),0);}
+function dndEnd(){document.querySelectorAll('.dnd-item').forEach(el=>el.classList.remove('dragging'));}
+function dndOver(e,z){e.preventDefault();document.getElementById('dnd-z-'+z.replace(/[^a-z0-9]/gi,'_'))?.classList.add('over');}
+function dndLeave(e,z){document.getElementById('dnd-z-'+z.replace(/[^a-z0-9]/gi,'_'))?.classList.remove('over');}
+function dndDrop(e,z){e.preventDefault();document.getElementById('dnd-z-'+z.replace(/[^a-z0-9]/gi,'_'))?.classList.remove('over');if(!dndState.dragging)return;Object.keys(dndState.placements).forEach(k=>{if(dndState.placements[k]===dndState.dragging)delete dndState.placements[k];});dndState.placements[z]=dndState.dragging;dndState.dragging=null;dndState.checked=false;renderDnD();}
+function dndRemove(z){if(dndState.checked)return;delete dndState.placements[z];dndState.checked=false;renderDnD();}
+function dndCheck(){const ex=DND_EX[dndState.ex];let c=0;ex.zones.forEach(z=>{if(dndState.placements[z.id]===z.correct)c++;});dndState.checked=true;addScore(c,ex.zones.length);renderDnD();}
+function dndReset(){dndState.placements={};dndState.checked=false;renderDnD();}
+
+// ═══════════════════════════════════════════════════════
+// CASES DATA + RENDER
+// ═══════════════════════════════════════════════════════
+const CASES=[
+  {title:'The Wobbling Dachshund',tags:['Spinal cord','IVDD'],steps:[
+    {label:'Signalment & History',content:'Biscuit, a 5-year-old male neutered Dachshund, presents for acute onset inability to use his back legs that started this morning. The owner noticed him crying when picked up two days ago. He is otherwise healthy.',question:'Based on signalment and history alone, what is your top differential and why?',answer:'Hansen type I IVDD. Young chondrodystrophic breed + acute onset paraparesis + prodromal pain = classic presentation. T11–L2 is the most common site (no intercapital ligament caudal to T10).'},
+    {label:'Neurologic Exam',content:'Non-ambulatory. Normal thoracic limbs. Absent voluntary movement, absent patellar and withdrawal reflexes, absent deep pain perception bilaterally in the pelvic limbs. Bladder is expressible with minimal resistance.',question:'1. Localize the lesion. 2. What does the bladder finding tell you? 3. What is the prognosis?',answer:'1. L4–S3 (LMN pelvic limbs, normal thoracic limbs). 2. Easy expression = LMN bladder — flaccid detrusor, reduced sphincter tone (pudendal/pelvic n.). 3. Loss of deep pain perception = GRAVE prognosis. Recovery unlikely but possible if DPP returns within 48–72h.'},
+    {label:'Diagnostics & Decision',content:'MRI confirms L4–L5 disc extrusion with severe cord compression. T2 signal change within the cord parenchyma is noted (possible myelomalacia).',question:'What does myelomalacia on MRI mean and how does it change your approach?',answer:'Myelomalacia = hemorrhagic/ischemic necrosis — irreversible damage. Ascending myelomalacia can be fatal. Prognosis shifts to grave. Surgery may be offered but owner must understand this. Quality-of-life and euthanasia discussion is appropriate and compassionate.'},
+  ]},
+  {title:'The Circling Labrador',tags:['Vestibular','Localization'],steps:[
+    {label:'Signalment & History',content:'Mango, a 12-year-old female spayed Labrador, presents for acute onset head tilt to the right, circling, and rolling. She woke up like this. No prior ear disease history.',question:'List your top 3 differentials and classify each as peripheral or central.',answer:'1. Idiopathic (old dog) vestibular — PERIPHERAL (most likely). 2. Otitis media/interna — PERIPHERAL. 3. Ischemic/hemorrhagic infarct — CENTRAL. Age, acuity, and no ear disease favor idiopathic.'},
+    {label:'Neurologic Exam',content:'Right head tilt. Horizontal nystagmus — fast phase to the LEFT. Circling/leaning to the RIGHT. No proprioceptive deficits. Normal mentation. Forced strabismus right eye (ventral). No Horner\'s.',question:'1. Peripheral or central? 2. Which findings tell you? 3. Which side is the lesion?',answer:'1. PERIPHERAL. 2. Horizontal (not vertical) nystagmus, no proprioceptive deficits (key!), normal mentation, CN VII intact. 3. RIGHT side — head tilt toward lesion, circling toward lesion, fast phase away (to the left).'},
+    {label:'Communication',content:'The owner is distressed and asks if the dog should be euthanized.',question:'How do you counsel this owner and what is the treatment plan?',answer:'Idiopathic vestibular disease is self-limiting — recovery in 1–3 weeks. Treatment: anti-nausea medication, padded environment, assist with feeding/drinking. The presentation looks dramatic but prognosis is excellent. Mild head tilt may persist but most dogs return to normal. Reassure the owner clearly.'},
+  ]},
+  {title:'The Rigid German Shepherd',tags:['Neuromuscular','Tetanus'],steps:[
+    {label:'Signalment & History',content:'Rex, a 3-year-old male intact GSD, presents for 2-day progressive stiffness, reluctance to open his mouth, and an abnormal facial expression. He stepped on a nail 10 days ago. Vaccination status unknown.',question:'Top differential and reasoning?',answer:'Tetanus (Clostridium tetani). Classic history: penetrating wound → 7–21 day incubation → progressive rigidity. Trismus (jaw locking), risus sardonicus, and stiff gait are pathognomonic. Dogs are relatively resistant to tetanus compared to horses but can still be severely affected.'},
+    {label:'Physical Exam',content:'Trismus, risus sardonicus, stiff sawhorse stance, elevated tail, erect ears. Normal mentation. Touch and noise trigger severe muscle spasms. Temp 40.8°C.',question:'Explain the mechanism. Why does sensory stimulation make it worse?',answer:'Tetanospasmin binds irreversibly to presynaptic neurons → blocks glycine/GABA release from Renshaw cells → alpha motor neurons fire continuously without inhibition → sustained contraction. Sensory stimuli trigger reflex spasms because inhibitory "brakes" are absent. Pyrexia results from sustained muscle contraction generating heat.'},
+    {label:'Treatment & Prognosis',content:'You are developing a treatment plan.',question:'List the key treatment components and give the owner a prognosis.',answer:'1. Anti-toxin (neutralizes unbound toxin only — cannot reverse already-bound). 2. Metronidazole ≥10 days (kills C. tetani). 3. Wound debridement. 4. Benzodiazepines + methocarbamol for rigidity. 5. Quiet, dark environment — minimize sensory stimuli. 6. Supportive care: IV fluids, nutrition, urinary catheter. Prognosis: GUARDED — 40–50% fatality in dogs. Recovery requires new axon terminal formation (~2 week delay before clinical improvement).'},
+  ]},
+  {title:'The Seizing Pug',tags:['Forebrain','MUO','Seizures'],steps:[
+    {label:'Signalment & History',content:'Dumpling, a 4-year-old female spayed Pug, presents for two GTC seizures in 3 weeks. Between seizures she seems quieter and is staring into space. Vaccines current.',question:'Given the signalment and presentation, what are your top differentials and why?',answer:'1. MUO/GME — pugs have a breed predilection; multifocal forebrain disease. 2. Idiopathic epilepsy — age is on the lower end. 3. Infectious encephalitis (Neospora, toxoplasmosis). 4. Neoplasia — less likely at 4 years. Behavioral changes between seizures suggest ongoing forebrain disease, not just ictal events.'},
+    {label:'Neurologic Exam & Diagnostics',content:'Depressed mentation, mild right-sided postural reaction deficits, left menace deficit. MRI: multifocal T2 hyperintense lesions throughout the cerebrum. CSF: moderate mononuclear pleocytosis, elevated protein. Infectious titers negative.',question:'1. Confirm localization. 2. Diagnosis? 3. What do the CSF findings indicate?',answer:'1. Multifocal forebrain disease (right-sided deficits = left forebrain; left menace deficit = right forebrain or optic tract). 2. MUO — consistent with breed, age, MRI pattern, CSF, after ruling out infectious causes. 3. Mononuclear pleocytosis = inflammatory/immune-mediated process. Negative titers support MUO.'},
+    {label:'Treatment & Prognosis',content:'The owner asks if Dumpling can be cured.',question:'Outline treatment and counsel the owner on prognosis.',answer:'Treatment: Prednisolone (1–2 mg/kg/day, taper over months) ± cyclosporine / mycophenolate / cytarabine. Add anti-seizure medication (phenobarbital or levetiracetam). Prognosis: GRAVE. MUO cannot be cured — immunosuppression slows progression but does not stop it. This is lifelong management. Median survival varies. Owner must understand rechecks, dose adjustments, and the progressive nature of the disease.'},
+  ]},
+];
+let caseState={idx:0,step:0,revealed:[]};
+function renderCases(){
+  const cas=CASES[caseState.idx];
+  const step=cas.steps[caseState.step];
+  const rev=(caseState.revealed[caseState.idx]||[])[caseState.step];
+  const selBtns=CASES.map((c,i)=>`<button class="case-selbtn${caseState.idx===i?' active':''}" onclick="caseSelect(${i})">${c.title}</button>`).join('');
+  const stepDots=cas.steps.map((_,i)=>{
+    const d=(caseState.revealed[caseState.idx]||[])[i];
+    return `<div class="cstep${d?' done':''}${i===caseState.step?' active':''}" onclick="caseGo(${i})" title="Step ${i+1}"></div>`;
+  }).join('');
+  document.getElementById('main').innerHTML=`
+<div class="sh"><h2>Clinical cases</h2><p>Work through each case step by step. Write your answer before revealing.</p></div>
+<div class="case-selbar">${selBtns}</div>
+<div class="case-steps-row">${stepDots}<span style="font-size:12px;color:var(--text-hint);margin-left:4px">Step ${caseState.step+1} of ${cas.steps.length}</span></div>
+<div class="case-card">
+  <div class="case-banner"><h3>${cas.title}</h3><p>${cas.tags.map(t=>`<span class="badge b-accent" style="margin-right:4px">${t}</span>`).join('')}</p></div>
+  <div class="case-body">
+    <div style="margin-bottom:12px"><div class="case-step-lbl">${step.label}</div><div class="case-text">${step.content}</div></div>
+    <div class="case-step-lbl">Your answer</div>
+    <textarea class="case-textarea" id="case-ta" placeholder="Write your answer before revealing…" rows="3"></textarea>
+    <div style="margin-top:4px">
+      <button class="case-btn primary" onclick="caseReveal()">Reveal model answer</button>
+      ${caseState.step>0?`<button class="case-btn" onclick="caseBack()">← Back</button>`:''}
+      ${caseState.step<cas.steps.length-1?`<button class="case-btn" onclick="caseNext()" ${!rev?'disabled style="opacity:.45"':''}>Next step →</button>`:''}
+    </div>
+    <div class="case-reveal-box${rev?' show':''}" id="case-rev">
+      <div class="case-reveal-lbl">Model answer</div>
+      <div class="case-reveal-text">${step.answer}</div>
+    </div>
+  </div>
+</div>`;
+}
+function caseSelect(i){caseState.idx=i;caseState.step=0;renderCases();}
+function caseGo(i){if(i<=caseState.step||(caseState.revealed[caseState.idx]||[])[i]){caseState.step=i;renderCases();}}
+function caseReveal(){if(!caseState.revealed[caseState.idx])caseState.revealed[caseState.idx]=[];caseState.revealed[caseState.idx][caseState.step]=true;renderCases();}
+function caseNext(){if(caseState.step<CASES[caseState.idx].steps.length-1){caseState.step++;renderCases();}}
+function caseBack(){if(caseState.step>0){caseState.step--;renderCases();}}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+render();
+</script>
+</body>
+</html>

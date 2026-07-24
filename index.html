@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>desmoVet — Science. Connection. Compassion.</title>
+<style>
+  :root{
+    --navy:#0f1c2b;
+    --panel:#16273a;
+    --panel-2:#1c3247;
+    --line:#28405a;
+    --ink:#ffffff;
+    --sub:#ffffff;
+    --sage:#ffffff;
+    --sage-dark:#ffffff;
+    --sage-tint:rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--navy);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    line-height:1.6;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+
+  /* NAV */
+  nav{border-bottom:1px solid var(--line);background:rgba(15,28,43,0.92);backdrop-filter:blur(8px);position:sticky;top:0;z-index:50;}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;}
+  .brand{font-weight:700;font-size:1.15rem;color:var(--ink);}
+  .navlinks{display:flex;gap:26px;font-size:0.92rem;font-weight:600;}
+  .navlinks a{color:var(--sub);}
+  .navlinks a:hover{color:var(--sage);}
+
+  /* HERO */
+  .hero{padding:0 0 50px;text-align:center;}
+  .logo-banner{width:100%;background:#fefefe;padding:42px 20px 34px;}
+  .logo-banner img.lockup{max-width:280px;width:72vw;height:auto;display:block;margin:0 auto;}
+  .hero .wrap{padding-top:32px;}
+  .tagline{font-size:1.15rem;color:var(--sub);max-width:580px;margin:0 auto 30px;font-style:italic;}
+  .quicklinks{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;}
+  .quicklink{
+    background:var(--panel);border:1px solid var(--line);
+    padding:10px 16px;border-radius:8px;font-size:0.88rem;font-weight:600;
+    color:var(--ink);display:flex;align-items:center;gap:6px;
+  }
+  .quicklink:hover{border-color:var(--sage);color:var(--sage);}
+  .quicklink .sub{color:var(--sub);font-weight:400;}
+
+  /* SECTIONS */
+  section{padding:56px 0;border-top:1px solid var(--line);}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+  h2{font-size:1.5rem;font-weight:700;margin:0;color:var(--ink);}
+  .count-badge{font-size:0.85rem;color:var(--sub);font-weight:600;}
+
+  /* NAME */
+  .quote-block{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:22px 24px;font-size:0.98rem;color:var(--sub);margin-bottom:20px;
+  }
+  .quote-block .src{margin-top:10px;font-size:0.8rem;color:var(--sub);font-weight:600;}
+  .name-section p.interp{color:var(--sub);font-size:1.02rem;max-width:680px;margin:0 0 20px;}
+  .payoff{
+    font-weight:700;font-size:1.2rem;color:var(--ink);
+    background:var(--sage-tint);border:1px solid var(--line);border-radius:10px;padding:16px 20px;
+    display:inline-block;
+  }
+
+  /* MODULES / TOOLS GRID */
+  .modules-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .module-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:22px;display:flex;flex-direction:column;
+    transition:box-shadow .15s ease, border-color .15s ease, transform .15s ease;
+  }
+  .module-card:hover{box-shadow:0 12px 28px rgba(0,0,0,0.35);border-color:var(--sage);transform:translateY(-2px);}
+  .module-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .module-icon{font-size:1.5rem;}
+  .module-name{font-weight:700;font-size:1.02rem;color:var(--ink);}
+  .module-desc{font-size:0.9rem;color:var(--sub);margin-bottom:14px;flex-grow:1;}
+  .module-tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .module-tag{
+    font-size:0.75rem;font-weight:600;color:var(--ink);
+    background:var(--panel-2);border:1px solid var(--line);padding:4px 10px;border-radius:20px;
+  }
+  .module-tag.soon{color:var(--sub);background:var(--panel-2);}
+
+  /* STORY */
+  .story-layout{display:grid;grid-template-columns:110px 1fr;gap:28px;align-items:start;}
+  .avatar{
+    width:92px;height:92px;border-radius:50%;
+    border:1px solid var(--line);
+    overflow:hidden;
+    flex-shrink:0;
+  }
+  .avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+  .story-name{font-weight:700;font-size:1.02rem;color:var(--ink);}
+  .story-title{font-size:0.85rem;color:var(--sub);margin-bottom:12px;}
+  .story-body p{color:var(--sub);font-size:0.98rem;margin:0 0 14px;}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 22px;}
+  .tag{
+    font-size:0.78rem;font-weight:600;color:var(--ink);
+    background:var(--panel);border:1px solid var(--line);
+    padding:6px 12px;border-radius:20px;
+  }
+  .mission-quote{
+    font-style:italic;color:var(--ink);font-size:0.98rem;
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 20px;
+  }
+
+  /* DISCLAIMER */
+  .disclaimer{
+    background:rgba(230,178,79,0.08);border:1px solid rgba(230,178,79,0.3);border-radius:10px;
+    padding:20px 22px;display:flex;gap:14px;align-items:flex-start;
+  }
+  .disclaimer .icon{font-size:1.3rem;}
+  .disclaimer b{color:#f0c95a;}
+  .disclaimer p{margin:6px 0 0;color:#d9c496;font-size:0.9rem;}
+
+  @media (max-width:640px){
+    .modules-grid{grid-template-columns:1fr;}
+    .story-layout{grid-template-columns:1fr;}
+  }
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--line);padding:36px 0;text-align:center;color:var(--sub);font-size:0.85rem;}
+  footer .brand{color:var(--ink);margin-bottom:8px;display:block;}
+  footer .note{margin-bottom:14px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="#top" class="brand">desmoVet</a>
+    <div class="navlinks">
+      <a href="#name">The Name</a>
+      <a href="#tools">Tools</a>
+      <a href="#story">About</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="logo-banner">
+    <img class="lockup" src="desmovet-full.jpg" alt="desmoVet — Science. Connection. Compassion.">
+  </div>
+  <div class="wrap">
+    <p class="tagline">The connections at the heart of veterinary medicine.</p>
+    <div class="quicklinks">
+      <a class="quicklink" href="https://kbonen12.github.io/anestheticdosecalculator2.0/" target="_blank" rel="noopener">💉 Anesthesia Calc <span class="sub">→</span></a>
+      <a class="quicklink" href="https://kbonen12.github.io/equicalc.2/" target="_blank" rel="noopener">🐴 EquiCalc <span class="sub">→</span></a>
+      <a class="quicklink" href="cardio-tutor.html" target="_blank" rel="noopener">❤️ Cardio Tutor <span class="sub">→</span></a>
+      <a class="quicklink" href="neuro-tutor.html" target="_blank" rel="noopener">🧠 Neuro Tutor <span class="sub">→</span></a>
+    </div>
+  </div>
+</header>
+
+<section id="name">
+  <div class="wrap">
+    <div class="section-head"><h2>What's in a Name</h2></div>
+    <div class="quote-block">
+      "Desmosomes are specialized intercellular junctions that act as molecular 'spot welds' to tightly bind adjacent cells together. Highly concentrated in tissues that endure significant mechanical stress, such as the skin, heart, and bladder, they maintain tissue structural integrity by resisting tearing and physical shear forces."
+      <div class="src">— on desmosomes, cell biology</div>
+    </div>
+    <p class="interp">desmoVet is built on the same principle. No single tool holds up veterinary practice or education on its own — but placed where the stress actually is, and connected to everything around them, they're built to take the load: fast decisions, incomplete information, and the students and clinicians who need something that holds up under pressure.</p>
+    <div class="payoff">The connections at the heart of veterinary medicine.</div>
+  </div>
+</section>
+
+<section id="tools">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Tool Modules</h2>
+      <div class="count-badge">4 modules</div>
+    </div>
+    <div class="modules-grid">
+
+      <a class="module-card" href="https://kbonen12.github.io/anestheticdosecalculator2.0/" target="_blank" rel="noopener">
+        <div class="module-top"><span class="module-icon">💉</span><span class="module-name">Small Animal Anesthesia</span></div>
+        <div class="module-desc">Dose, CRI, and full protocol builder for small animal anesthesia, including the Kitty Magic combination reference.</div>
+        <div class="module-tags"><span class="module-tag">Dose</span><span class="module-tag">CRI</span><span class="module-tag">Protocol Sheet</span></div>
+      </a>
+
+      <a class="module-card" href="https://kbonen12.github.io/equicalc.2/" target="_blank" rel="noopener">
+        <div class="module-top"><span class="module-icon">🐴</span><span class="module-name">EquiCalc</span></div>
+        <div class="module-desc">Equine drug and fluid calculators — TPN, GIR, fluid deficits, CRIs, induction protocols, and standing sedation.</div>
+        <div class="module-tags"><span class="module-tag">TPN</span><span class="module-tag">Fluids</span><span class="module-tag">Sedation</span></div>
+      </a>
+
+      <a class="module-card" href="cardio-tutor.html" target="_blank" rel="noopener">
+        <div class="module-top"><span class="module-icon">❤️</span><span class="module-name">Cardio Tutor</span></div>
+        <div class="module-desc">An interactive tutor for veterinary cardiac physiology — case-based review and core concept walkthroughs.</div>
+        <div class="module-tags"><span class="module-tag">Physiology</span><span class="module-tag">Case-Based</span></div>
+      </a>
+
+      <a class="module-card" href="neuro-tutor.html" target="_blank" rel="noopener">
+        <div class="module-top"><span class="module-icon">🧠</span><span class="module-name">Neuro Tutor</span></div>
+        <div class="module-desc">An interactive learning guide for veterinary neurology — localization, UMN/LMN reasoning, and differentials.</div>
+        <div class="module-tags"><span class="module-tag">Localization</span><span class="module-tag">Differentials</span></div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section id="story">
+  <div class="wrap">
+    <div class="section-head"><h2>About the Author</h2></div>
+    <div class="story-layout">
+      <div class="avatar"><img src="kyle-photo.jpg" alt="Kyle B."></div>
+      <div class="story-body">
+        <div class="story-name">Kyle B.</div>
+        <div class="story-title">Doctor of Veterinary Medicine Student</div>
+        <p>I'm a DVM student at Colorado State University with a growing focus on the business and technology side of veterinary medicine. Alongside clinical training, I've built and shipped two live tools already in use by veterinarians and students — a small animal anesthesia calculator and EquiCalc, a full equine calculator hub — with two more in development for veterinary education.</p>
+        <p>I'm drawn to the intersection of clinical practice and industry: where technology, product thinking, and veterinary medicine meet. My interest isn't just in practicing medicine one exam room at a time — it's in helping build the tools, systems, and companies that make veterinary care faster, safer, and more accessible at scale.</p>
+        <div class="tags">
+          <span class="tag">Colorado State University</span>
+          <span class="tag">DVM Candidate</span>
+          <span class="tag">Veterinary Technology</span>
+          <span class="tag">Product Development</span>
+          <span class="tag">Veterinary Entrepreneurship</span>
+        </div>
+        <div class="mission-quote">"Simple, reliable tools for veterinarians and students — built by someone who needs them too."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="disclaimer">
+  <div class="wrap">
+    <div class="disclaimer">
+      <div class="icon">⚠️</div>
+      <div>
+        <b>Clinical Disclaimer</b>
+        <p>desmoVet's tools are intended as calculation and study aids for licensed veterinary professionals and veterinary students. All drug doses, fluid rates, and formulations must be verified against current references and adapted to the individual patient. These tools do not replace clinical judgment, specialist consultation, or approved prescribing guidelines. KB Enterprises LLC assumes no liability for clinical decisions made using this platform.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">desmoVet</span>
+    <div class="note">desmoVet is a product of KB Enterprises LLC.</div>
+    <div>© <span id="year"></span> KB Enterprises LLC · All rights reserved</div>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+
+</body>
+</html>
