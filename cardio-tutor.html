@@ -4002,6 +4002,9 @@ function initECGRhythms() {
       <p style="font-size:12px;color:var(--text-muted);margin-top:3px">Tap any rhythm to expand its full diagnostic criteria.</p>
     </div>`;
   root.appendChild(primer);
+
+  // Group by category
+  const categories = {};
   ECG_RHYTHM_REFERENCE.forEach(r => {
     if (!categories[r.category]) categories[r.category] = [];
     categories[r.category].push(r);
