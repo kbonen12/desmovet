@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Small Animal Anesthesia Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:       #0d2137;
+  --navy-mid:   #163554;
+  --teal:       #1a7d8c;
+  --teal-light: #e8f5f7;
+  --sky:        #d4eef2;
+  --amber:      #e8a000;
+  --amber-light:#fff8ec;
+  --green:      #2a7a3b;
+  --green-light:#eaf4ec;
+  --red:        #b5003c;
+  --gray-50:    #f8fafc;
+  --gray-100:   #f0f4f8;
+  --gray-200:   #dde4ed;
+  --gray-400:   #8fa3b8;
+  --gray-600:   #4a6277;
+  --gray-800:   #1e2e3d;
+  --white:      #ffffff;
+  --radius:     8px;
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:  0 4px 16px rgba(13,33,55,0.12);
+  --shadow-lg:  0 12px 40px rgba(13,33,55,0.18);
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  background: var(--gray-100);
+  color: var(--gray-800);
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.site-header { background: var(--navy); color: white; padding: 0 20px; }
+.header-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0; gap: 12px; flex-wrap: wrap;
+}
+.header-brand h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.35rem; font-weight: 400; letter-spacing: 0.01em;
+}
+.header-brand p { font-size: 0.7rem; color: var(--gray-400); margin-top: 2px; letter-spacing: 0.05em; text-transform: uppercase; }
+.header-disclaimer {
+  background: rgba(232,160,0,0.15); border: 1px solid rgba(232,160,0,0.3);
+  border-radius: 6px; padding: 7px 12px; font-size: 0.72rem;
+  color: #ffd166; max-width: 360px; line-height: 1.5;
+}
+
+/* ── Tabs ── */
+.tab-nav { background: var(--navy-mid); padding: 0 20px; border-bottom: 2px solid var(--teal); }
+.tab-nav-inner { max-width: 1100px; margin: 0 auto; display: flex; gap: 2px; }
+.tab-btn {
+  background: none; border: none; color: var(--gray-400);
+  font-family: inherit; font-size: 0.82rem; font-weight: 500;
+  letter-spacing: 0.03em; padding: 11px 20px; cursor: pointer;
+  border-bottom: 3px solid transparent; margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s; white-space: nowrap;
+}
+.tab-btn:hover { color: white; }
+.tab-btn.active { color: white; border-bottom-color: var(--teal); }
+
+/* ── Main ── */
+.main-wrap { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Patient strip ── */
+.patient-strip {
+  background: var(--white); border: 1px solid var(--amber);
+  border-radius: var(--radius); padding: 14px 18px;
+  margin-bottom: 18px; display: flex; flex-wrap: wrap;
+  gap: 20px; align-items: flex-end; box-shadow: var(--shadow-sm);
+}
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-group label {
+  font-size: 0.7rem; font-weight: 600; color: var(--gray-600);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+input[type=number], select {
+  font-family: inherit; font-size: 0.87rem;
+  border: 1px solid var(--gray-200); border-radius: 5px;
+  padding: 6px 9px; background: var(--white); color: var(--gray-800);
+  transition: border-color 0.15s, box-shadow 0.15s; outline: none;
+}
+input[type=number]:focus, select:focus {
+  border-color: var(--teal); box-shadow: 0 0 0 3px rgba(26,125,140,0.14);
+}
+.inp-amber { background: var(--amber-light); border-color: #dda800; color: #7a4800; font-weight: 500; }
+.inp-green {
+  background: var(--green-light); border-color: #7ecb8a;
+  color: var(--green); font-weight: 700; pointer-events: none;
+}
+.inp-teal {
+  background: #0d2137; border: 2px solid #1a7d8c;
+  color: #4df0ff; font-weight: 800; pointer-events: none;
+  letter-spacing: 0.03em;
+}
+
+/* ── Toolbar ── */
+.toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
+}
+.search-wrap { position: relative; }
+.search-wrap svg {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--gray-400); pointer-events: none;
+}
+#drug-search {
+  padding: 7px 12px 7px 33px; border: 1px solid var(--gray-200);
+  border-radius: 20px; font-size: 0.84rem; font-family: inherit;
+  width: 220px; transition: border-color 0.15s, box-shadow 0.15s; outline: none;
+}
+#drug-search:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(26,125,140,0.14); }
+.print-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--navy); color: white; border: none;
+  border-radius: 6px; padding: 7px 15px; font-family: inherit;
+  font-size: 0.8rem; font-weight: 500; cursor: pointer;
+  transition: background 0.15s;
+}
+.print-btn:hover { background: var(--navy-mid); }
+
+/* ── Table ── */
+.card {
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); border: 1px solid var(--gray-200); overflow: hidden;
+}
+.table-scroll { overflow-x: auto; }
+.calc-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+.calc-table th, .calc-table td {
+  padding: 7px 10px; text-align: left;
+  border-bottom: 1px solid var(--gray-200); vertical-align: middle;
+}
+.calc-table thead th {
+  background: var(--gray-50); color: var(--gray-600);
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; position: sticky; top: 0; z-index: 1;
+}
+.calc-table tbody tr:hover { background: var(--gray-50); }
+.section-row td {
+  background: var(--navy) !important; color: white;
+  font-weight: 700; font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.07em; padding: 6px 10px;
+}
+.sub-row td {
+  background: var(--teal-light) !important; color: var(--teal);
+  font-size: 0.76rem; font-weight: 600; font-style: italic;
+}
+.drug-link-btn {
+  background: none; border: none; color: var(--teal);
+  font-family: inherit; font-size: inherit; font-weight: 500;
+  cursor: pointer; padding: 0; text-decoration: none;
+  border-bottom: 1px dashed var(--teal); transition: color 0.15s;
+}
+.drug-link-btn:hover { color: var(--navy); border-bottom-color: var(--navy); }
+.no-results { text-align: center; padding: 28px; color: var(--gray-400); font-size: 0.9rem; }
+
+/* ── CRI Grid ── */
+.cri-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 14px;
+}
+.cri-card {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm);
+}
+.cri-head {
+  background: var(--navy-mid); color: white;
+  padding: 9px 14px; display: flex; justify-content: space-between; align-items: center;
+}
+.cri-head .cname { font-weight: 600; font-size: 0.88rem; }
+.cri-head .cunit { font-size: 0.7rem; color: var(--gray-400); }
+.cri-body { padding: 12px 14px; }
+.cri-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 5px 0; border-bottom: 1px solid var(--gray-100);
+  font-size: 0.81rem; gap: 8px;
+}
+.cri-row:last-child { border-bottom: none; }
+.cri-lbl { color: var(--gray-600); font-size: 0.77rem; }
+.result-row {
+  background: var(--green-light); border-radius: 5px;
+  padding: 7px 6px; margin-top: 6px; border-bottom: none !important;
+}
+.result-row .cri-lbl { font-weight: 700; color: var(--green); }
+
+/* ── Kitty ── */
+.kitty-alert {
+  background: #fffbe6; border-left: 4px solid var(--amber);
+  border-radius: 0 6px 6px 0; padding: 12px 16px;
+  font-size: 0.83rem; color: #5a3c00; margin-bottom: 18px; line-height: 1.6;
+}
+.kitty-controls {
+  display: flex; flex-wrap: wrap; gap: 18px;
+  align-items: flex-end; margin-bottom: 18px;
+}
+.kitty-field { display: flex; flex-direction: column; gap: 5px; }
+.kitty-field label {
+  font-size: 0.7rem; font-weight: 600; color: var(--gray-600);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.kitty-field input, .kitty-field select { min-width: 160px; }
+.band-label {
+  display: inline-block; font-size: 0.83rem; color: var(--gray-600);
+  background: var(--sky); border-radius: 6px; padding: 7px 12px; margin-bottom: 16px;
+}
+.band-label strong { color: var(--navy); }
+.km-cards { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+.km-card {
+  flex: 1; min-width: 150px; max-width: 230px;
+  border: 2px solid var(--gray-200); border-radius: var(--radius);
+  padding: 13px 15px; background: var(--gray-50);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.km-card.selected {
+  border-color: var(--teal); background: var(--teal-light);
+  box-shadow: 0 2px 10px rgba(26,125,140,0.15);
+}
+.km-level { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--navy); margin-bottom: 2px; }
+.km-desc { font-size: 0.71rem; color: var(--gray-400); margin-bottom: 8px; }
+.km-vol { font-size: 1.65rem; font-weight: 800; color: var(--green); line-height: 1.1; }
+.km-vol-range { font-size: 1.05rem; font-weight: 700; color: var(--green); }
+.km-unit { font-size: 0.68rem; color: var(--gray-400); margin-bottom: 8px; }
+.km-drugs { font-size: 0.75rem; color: var(--gray-600); }
+.km-drugs div { padding-left: 10px; position: relative; margin-bottom: 3px; }
+.km-drugs div::before { content: "•"; position: absolute; left: 0; color: var(--teal); }
+.km-oor { font-size: 0.81rem; color: var(--red); font-style: italic; }
+.ref-title {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--navy); margin-bottom: 8px;
+}
+.ref-table thead th { background: var(--navy); color: white; }
+.ref-table td.hl { background: var(--sky) !important; font-weight: 700; color: var(--navy); }
+
+/* ── Modal ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(13,33,55,0.52); z-index: 1000;
+  align-items: center; justify-content: center;
+  padding: 16px; backdrop-filter: blur(2px);
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--white); border-radius: 12px;
+  box-shadow: var(--shadow-lg); max-width: 680px; width: 100%;
+  max-height: 90vh; display: flex; flex-direction: column;
+  overflow: hidden; animation: mIn 0.18s ease;
+}
+@keyframes mIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+.modal-head {
+  background: var(--navy); color: white;
+  padding: 18px 22px; display: flex;
+  justify-content: space-between; align-items: flex-start; flex-shrink: 0;
+}
+.modal-head h2 { font-family: 'DM Serif Display', serif; font-size: 1.3rem; font-weight: 400; }
+.modal-head p { font-size: 0.76rem; color: var(--gray-400); margin-top: 3px; }
+.modal-close {
+  background: rgba(255,255,255,0.1); border: none; color: white;
+  width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+  font-size: 1rem; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background 0.15s; margin-left: 12px;
+}
+.modal-close:hover { background: rgba(255,255,255,0.22); }
+.modal-tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 11px 22px; border-bottom: 1px solid var(--gray-200); flex-shrink: 0;
+}
+.tag {
+  background: var(--sky); color: var(--navy-mid);
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.03em;
+}
+.modal-scroll { overflow-y: auto; padding: 18px 22px; flex: 1; }
+.qr-grid {
+  display: grid; grid-template-columns: 130px 1fr;
+  gap: 6px 12px; background: var(--gray-50);
+  border: 1px solid var(--gray-200); border-radius: var(--radius);
+  padding: 14px; font-size: 0.84rem; margin-bottom: 4px;
+}
+.qr-grid dt { font-weight: 600; color: var(--gray-600); }
+.qr-grid dd { color: var(--gray-800); }
+.msec-title {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--teal);
+  margin: 16px 0 6px;
+}
+.mlist { list-style: none; font-size: 0.84rem; color: var(--gray-800); line-height: 1.6; }
+.mlist li { padding: 4px 0 4px 16px; position: relative; border-bottom: 1px solid var(--gray-100); }
+.mlist li:last-child { border-bottom: none; }
+.mlist li::before { content:""; position:absolute; left:0; top:11px; width:6px; height:6px; border-radius:50%; background:var(--teal); }
+.mlist.caution li::before { background: var(--amber); }
+.mlist.notes li::before { background: var(--navy-mid); }
+.modal-foot {
+  padding: 11px 22px; border-top: 1px solid var(--gray-200);
+  font-size: 0.7rem; color: var(--gray-400); flex-shrink: 0;
+  background: var(--gray-50);
+}
+
+/* ── Protocol Builder ── */
+.pb-patient {
+  background: var(--white); border: 1px solid var(--amber);
+  border-radius: var(--radius); padding: 16px 20px;
+  margin-bottom: 20px; box-shadow: var(--shadow-sm);
+}
+.pb-patient-grid {
+  display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;
+}
+.pb-patient-grid .field-group input[type=text] {
+  font-family: inherit; font-size: 0.87rem;
+  border: 1px solid #dda800; border-radius: 5px;
+  padding: 6px 9px; background: var(--amber-light); color: var(--gray-800);
+  transition: border-color 0.15s, box-shadow 0.15s; outline: none; width: 200px;
+}
+.pb-patient-grid .field-group input[type=text]:focus {
+  border-color: var(--teal); box-shadow: 0 0 0 3px rgba(26,125,140,0.14);
+}
+.pb-section {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius); margin-bottom: 16px;
+  box-shadow: var(--shadow-sm); overflow: hidden;
+}
+.pb-section-head {
+  background: var(--navy); color: white;
+  padding: 10px 16px; display: flex; align-items: center;
+  justify-content: space-between; gap: 10px;
+}
+.pb-section-head h3 {
+  font-family: 'DM Serif Display', serif; font-size: 1rem;
+  font-weight: 400; letter-spacing: 0.01em;
+}
+.pb-section-head .pb-section-sub {
+  font-size: 0.7rem; color: var(--gray-400); margin-top: 1px;
+}
+.pb-add-btn {
+  background: rgba(26,125,140,0.7); border: 1px solid rgba(26,125,140,0.9);
+  color: white; border-radius: 5px; padding: 5px 12px;
+  font-family: inherit; font-size: 0.78rem; font-weight: 500;
+  cursor: pointer; white-space: nowrap; transition: background 0.15s;
+  display: flex; align-items: center; gap: 5px;
+}
+.pb-add-btn:hover { background: var(--teal); }
+.pb-section-body { padding: 14px 16px; }
+.pb-empty {
+  text-align: center; padding: 18px; color: var(--gray-400);
+  font-size: 0.84rem; font-style: italic; border: 2px dashed var(--gray-200);
+  border-radius: 6px;
+}
+.pb-drug-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 80px 80px 80px 80px 80px 30px;
+  gap: 8px; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--gray-100);
+  font-size: 0.82rem;
+}
+.pb-drug-row:last-child { border-bottom: none; }
+.pb-drug-row-cri {
+  display: grid;
+  grid-template-columns: 150px 1fr 80px 80px 80px 80px 80px 30px;
+  gap: 8px; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--gray-100);
+  font-size: 0.82rem; background: rgba(26,125,140,0.04);
+}
+.pb-drug-row-cri:last-child { border-bottom: none; }
+.pb-col-head {
+  display: grid;
+  grid-template-columns: 150px 1fr 80px 80px 80px 80px 80px 30px;
+  gap: 8px; padding: 6px 0 8px;
+  border-bottom: 2px solid var(--gray-200); margin-bottom: 4px;
+}
+.pb-col-head span {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--gray-400);
+}
+.pb-drug-name {
+  font-weight: 600; color: var(--navy);
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+.pb-cri-badge {
+  font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; background: var(--teal); color: white;
+  padding: 1px 5px; border-radius: 3px;
+}
+.pb-inp {
+  font-family: inherit; font-size: 0.82rem; width: 100%;
+  border: 2px solid #dda800; border-radius: 4px;
+  padding: 5px 7px; background: #fff8ec; color: #7a4800;
+  font-weight: 600; transition: border-color 0.15s; outline: none;
+}
+.pb-inp:focus { border-color: var(--teal); }
+.pb-out {
+  font-family: inherit; font-size: 0.82rem; width: 100%;
+  border: 2px solid #5aaa6a; border-radius: 4px;
+  padding: 5px 7px; background: #d4f5dc;
+  color: #000000; font-weight: 800; pointer-events: none;
+}
+.pb-notes-inp {
+  font-family: inherit; font-size: 0.82rem; width: 100%;
+  border: 1px solid var(--gray-200); border-radius: 4px;
+  padding: 5px 7px; background: var(--white); color: var(--gray-600);
+  transition: border-color 0.15s; outline: none;
+}
+.pb-notes-inp:focus { border-color: var(--teal); }
+.pb-remove-btn {
+  background: none; border: none; color: var(--gray-400);
+  cursor: pointer; font-size: 1rem; line-height: 1;
+  padding: 2px 4px; border-radius: 3px; transition: color 0.15s, background 0.15s;
+}
+.pb-remove-btn:hover { color: var(--red); background: #fde8ef; }
+
+/* ── Drug picker modal ── */
+.picker-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(13,33,55,0.52); z-index: 1100;
+  align-items: center; justify-content: center;
+  padding: 16px; backdrop-filter: blur(2px);
+}
+.picker-overlay.open { display: flex; }
+.picker-box {
+  background: var(--white); border-radius: 12px;
+  box-shadow: var(--shadow-lg); max-width: 520px; width: 100%;
+  max-height: 85vh; display: flex; flex-direction: column;
+  overflow: hidden; animation: mIn 0.18s ease;
+}
+.picker-head {
+  background: var(--navy); color: white;
+  padding: 14px 20px; display: flex;
+  justify-content: space-between; align-items: center; flex-shrink: 0;
+}
+.picker-head h3 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; font-weight: 400; }
+.picker-search-wrap { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); flex-shrink: 0; }
+#picker-search {
+  width: 100%; padding: 8px 12px; border: 1px solid var(--gray-200);
+  border-radius: 6px; font-family: inherit; font-size: 0.85rem; outline: none;
+  transition: border-color 0.15s;
+}
+#picker-search:focus { border-color: var(--teal); }
+.picker-list { overflow-y: auto; flex: 1; }
+.picker-group-head {
+  background: var(--gray-50); color: var(--gray-600);
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; padding: 7px 16px;
+  position: sticky; top: 0; border-bottom: 1px solid var(--gray-200);
+}
+.picker-item {
+  padding: 10px 16px; cursor: pointer; display: flex;
+  align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--gray-100); transition: background 0.1s;
+}
+.picker-item:hover { background: var(--teal-light); }
+.picker-item .pname { font-weight: 500; color: var(--navy); font-size: 0.85rem; }
+.picker-item .psub  { font-size: 0.72rem; color: var(--gray-400); margin-top: 1px; }
+.picker-item .ptags { display: flex; gap: 4px; }
+.picker-item .ptag  { font-size: 0.62rem; background: var(--sky); color: var(--navy-mid); padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+
+/* ── Isoflurane section ── */
+.iso-section {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius); margin-bottom: 16px;
+  box-shadow: var(--shadow-sm); overflow: hidden;
+}
+.iso-body { padding: 14px 16px; }
+.iso-grid { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+.iso-field { display: flex; flex-direction: column; gap: 5px; }
+.iso-field label { font-size: 0.7rem; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ── Print protocol sheet ── */
+@media print {
+  .site-header, .tab-nav, .pb-toolbar, .pb-add-btn, .pb-remove-btn,
+  .picker-overlay, .modal-overlay { display: none !important; }
+  #tab-protocol { display: block !important; }
+  #tab-doses, #tab-cri, #tab-kitty { display: none !important; }
+  body { background: white; }
+  .main-wrap { margin: 0; padding: 8px; }
+  .pb-section, .iso-section { box-shadow: none; break-inside: avoid; }
+  .pb-inp, .pb-out, .pb-notes-inp { border: 1px solid #ccc !important; background: white !important; color: black !important; }
+  .pb-patient { border: 2px solid #333; }
+  .print-header { display: block !important; }
+}
+.print-header {
+  display: none;
+  font-family: 'DM Serif Display', serif; font-size: 1.1rem;
+  color: var(--navy); margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--navy);
+}
+.pb-toolbar { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+
+@media (max-width: 700px) {
+  .pb-drug-row, .pb-drug-row-cri, .pb-col-head {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+  .pb-drug-name { grid-column: 1 / -1; }
+  .pb-remove-btn { grid-column: 2; justify-self: end; }
+}
+
+@media print {
+  .site-header, .tab-nav, .toolbar, .pb-toolbar, .print-btn,
+  .pb-add-btn, .pb-remove-btn, .modal-overlay, .picker-overlay { display: none !important; }
+  .tab-panel { display: none !important; }
+  #tab-protocol { display: block !important; }
+  body { background: white; font-size: 11px; }
+  .card, .cri-card, .pb-section, .iso-section { box-shadow: none; border: 1px solid #ccc; }
+  .main-wrap { margin: 0; padding: 8px; }
+  .pb-inp, .pb-out, .pb-notes-inp { border: 1px solid #ccc !important; background: white !important; color: black !important; font-weight: 600 !important; }
+  input[readonly] { border: 1px solid #ccc !important; background: white !important; color: black !important; font-weight: 600 !important; }
+  .pb-patient { border: 2px solid #333; }
+  .print-header { display: block !important; }
+}
+
+/* ── Mobile ── */
+@media (max-width: 560px) {
+  .tab-btn { padding: 10px 11px; font-size: 0.75rem; }
+  .cri-grid { grid-template-columns: 1fr; }
+  .km-card { min-width: 140px; }
+  .modal-head { padding: 14px 16px; }
+  .modal-scroll { padding: 14px 16px; }
+  .modal-tags { padding: 10px 16px; }
+  .qr-grid { grid-template-columns: 110px 1fr; }
+  #drug-search { width: 180px; }
+}
+</style>
+</head>
+<body>
+  <a href="https://desmovet.com" target="_blank" rel="noopener"
+   style="position:fixed;top:14px;left:14px;z-index:9999;
+          font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+          font-size:12px;font-weight:600;color:#1f2f42;
+          background:#ffffff;border:1px solid #d8d8d8;border-radius:20px;
+          padding:6px 14px;text-decoration:none;
+          box-shadow:0 4px 12px rgba(0,0,0,0.12);">
+  ← desmoVet
+</a>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <h1>Small Animal Anesthesia Calculator</h1>
+      <p>Dose · CRI · Kitty Magic</p>
+    </div>
+    <div class="header-disclaimer">
+      ⚠ For reference only — always verify with current formularies, hospital protocols, and the attending clinician.
+    </div>
+  </div>
+</header>
+
+<nav class="tab-nav">
+  <div class="tab-nav-inner">
+    <button id="btn-doses"    class="tab-btn active" onclick="showTab('doses')">Dose Calculator</button>
+    <button id="btn-cri"      class="tab-btn"        onclick="showTab('cri')">CRI Calculator</button>
+    <button id="btn-kitty"    class="tab-btn"        onclick="showTab('kitty')">Kitty Magic</button>
+    <button id="btn-protocol" class="tab-btn"        onclick="showTab('protocol')">Protocol Builder</button>
+  </div>
+</nav>
+
+<main class="main-wrap">
+
+<!-- ══ TAB 1: DOSE ══ -->
+<section id="tab-doses" class="tab-panel active">
+  <div class="patient-strip">
+    <div class="field-group">
+      <label>Patient Weight (kg)</label>
+      <input id="wt" type="number" step="0.1" min="0" value="10" class="inp-amber" oninput="recalcDoses()" style="width:90px"/>
+    </div>
+    <div class="field-group">
+      <label>Species</label>
+      <select id="species" onchange="recalcDoses()" style="width:120px">
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="drug-search" type="text" placeholder="Search drugs…" oninput="filterRows()" autocomplete="off"/>
+    </div>
+    <button class="print-btn" onclick="window.print()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print / Export
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="table-scroll">
+      <table class="calc-table">
+        <thead>
+          <tr>
+            <th style="width:160px">Drug</th>
+            <th>Route / Notes</th>
+            <th style="width:100px">Dose (mg/kg)</th>
+            <th>Range (mg/kg)</th>
+            <th style="width:90px">Total (mg)</th>
+            <th style="width:90px">Volume (mL)</th>
+          </tr>
+        </thead>
+        <tbody id="dose-tbody"></tbody>
+      </table>
+    </div>
+    <div id="no-results" class="no-results" style="display:none">No drugs match your search.</div>
+  </div>
+</section>
+
+<!-- ══ TAB 2: CRI ══ -->
+<section id="tab-cri" class="tab-panel">
+  <div class="patient-strip">
+    <div class="field-group">
+      <label>Patient Weight (kg)</label>
+      <input id="cri-wt" type="number" step="0.1" min="0" value="10" class="inp-amber" oninput="recalcCRI()" style="width:90px"/>
+    </div>
+    <div class="field-group" style="justify-content:flex-end">
+      <span style="font-size:0.78rem;color:var(--gray-600);max-width:320px;line-height:1.5">Enter dose rate and concentration to calculate mL/hr. Click any drug name for full info.</span>
+    </div>
+  </div>
+  <div class="toolbar" style="justify-content:flex-end">
+    <button class="print-btn" onclick="window.print()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print / Export
+    </button>
+  </div>
+  <div class="cri-grid" id="cri-grid"></div>
+</section>
+
+<!-- ══ TAB 3: KITTY MAGIC ══ -->
+<section id="tab-kitty" class="tab-panel">
+  <div class="kitty-alert">
+    <strong>Kitty Magic / DKT / Triple Combination — Extra-label, cats only, given IM.</strong><br/>
+    Ketamine (100 mg/mL) + Dexmedetomidine (0.5 mg/mL) + Opioid (select below).<br/>
+    Volumes shown are <em>mL of each individual drug</em>, <strong>NOT mL/kg</strong>.
+    Only use the concentrations listed — do not substitute other formulations.
+  </div>
+
+  <div class="kitty-controls">
+    <div class="kitty-field">
+      <label>Cat Weight (kg)</label>
+      <input id="kitty-wt" type="number" step="0.1" min="0" value="4.5" class="inp-amber" oninput="recalcKitty()"/>
+    </div>
+    <div class="kitty-field">
+      <label>Opioid</label>
+      <select id="kitty-opioid" class="inp-amber" onchange="recalcKitty()">
+        <option value="butorphanol">Butorphanol (10 mg/mL)</option>
+        <option value="hydromorphone">Hydromorphone (2 mg/mL)</option>
+        <option value="buprenorphine">Buprenorphine (0.3 mg/mL)</option>
+      </select>
+    </div>
+    <div class="kitty-field">
+      <label>Sedation Level</label>
+      <select id="kitty-level" class="inp-amber" onchange="recalcKitty()">
+        <option value="mild">Mild</option>
+        <option value="moderate" selected>Moderate</option>
+        <option value="profound">Profound</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="kitty-band" class="band-label"></div>
+  <div class="km-cards" id="km-cards"></div>
+
+  <div class="ref-title">Full Reference Table — mL of each drug (NOT mL/kg) given IM</div>
+  <div class="card">
+    <div class="table-scroll">
+      <table class="calc-table ref-table">
+        <thead><tr><th>Cat Weight</th><th>Mild</th><th>Moderate</th><th>Profound</th></tr></thead>
+        <tbody>
+          <tr id="ref-row-0"><td>2–3 kg</td><td>0.025 mL</td><td>0.05 mL</td><td>0.10–0.15 mL</td></tr>
+          <tr id="ref-row-1"><td>3–4 kg</td><td>0.05 mL</td><td>0.10 mL</td><td>0.20–0.25 mL</td></tr>
+          <tr id="ref-row-2"><td>4–6 kg</td><td>0.10 mL</td><td>0.20 mL</td><td>0.30–0.35 mL</td></tr>
+          <tr id="ref-row-3"><td>6–7 kg</td><td>0.20 mL</td><td>0.30 mL</td><td>0.40–0.45 mL</td></tr>
+          <tr id="ref-row-4"><td>7–8 kg</td><td>0.30 mL</td><td>0.40 mL</td><td>0.50–0.55 mL</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p style="font-size:0.71rem;color:var(--gray-400);margin-top:8px;">
+    * Dexmedetomidine must be 0.5 mg/mL; Ketamine must be 100 mg/mL. Do not substitute other concentrations.
+  </p>
+</section>
+
+<!-- ══ TAB 4: PROTOCOL BUILDER ══ -->
+<section id="tab-protocol" class="tab-panel">
+
+  <div class="print-header">Anesthetic Protocol Sheet</div>
+
+  <!-- Patient Info -->
+  <div class="pb-patient">
+    <div class="pb-patient-grid">
+      <div class="field-group">
+        <label>Patient Name</label>
+        <input type="text" id="pb-name" placeholder="e.g. Max" oninput="pbUpdatePrint()" style="font-family:inherit;font-size:0.87rem;border:2px solid #dda800;border-radius:5px;padding:6px 9px;background:#fff8ec;color:#7a4800;outline:none;width:200px"/>
+      </div>
+      <div class="field-group">
+        <label>Species</label>
+        <select id="pb-species" onchange="pbRecalcAll()" style="width:120px;font-family:inherit;font-size:0.87rem;border:2px solid #dda800;border-radius:5px;padding:6px 9px;background:#fff8ec;color:#7a4800;outline:none">
+          <option value="dog">Dog</option>
+          <option value="cat">Cat</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Weight (kg)</label>
+        <input type="number" id="pb-wt" step="0.1" min="0" placeholder="kg" oninput="pbRecalcAll()" style="width:90px;font-family:inherit;font-size:0.87rem;border:2px solid #dda800;border-radius:5px;padding:6px 9px;background:#fff8ec;color:#7a4800;outline:none"/>
+      </div>
+      <div class="field-group">
+        <label>Procedure</label>
+        <input type="text" id="pb-procedure" placeholder="e.g. OHE, Dental" oninput="pbUpdatePrint()" style="width:220px;font-family:inherit;font-size:0.87rem;border:2px solid #dda800;border-radius:5px;padding:6px 9px;background:#fff8ec;color:#7a4800;outline:none"/>
+      </div>
+      <div class="field-group">
+        <label>Date</label>
+        <input type="text" id="pb-date" placeholder="MM/DD/YYYY" style="width:130px;font-family:inherit;font-size:0.87rem;border:2px solid #dda800;border-radius:5px;padding:6px 9px;background:#fff8ec;color:#7a4800;outline:none"/>
+      </div>
+      <div class="field-group">
+        <label>Clinician</label>
+        <input type="text" id="pb-clinician" placeholder="Dr. Name" style="width:170px;font-family:inherit;font-size:0.87rem;border:2px solid #dda800;border-radius:5px;padding:6px 9px;background:#fff8ec;color:#7a4800;outline:none"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="pb-toolbar">
+    <button class="print-btn" onclick="printProtocol()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print Protocol Sheet
+    </button>
+  </div>
+
+  <!-- PREMEDICATION -->
+  <div class="pb-section" id="pb-sec-premed">
+    <div class="pb-section-head">
+      <div>
+        <h3>Premedication</h3>
+        <div class="pb-section-sub">Anticholinergics · Sedatives · Opioids · NSAIDs</div>
+      </div>
+      <button class="pb-add-btn" onclick="openPicker('premed')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Drug
+      </button>
+    </div>
+    <div class="pb-section-body">
+      <div class="pb-col-head">
+        <span>Drug</span><span>Route</span>
+        <span>Dose mg/kg</span><span>Range</span><span>Total mg</span>
+        <span>Conc. mg/mL</span><span>Volume mL</span><span></span>
+      </div>
+      <div id="pb-list-premed"></div>
+      <div id="pb-empty-premed" class="pb-empty">No premedication drugs added yet.</div>
+    </div>
+  </div>
+
+  <!-- INDUCTION -->
+  <div class="pb-section" id="pb-sec-induction">
+    <div class="pb-section-head">
+      <div>
+        <h3>Induction</h3>
+        <div class="pb-section-sub">Propofol · Alfaxalone · Ketamine · Etomidate · Co-induction agents</div>
+      </div>
+      <button class="pb-add-btn" onclick="openPicker('induction')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Drug
+      </button>
+    </div>
+    <div class="pb-section-body">
+      <div class="pb-col-head">
+        <span>Drug</span><span>Route</span>
+        <span>Dose mg/kg</span><span>Range</span><span>Total mg</span>
+        <span>Conc. mg/mL</span><span>Volume mL</span><span></span>
+      </div>
+      <div id="pb-list-induction"></div>
+      <div id="pb-empty-induction" class="pb-empty">No induction drugs added yet.</div>
+    </div>
+  </div>
+
+  <!-- MAINTENANCE -->
+  <div class="pb-section">
+    <div class="pb-section-head">
+      <div>
+        <h3>Maintenance — Inhalant</h3>
+        <div class="pb-section-sub">Isoflurane / Sevoflurane target settings</div>
+      </div>
+    </div>
+    <div class="pb-section-body">
+      <div class="iso-grid">
+        <div class="iso-field">
+          <label>Agent</label>
+          <select id="pb-iso-agent" class="inp-amber" style="width:160px">
+            <option>Isoflurane</option>
+            <option>Sevoflurane</option>
+          </select>
+        </div>
+        <div class="iso-field">
+          <label>Target MAC (%)</label>
+          <input type="number" id="pb-iso-mac" step="0.1" placeholder="e.g. 1.5" class="inp-amber" style="width:100px"/>
+        </div>
+        <div class="iso-field">
+          <label>O₂ Flow (L/min)</label>
+          <input type="number" id="pb-iso-o2" step="0.1" placeholder="e.g. 1.0" class="inp-amber" style="width:100px"/>
+        </div>
+        <div class="iso-field">
+          <label>Circuit</label>
+          <select id="pb-iso-circuit" class="inp-amber" style="width:180px">
+            <option>Rebreathing (circle)</option>
+            <option>Non-rebreathing (Bain/Mapleson)</option>
+          </select>
+        </div>
+        <div class="iso-field">
+          <label>Notes</label>
+          <input type="text" id="pb-iso-notes" placeholder="e.g. reduce with CRI" class="pb-notes-inp" style="width:220px"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRI -->
+  <div class="pb-section" id="pb-sec-cri">
+    <div class="pb-section-head">
+      <div>
+        <h3>Maintenance — CRIs</h3>
+        <div class="pb-section-sub">Fentanyl · Ketamine · Lidocaine · Dexmedetomidine · Vasopressors</div>
+      </div>
+      <button class="pb-add-btn" onclick="openPicker('cri')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add CRI
+      </button>
+    </div>
+    <div class="pb-section-body">
+      <div class="pb-col-head">
+        <span>Drug <span class="pb-cri-badge" style="vertical-align:middle">CRI</span></span>
+        <span>Route / Notes</span>
+        <span>mg/kg/min</span><span>Range</span><span>Conc. mg/mL</span>
+        <span>Rate mL/hr</span><span>Duration (hr)</span><span></span>
+      </div>
+      <div id="pb-list-cri"></div>
+      <div id="pb-empty-cri" class="pb-empty">No CRIs added yet.</div>
+    </div>
+  </div>
+
+  <!-- LOCAL BLOCKS -->
+  <div class="pb-section" id="pb-sec-local">
+    <div class="pb-section-head">
+      <div>
+        <h3>Locoregional / Local Blocks</h3>
+        <div class="pb-section-sub">Bupivacaine · Lidocaine · Nerve blocks · Wound soakers</div>
+      </div>
+      <button class="pb-add-btn" onclick="openPicker('local')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Drug
+      </button>
+    </div>
+    <div class="pb-section-body">
+      <div class="pb-col-head">
+        <span>Drug</span><span>Route / Block Type</span>
+        <span>Max mg/kg</span><span>Range</span><span>Total mg</span>
+        <span>Conc. mg/mL</span><span>Volume mL</span><span></span>
+      </div>
+      <div id="pb-list-local"></div>
+      <div id="pb-empty-local" class="pb-empty">No local block drugs added yet.</div>
+    </div>
+  </div>
+
+  <!-- ADDITIONAL NOTES -->
+  <div class="pb-section">
+    <div class="pb-section-head"><h3>Additional Notes / Monitoring Plan</h3></div>
+    <div class="pb-section-body">
+      <textarea id="pb-extra-notes" rows="4" placeholder="e.g. Pre-oxygenate for 3 min, target SpO2 >95%, ETCO2 35–45 mmHg, keep MAP >65 mmHg, warm patient throughout..."
+        style="width:100%;font-family:inherit;font-size:0.84rem;border:1px solid var(--gray-200);border-radius:5px;padding:10px;outline:none;resize:vertical;color:var(--gray-800);line-height:1.6"></textarea>
+    </div>
+  </div>
+
+</section>
+
+</main>
+
+<!-- ══ DRUG MODAL ══ -->
+<div class="modal-overlay" id="drug-modal" onclick="closeOverlay(event)">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <h2 id="m-name"></h2>
+        <p id="m-subtitle"></p>
+      </div>
+      <button class="modal-close" onclick="closeDrugModal()" title="Close">✕</button>
+    </div>
+    <div class="modal-tags" id="m-tags"></div>
+    <div class="modal-scroll">
+      <div class="msec-title">Quick Reference</div>
+      <dl class="qr-grid">
+        <dt>Category</dt>   <dd id="m-cat"></dd>
+        <dt>Typical dose</dt><dd id="m-dose"></dd>
+        <dt>Concentration</dt><dd id="m-conc"></dd>
+        <dt>Routes</dt>     <dd id="m-routes"></dd>
+        <dt>Onset / Duration</dt><dd id="m-time"></dd>
+        <dt>Controlled?</dt><dd id="m-sched"></dd>
+      </dl>
+      <div class="msec-title">Mechanism &amp; Uses</div>
+      <ul class="mlist" id="m-mech"></ul>
+      <div class="msec-title">Advantages</div>
+      <ul class="mlist" id="m-adv"></ul>
+      <div class="msec-title">Cautions / Disadvantages</div>
+      <ul class="mlist caution" id="m-dis"></ul>
+      <div id="m-notes-wrap">
+        <div class="msec-title">Extra Notes</div>
+        <ul class="mlist notes" id="m-notes"></ul>
+      </div>
+    </div>
+    <div class="modal-foot">For reference only — always verify with hospital protocols and the attending clinician.</div>
+  </div>
+</div>
+
+<!-- ══ DRUG PICKER MODAL ══ -->
+<div class="picker-overlay" id="picker-modal" onclick="closePickerOverlay(event)">
+  <div class="picker-box">
+    <div class="picker-head">
+      <h3 id="picker-title">Select Drug</h3>
+      <button class="modal-close" onclick="closePicker()">✕</button>
+    </div>
+    <div class="picker-search-wrap">
+      <input id="picker-search" type="text" placeholder="Search drugs…" oninput="filterPicker()" autocomplete="off"/>
+    </div>
+    <div class="picker-list" id="picker-list"></div>
+  </div>
+</div>
+
+<script>
+/* ────────────────────────────────────────
+   DRUG DATABASE
+──────────────────────────────────────── */
+const DRUGS = {
+  atropine:{name:"Atropine",subtitle:"Anticholinergic premedication",category:"Anticholinergic",dose:"0.01–0.04 mg/kg SQ, IM, IV",concentration:"0.54 mg/mL (also 0.4 or 1 mg/mL)",routes:"SQ, IM, IV",routeOptions:["SQ","IM","IV"],time:"Onset ~5–10 min IM; duration ~60–90 min",schedule:"Not controlled",tags:["Premed","Anticholinergic"],mechanism:["Competitive muscarinic antagonist that reduces vagal tone.","Decreases salivary and respiratory secretions."],advantages:["Useful for treating vagally mediated bradycardia.","Increases heart rate and supports cardiac output.","Inexpensive and widely available."],disadvantages:["Can cause tachycardia and increased myocardial oxygen demand.","May worsen certain tachyarrhythmias.","Use cautiously in pre-existing cardiac disease.","Low doses may cause or exacerbate second-degree AV block."],notes:[]},
+  glycopyrrolate:{name:"Glycopyrrolate",subtitle:"Longer-acting anticholinergic",category:"Anticholinergic",dose:"0.005–0.02 mg/kg SQ, IM, IV",concentration:"0.2 mg/mL",routes:"SQ, IM, IV",routeOptions:["SQ","IM","IV"],time:"Onset similar to atropine; duration 2–4 hr",schedule:"Not controlled",tags:["Premed","Anticholinergic"],mechanism:["Quaternary ammonium antimuscarinic; does not cross the blood–brain barrier.","Reduces vagal tone and salivary/respiratory secretions."],advantages:["No CNS effects (does not cross BBB).","Longer duration than atropine.","Less pronounced initial tachycardia."],disadvantages:["Prolonged effects may be undesirable post-op.","Slightly slower onset; not ideal when rapid HR response needed.","SQ absorption can be variable."],notes:[]},
+  acepromazine:{name:"Acepromazine",subtitle:"Phenothiazine tranquilizer",category:"Tranquilizer / Sedative",dose:"0.01–0.05 mg/kg SQ, IM, IV (max 3 mg total)",concentration:"1 mg/mL",routes:"SQ, IM, IV",routeOptions:["SQ","IM","IV"],time:"Onset 20–30 min IM; duration 4–8+ hr",schedule:"Not controlled",tags:["Premed","Sedative"],mechanism:["Dopamine (D2) receptor antagonist with alpha-1 blockade.","Produces tranquilization but NO analgesia."],advantages:["Potent tranquilizer; excellent anxiolytic, especially in dogs.","Reduces catecholamine-induced arrhythmias.","Smooths recovery at low doses."],disadvantages:["Peripheral vasodilation and hypotension.","Irreversible — effects last ~8 hours.","Avoid/reduce dose in hypovolemic, geriatric, or very young patients.","Avoid in Boxers."],notes:[]},
+  diazepam:{name:"Diazepam",subtitle:"Benzodiazepine sedative / muscle relaxant",category:"Benzodiazepine",dose:"0.1–0.5 mg/kg IV",concentration:"5 mg/mL",routes:"IV (preferred), PO, rectal",routeOptions:["IV","PO","Rectal"],time:"Rapid onset; duration ≈30–60 min IV",schedule:"Controlled (C-IV)",tags:["Sedative","Anticonvulsant"],mechanism:["Enhances GABA at the GABA-A receptor, producing CNS depression.","Anxiolysis, muscle relaxation, and anticonvulsant activity."],advantages:["Minimal cardiovascular depression at clinical doses.","Useful co-induction agent with ketamine or propofol.","Excellent anticonvulsant for active seizures."],disadvantages:["May cause excitement in healthy adult animals when used alone.","Propylene-glycol based; IM injection is painful and poorly absorbed.","Use cautiously in liver dysfunction."],notes:[]},
+  midazolam:{name:"Midazolam",subtitle:"Water-soluble benzodiazepine",category:"Benzodiazepine",dose:"0.1–0.5 mg/kg IM, SQ, IV",concentration:"5 mg/mL",routes:"IM, SQ, IV",routeOptions:["IM","SQ","IV","Intranasal"],time:"Rapid onset; duration ~1 hr",schedule:"Controlled (C-IV)",tags:["Sedative","Anticonvulsant"],mechanism:["Benzodiazepine that enhances GABA-mediated CNS depression.","Water-soluble; similar profile to diazepam."],advantages:["IM administration without significant pain.","Minimal cardiovascular and respiratory depression.","Reversible with flumazenil."],disadvantages:["Excitement or dysphoria in healthy non-painful animals.","Limited sedation when used alone in young healthy animals."],notes:["Commonly combined with opioids or induction agents for co-induction."]},
+  buprenorphine:{name:"Buprenorphine",subtitle:"Partial μ-agonist opioid",category:"Opioid analgesic",dose:"0.01–0.04 mg/kg IM, IV, SQ, OTM",concentration:"0.3 mg/mL (high-conc 1.8 mg/mL formulations exist)",routes:"IM, IV, SQ, oral transmucosal (cats)",routeOptions:["IM","IV","SQ","OTM (cats)"],time:"Onset 30–45 min; duration 6–10+ hr",schedule:"Controlled (C-III)",tags:["Opioid","Analgesic"],mechanism:["Partial μ-agonist with high receptor affinity and slow dissociation.","Moderate analgesia with a ceiling effect."],advantages:["Long-acting analgesia in cats and dogs.","Lower dysphoria/respiratory depression than full μ-agonists.","Oral transmucosal (OTM) effective in cats."],disadvantages:["Difficult to fully reverse due to high receptor affinity.","May be insufficient for very painful procedures."],notes:[]},
+  butorphanol:{name:"Butorphanol",subtitle:"κ-agonist / μ-antagonist opioid",category:"Opioid (mixed agonist–antagonist)",dose:"0.2–0.8 mg/kg IM, IV, SQ",concentration:"10 mg/mL",routes:"IM, IV, SQ",routeOptions:["IM","IV","SQ"],time:"Onset 10–15 min; analgesia ~1–2 hr, sedation ~2–4 hr",schedule:"Controlled (C-IV)",tags:["Opioid","Sedative"],mechanism:["κ-agonist and weak μ-antagonist.","Good sedative but only mild analgesic effect."],advantages:["Good sedation in combination protocols.","Ceiling effect for respiratory depression; relatively safe.","Can partially reverse full μ-agonists while maintaining some analgesia."],disadvantages:["Insufficient for severe pain (orthopedic, major surgery).","Short duration of analgesia."],notes:[]},
+  fentanyl:{name:"Fentanyl",subtitle:"Potent full μ-agonist opioid",category:"Opioid analgesic",dose:"0.002–0.01 mg/kg IV bolus; CRI per protocol",concentration:"0.05 mg/mL",routes:"IV (bolus/CRI), IM, transdermal patch",routeOptions:["IV bolus","IV CRI","IM","Transdermal patch"],time:"Rapid IV onset (minutes); very short duration after single bolus",schedule:"Controlled (C-II)",tags:["Opioid","CRI"],mechanism:["Strong μ-agonist providing profound analgesia.","Used as intra-operative CRI or repeated boluses."],advantages:["Excellent analgesia for severe acute pain.","Highly titratable via CRI with rapid on/off.","Minimal cardiovascular depression at clinical doses."],disadvantages:["Dose-dependent respiratory depression.","Bradycardia from vagal tone increase.","Requires controlled-substance handling."],notes:[]},
+  morphine:{name:"Morphine",subtitle:"Prototype full μ-agonist opioid",category:"Opioid analgesic",dose:"0.1–0.5 mg/kg IM, SQ (dogs); use lower doses in cats",concentration:"10 mg/mL",routes:"IM, SQ, slow IV, epidural",routeOptions:["IM","SQ","IV (slow, dogs only)","Epidural"],time:"Onset 20–30 min IM; duration 4–6 hr",schedule:"Controlled (C-II)",tags:["Opioid"],mechanism:["Full μ-agonist providing moderate–severe analgesia.","Histamine release possible with rapid IV injection."],advantages:["Inexpensive and widely available.","Good analgesia and sedation.","Epidural use provides long-lasting regional analgesia."],disadvantages:["May cause vomiting and defecation, especially in non-painful animals.","Bradycardia and respiratory depression at higher doses.","Histamine release/hypotension with rapid IV administration."],notes:[]},
+  hydromorphone:{name:"Hydromorphone",subtitle:"Full μ-agonist opioid",category:"Opioid analgesic",dose:"0.05–0.2 mg/kg IM, IV, SQ",concentration:"2 mg/mL",routes:"IM, IV, SQ",routeOptions:["IM","IV","SQ"],time:"Onset 15–20 min IM; duration 3–4 hr",schedule:"Controlled (C-II)",tags:["Opioid"],mechanism:["Full μ-agonist providing moderate to severe analgesia."],advantages:["Reliable analgesia and sedation.","Less histamine release than morphine when given IV."],disadvantages:["Commonly causes vomiting in dogs.","Panting, dysphoria, or bradycardia can occur.","Respiratory depression at higher doses."],notes:[]},
+  methadone:{name:"Methadone",subtitle:"Full μ-agonist opioid (NMDA effects)",category:"Opioid analgesic",dose:"0.1–0.7 mg/kg IM, IV, SQ",concentration:"10 mg/mL",routes:"IM, IV, SQ",routeOptions:["IM","IV","SQ"],time:"Onset 10–20 min; duration 3–6 hr",schedule:"Controlled (C-II)",tags:["Opioid"],mechanism:["Full μ-agonist with additional NMDA antagonism and monoamine reuptake effects.","Useful for acute peri-operative pain."],advantages:["Good analgesia with generally less vomiting than morphine/hydromorphone.","Useful in multimodal therapy for neuropathic pain."],disadvantages:["Respiratory depression and bradycardia possible.","Sedation or dysphoria in some patients."],notes:[]},
+  dexmedetomidine:{name:"Dexmedetomidine",subtitle:"Alpha-2 adrenergic agonist sedative",category:"Alpha-2 agonist",dose:"0.001–0.02 mg/kg IM, SQ, IV",concentration:"0.5 mg/mL (also 0.1 & 10 mg/mL)",routes:"IM, IV, SQ",routeOptions:["IM","IV","SQ","IV CRI"],time:"Onset 5–10 min IM; duration 1–2 hr",schedule:"Not controlled",tags:["Sedative","Analgesic","Reversible"],mechanism:["Selective alpha-2 agonist causing CNS depression and analgesia.","Dose-dependent sedation, muscle relaxation, and analgesia."],advantages:["Reliable sedation with analgesic properties.","Reversible with atipamezole.","Good muscle relaxation for minor procedures."],disadvantages:["Marked bradycardia and reduced cardiac output.","Peripheral vasoconstriction / initial hypertension followed by hypotension.","Avoid in significant cardiac disease, shock, or extremes of age."],notes:[]},
+  propofol:{name:"Propofol",subtitle:"IV induction agent",category:"Non-barbiturate hypnotic",dose:"2–8 mg/kg IV to effect",concentration:"10 mg/mL",routes:"IV",routeOptions:["IV"],time:"Rapid onset (<1 min); short duration after single bolus",schedule:"Not controlled in most regions",tags:["Induction"],mechanism:["Enhances GABA-mediated inhibitory neurotransmission.","Hypnosis but no analgesia."],advantages:["Rapid, smooth induction and recovery.","Can be titrated slowly to effect.","Extra-hepatic metabolism; often tolerated in liver disease."],disadvantages:["Dose-dependent apnea and respiratory depression.","Vasodilation and hypotension, especially in hypovolemic patients.","Pain on injection possible with small/peripheral catheters."],notes:[]},
+  ketamine:{name:"Ketamine",subtitle:"Dissociative anesthetic",category:"Dissociative / NMDA antagonist",dose:"5–7 mg/kg IV or IM for induction; CRI per protocol",concentration:"100 mg/mL",routes:"IV, IM",routeOptions:["IV","IM","IV CRI"],time:"Rapid onset; duration 10–20 min after induction dose",schedule:"Controlled (C-III)",tags:["Induction","Analgesic","CRI"],mechanism:["Non-competitive NMDA receptor antagonist.","Dissociative anesthesia with somatic analgesia."],advantages:["Maintains sympathetic tone — supports HR and BP.","Good somatic/orthopedic analgesia.","Useful as CRI for wind-up and chronic pain."],disadvantages:["Sympathomimetic effects undesirable in some cardiomyopathies.","Increased salivation and muscle tone without co-induction agents.","Rough recoveries at high doses."],notes:["Avoid when possible in patients with increased intracranial or intraocular pressure."]},
+  etomidate:{name:"Etomidate",subtitle:"Cardio-sparing induction agent",category:"Imidazole anesthetic",dose:"0.5–1.5 mg/kg IV to effect",concentration:"2 mg/mL",routes:"IV",routeOptions:["IV"],time:"Rapid onset; short duration",schedule:"Not controlled",tags:["Induction"],mechanism:["Enhances GABA-mediated inhibition with minimal cardiovascular depression."],advantages:["Minimal effect on HR, contractility, and BP.","Preferred induction agent in patients with severe cardiac disease."],disadvantages:["Myoclonus and excitement without adequate premedication.","Adrenocortical suppression, especially with repeated dosing or CRI.","Formulation can be irritating; pain on injection possible."],notes:[]},
+  alfaxalone:{name:"Alfaxalone",subtitle:"Neurosteroid induction agent",category:"Neuroactive steroid anesthetic",dose:"2–5 mg/kg IV or IM to effect",concentration:"10 mg/mL",routes:"IV, IM",routeOptions:["IV","IM"],time:"Rapid onset; short duration",schedule:"Controlled in some regions",tags:["Induction"],mechanism:["GABA-A agonist producing hypnosis and muscle relaxation."],advantages:["Can be given IM for heavy sedation/anesthesia in cats and small dogs.","Generally smooth induction and recovery when titrated.","Less cardiovascular depression than high-dose propofol."],disadvantages:["Excitement or paddling on recovery if under-dosed.","More expensive than propofol in many practices."],notes:[]},
+  carprofen:{name:"Carprofen",subtitle:"NSAID for peri-operative analgesia",category:"NSAID",dose:"Dogs: 2.2 mg/kg BID or 4.4 mg/kg SID; cats: 1–2 mg/kg single peri-op dose only",concentration:"50 mg/mL (injectable) or oral tablets",routes:"SQ (injectable), PO",routeOptions:["SQ","PO"],time:"Onset within hours; duration ≈24 hr",schedule:"Not controlled",tags:["NSAID","Analgesic"],mechanism:["COX-2 preferential NSAID.","Reduces inflammatory mediators and pain."],advantages:["Good post-operative analgesia for soft-tissue and orthopedic pain.","Once-daily dosing in dogs."],disadvantages:["Risk of GI ulceration, vomiting, diarrhea.","Renal and hepatic adverse effects, especially with dehydration.","Avoid concurrent NSAIDs/steroids without appropriate washout."],notes:[]},
+  ondansetron:{name:"Ondansetron",subtitle:"Serotonin (5-HT3) antagonist anti-emetic",category:"Antiemetic",dose:"0.5–1 mg/kg IV",concentration:"2 mg/mL",routes:"IV, PO",routeOptions:["IV","PO"],time:"Onset within 30–60 min; duration several hours",schedule:"Not controlled",tags:["Antiemetic"],mechanism:["Selective 5-HT3 receptor antagonist in the chemoreceptor trigger zone and GI tract."],advantages:["Effective for many causes of nausea/vomiting.","Minimal sedative or cardiovascular effects."],disadvantages:["Relatively short duration; may need repeated dosing.","Cost can be higher than maropitant."],notes:[]},
+  bupivacaine:{name:"Bupivacaine",subtitle:"Long-acting local anesthetic",category:"Amide local anesthetic",dose:"Dogs: <2 mg/kg; cats: <1 mg/kg total (do not exceed toxic dose)",concentration:"7.5 mg/mL (varies by product)",routes:"Local infiltration, nerve blocks, epidural, wound soaker catheters",routeOptions:["Local infiltration","Peripheral nerve block","Epidural","Wound soaker catheter","Splash block","Intratesticular"],time:"Onset 15–30 min; duration 4–8 hr",schedule:"Not controlled",tags:["Local block"],mechanism:["Blocks voltage-gated sodium channels, preventing nerve depolarization."],advantages:["Long-lasting regional analgesia.","Marked opioid-sparing effect in locoregional techniques."],disadvantages:["Cardiotoxic and neurotoxic at high plasma concentrations.","Intravascular injection can cause severe arrhythmias and collapse.","Dose limits critical in cats and small patients."],notes:[]},
+  lidocaine:{name:"Lidocaine",subtitle:"Short-acting local anesthetic; anti-arrhythmic",category:"Amide local anesthetic",dose:"Regional: <4 mg/kg (dog), <2 mg/kg (cat); CRI protocols vary",concentration:"10–20 mg/mL injectable; diluted for CRI/epidural",routes:"Local infiltration, nerve blocks, IV bolus/CRI (dogs), epidural",routeOptions:["Local infiltration","Peripheral nerve block","IV bolus (dogs only)","IV CRI (dogs only)","Epidural","Intratesticular","Splash block"],time:"Onset 5–10 min; duration 1–2 hr for local blocks",schedule:"Not controlled",tags:["Local block","CRI"],mechanism:["Blocks voltage-gated sodium channels in nerves and myocardium.","IV: anti-arrhythmic and pro-motility effects."],advantages:["Rapid onset.","Systemic CRI reduces anesthetic requirements and provides analgesia in dogs.","Useful anti-arrhythmic for ventricular ectopy in dogs."],disadvantages:["Cats are more sensitive to toxicity; avoid IV bolus in cats.","High doses cause CNS signs (tremors, seizures) and cardiovascular depression.","Intravascular injection during regional blocks can be dangerous."],notes:[]},
+  dopamine:{name:"Dopamine",subtitle:"Catecholamine CRI — inotrope / vasopressor",category:"Inotrope / vasopressor",dose:"0.001–0.01 mg/kg/min IV CRI",concentration:"0.8 mg/mL (typical dilution)",routes:"IV CRI only",routeOptions:["IV CRI"],time:"Very short half-life; effect stops within minutes of stopping",schedule:"Not controlled",tags:["CRI","Cardiovascular"],mechanism:["Low doses: dopaminergic effects on renal/mesenteric vasculature.","Moderate doses: β1-adrenergic inotropy.","High doses: α1-mediated vasoconstriction."],advantages:["Titrated CRI supports BP and cardiac output.","Useful in hypotensive anesthetized patients."],disadvantages:["Tachycardia and arrhythmias.","Increased myocardial oxygen demand.","Requires dedicated IV line and infusion pump."],notes:[]},
+  dobutamine:{name:"Dobutamine",subtitle:"Primarily β1-agonist inotrope",category:"Inotrope",dose:"0.001–0.02 mg/kg/min IV CRI",concentration:"1 mg/mL (typical dilution)",routes:"IV CRI only",routeOptions:["IV CRI"],time:"Very short half-life; titratable",schedule:"Not controlled",tags:["CRI","Cardiovascular"],mechanism:["Predominantly β1-adrenergic agonist improving contractility.","Minimal effect on systemic vascular resistance at low doses."],advantages:["Improves stroke volume and cardiac output in low-output states.","Less tachycardia than dopamine at equivalent inotropic doses."],disadvantages:["Tachyarrhythmias at higher doses.","Increased myocardial oxygen consumption.","Requires CRI with close ECG and BP monitoring."],notes:[]},
+  ephedrine:{name:"Ephedrine",subtitle:"Indirect sympathomimetic vasopressor",category:"Vasopressor / inotrope",dose:"0.05–0.2 mg/kg IV or IM; CRI protocols vary",concentration:"1 mg/mL (CRI dilution)",routes:"Slow IV bolus or CRI",routeOptions:["IV bolus","IV CRI","IM"],time:"Onset within minutes; duration 15–60 min",schedule:"Not controlled in most regions",tags:["Vasopressor"],mechanism:["Indirectly increases norepinephrine release; directly stimulates α and β receptors.","Increases heart rate and blood pressure."],advantages:["Useful for transient anesthetic-related hypotension.","Can be given as bolus or low-dose CRI."],disadvantages:["Tachyphylaxis with repeated dosing.","May cause tachycardia and arrhythmias.","Less predictable in catecholamine-depleted patients."],notes:[]}
+};
+
+/* ────────────────────────────────────────
+   DOSE TABLE CONFIG
+──────────────────────────────────────── */
+const DOSE_ROWS = [
+  {type:"section",label:"Anticholinergics"},
+  {drugKey:"atropine",       label:"Atropine",        note:"SQ, IM, IV",                          lowDog:0.01,  highDog:0.04,  lowCat:0.01,  highCat:0.04,  conc:0.54},
+  {drugKey:"glycopyrrolate", label:"Glycopyrrolate",  note:"SQ, IM, IV",                          lowDog:0.005, highDog:0.02,  lowCat:0.005, highCat:0.02,  conc:0.2},
+
+  {type:"section",label:"Tranquilizers / Sedatives"},
+  {drugKey:"acepromazine",   label:"Acepromazine",    note:"SQ, IM, IV (max 3 mg total)",         lowDog:0.01,  highDog:0.05,  lowCat:0.01,  highCat:0.05,  conc:1},
+  {drugKey:"diazepam",       label:"Diazepam",        note:"IV preferred",                        lowDog:0.1,   highDog:0.5,   lowCat:0.1,   highCat:0.5,   conc:5},
+  {drugKey:"midazolam",      label:"Midazolam",       note:"IM, SQ, IV",                          lowDog:0.1,   highDog:0.5,   lowCat:0.1,   highCat:0.5,   conc:5},
+  {drugKey:"dexmedetomidine",label:"Dexmedetomidine", note:"IM, SQ, IV",                          lowDog:0.005, highDog:0.02,  lowCat:0.005, highCat:0.02,  conc:0.5},
+
+  {type:"section",label:"Opioids"},
+  {type:"sub",label:"Full μ-Agonists"},
+  {drugKey:"morphine",       label:"Morphine",        note:"IM, SQ — slow IV dogs only",          lowDog:0.1,   highDog:0.5,   lowCat:0.05,  highCat:0.2,   conc:10},
+  {drugKey:"hydromorphone",  label:"Hydromorphone",   note:"IM, IV, SQ",                          lowDog:0.05,  highDog:0.2,   lowCat:0.05,  highCat:0.1,   conc:2},
+  {drugKey:"methadone",      label:"Methadone",       note:"IM, IV, SQ",                          lowDog:0.1,   highDog:0.7,   lowCat:0.1,   highCat:0.3,   conc:10},
+  {drugKey:"fentanyl",       label:"Fentanyl",        note:"IV bolus/CRI",                        lowDog:0.002, highDog:0.01,  lowCat:0.002, highCat:0.005, conc:0.05},
+  {type:"sub",label:"Partial / Mixed Agonists"},
+  {drugKey:"buprenorphine",  label:"Buprenorphine",   note:"IM, IV, SQ, OTM (cats)",              lowDog:0.01,  highDog:0.04,  lowCat:0.01,  highCat:0.04,  conc:0.3},
+  {drugKey:"butorphanol",    label:"Butorphanol",     note:"IM, IV, SQ",                          lowDog:0.2,   highDog:0.8,   lowCat:0.2,   highCat:0.8,   conc:10},
+
+  {type:"section",label:"Induction Agents"},
+  {drugKey:"propofol",       label:"Propofol",        note:"IV to effect",                        lowDog:2,     highDog:8,     lowCat:2,     highCat:8,     conc:10},
+  {drugKey:"ketamine",       label:"Ketamine",        note:"IV or IM (with premedication)",       lowDog:5,     highDog:7,     lowCat:5,     highCat:7,     conc:100},
+  {drugKey:"alfaxalone",     label:"Alfaxalone",      note:"IV to effect; IM in cats",            lowDog:2,     highDog:5,     lowCat:2,     highCat:5,     conc:10},
+  {drugKey:"etomidate",      label:"Etomidate",       note:"IV to effect (with premedication)",   lowDog:0.5,   highDog:1.5,   lowCat:0.5,   highCat:1.5,   conc:2},
+
+  {type:"section",label:"NSAIDs"},
+  {drugKey:"carprofen",      label:"Carprofen",       note:"SQ, PO",                              lowDog:2.2,   highDog:4.4,   lowCat:1,     highCat:2,     conc:50},
+
+  {type:"section",label:"Antiemetics"},
+  {drugKey:"ondansetron",    label:"Ondansetron",     note:"IV",                                  lowDog:0.5,   highDog:1,     lowCat:0.5,   highCat:1,     conc:2},
+
+  {type:"section",label:"Local Anesthetics"},
+  {drugKey:"bupivacaine",    label:"Bupivacaine",     note:"Nerve block / infiltration (total dose limit)",  lowDog:0, highDog:2, lowCat:0, highCat:1, conc:7.5},
+  {drugKey:"lidocaine",      label:"Lidocaine",       note:"Nerve block / CRI dogs; avoid IV in cats",      lowDog:0, highDog:4, lowCat:0, highCat:2, conc:20},
+];
+
+/* ────────────────────────────────────────
+   CRI CONFIG
+──────────────────────────────────────── */
+const CRI_DRUGS = [
+  {drugKey:"fentanyl",      name:"Fentanyl",       defaultDose:0.006, conc:0.05, doseRange:"0.003–0.01 mg/kg/min"},
+  {drugKey:"ketamine",      name:"Ketamine",       defaultDose:0.01,  conc:1,    doseRange:"0.003–0.02 mg/kg/min"},
+  {drugKey:"lidocaine",     name:"Lidocaine",      defaultDose:0.05,  conc:8,    doseRange:"0.025–0.1 mg/kg/min (dog only)"},
+  {drugKey:"morphine",      name:"Morphine",       defaultDose:0.003, conc:1,    doseRange:"0.001–0.005 mg/kg/min"},
+  {drugKey:"dexmedetomidine",name:"Dexmedetomidine",defaultDose:0.001,conc:0.5,  doseRange:"0.0005–0.002 mg/kg/min"},
+  {drugKey:"dopamine",      name:"Dopamine",       defaultDose:0.005, conc:0.8,  doseRange:"0.001–0.01 mg/kg/min"},
+  {drugKey:"dobutamine",    name:"Dobutamine",     defaultDose:0.005, conc:1,    doseRange:"0.001–0.02 mg/kg/min"},
+  {drugKey:"ephedrine",     name:"Ephedrine",      defaultDose:0.005, conc:1,    doseRange:"Variable; titrate to effect"},
+];
+
+/* ────────────────────────────────────────
+   KITTY MAGIC DATA
+──────────────────────────────────────── */
+const KM_TABLE = [
+  {min:2,max:3,mild:0.025,mod:0.05, pLo:0.10,pHi:0.15,rowId:"ref-row-0"},
+  {min:3,max:4,mild:0.05, mod:0.10, pLo:0.20,pHi:0.25,rowId:"ref-row-1"},
+  {min:4,max:6,mild:0.10, mod:0.20, pLo:0.30,pHi:0.35,rowId:"ref-row-2"},
+  {min:6,max:7,mild:0.20, mod:0.30, pLo:0.40,pHi:0.45,rowId:"ref-row-3"},
+  {min:7,max:8,mild:0.30, mod:0.40, pLo:0.50,pHi:0.55,rowId:"ref-row-4"},
+];
+const KM_OPIOIDS = {butorphanol:"Butorphanol (10 mg/mL)",hydromorphone:"Hydromorphone (2 mg/mL)",buprenorphine:"Buprenorphine (0.3 mg/mL)"};
+const KM_LEVELS  = [{key:"mild",label:"Mild",desc:"Light sedation / restraint"},{key:"moderate",label:"Moderate",desc:"Moderate sedation"},{key:"profound",label:"Profound",desc:"Heavy sedation / anesthesia"}];
+
+/* ────────────────────────────────────────
+   BUILD DOSE TABLE
+──────────────────────────────────────── */
+function buildDoseTable() {
+  const tbody = document.getElementById("dose-tbody");
+  DOSE_ROWS.forEach(row => {
+    const tr = document.createElement("tr");
+    if (row.type === "section") {
+      tr.className = "section-row";
+      tr.innerHTML = `<td colspan="6">${row.label}</td>`;
+    } else if (row.type === "sub") {
+      tr.className = "sub-row";
+      tr.innerHTML = `<td colspan="6">${row.label}</td>`;
+    } else {
+      tr.dataset.label = row.label.toLowerCase();
+      tr.dataset.key   = row.drugKey;
+      tr.innerHTML = `
+        <td><button class="drug-link-btn" onclick="openModal('${row.drugKey}')">${row.label}</button></td>
+        <td style="color:var(--gray-600);font-size:0.78rem">${row.note}</td>
+        <td><input type="number" id="dkg-${row.drugKey}" step="0.001" min="0" placeholder="mg/kg" style="width:88px;font-family:inherit;font-size:0.85rem;font-weight:600;border:2px solid #dda800;border-radius:5px;padding:6px 9px;background:#fff8ec;color:#7a4800;outline:none" oninput="recalcDoseRow('${row.drugKey}', true)"/></td>
+        <td id="rng-${row.drugKey}" style="font-size:0.78rem;color:var(--gray-600)"></td>
+        <td><input type="number" id="dmg-${row.drugKey}" readonly style="width:84px;font-family:inherit;font-size:0.85rem;font-weight:800;border:2px solid #5aaa6a;border-radius:5px;padding:6px 9px;background:#d4f5dc;color:#000000;letter-spacing:0.02em;outline:none"/></td>
+        <td><input type="number" id="dvl-${row.drugKey}" readonly style="width:84px;font-family:inherit;font-size:0.85rem;font-weight:800;border:2px solid #5aaa6a;border-radius:5px;padding:6px 9px;background:#d4f5dc;color:#000000;letter-spacing:0.02em;outline:none"/></td>
+      `;
+    }
+    tbody.appendChild(tr);
+  });
+}
+
+// Store conc per drug key for recalc
+const DOSE_CONC = {};
+DOSE_ROWS.forEach(r => { if (!r.type) DOSE_CONC[r.drugKey] = r.conc; });
+
+function recalcDoseRow(drugKey, userEdited) {
+  const wt   = parseFloat(document.getElementById("wt").value) || 0;
+  const dkgEl = document.getElementById(`dkg-${drugKey}`);
+  const dmgEl = document.getElementById(`dmg-${drugKey}`);
+  const dvlEl = document.getElementById(`dvl-${drugKey}`);
+  if (!dkgEl || !dmgEl || !dvlEl) return;
+  if (userEdited) dkgEl.dataset.userEdited = "1";
+  const dkg  = parseFloat(dkgEl.value);
+  const conc = DOSE_CONC[drugKey] || 1;
+  if (wt > 0 && !isNaN(dkg) && dkg > 0) {
+    const mg = dkg * wt;
+    dmgEl.value = mg.toFixed(3);
+    dvlEl.value = (mg / conc).toFixed(3);
+  } else {
+    dmgEl.value = "";
+    dvlEl.value = "";
+  }
+}
+
+function recalcDoses() {
+  const wt  = parseFloat(document.getElementById("wt").value) || 0;
+  const sp  = document.getElementById("species").value;
+  DOSE_ROWS.forEach(row => {
+    if (row.type) return;
+    const lo = sp==="dog" ? row.lowDog : row.lowCat;
+    const hi = sp==="dog" ? row.highDog: row.highCat;
+    const rng  = document.getElementById(`rng-${row.drugKey}`);
+    const dkgEl= document.getElementById(`dkg-${row.drugKey}`);
+    const dmgEl= document.getElementById(`dmg-${row.drugKey}`);
+    const dvlEl= document.getElementById(`dvl-${row.drugKey}`);
+    if (!dkgEl) return;
+
+    if (lo===0 && hi===0) {
+      rng.textContent = "See notes";
+      dkgEl.placeholder = "mg/kg";
+      dmgEl.value = ""; dvlEl.value = "";
+      return;
+    }
+
+    rng.textContent = `${lo}–${hi} mg/kg`;
+
+    // Pre-fill midpoint only if user hasn't typed their own value
+    if (!dkgEl.dataset.userEdited) {
+      const avg = (lo + hi) / 2;
+      dkgEl.value = avg.toFixed(4).replace(/\.?0+$/, "");
+    }
+
+    recalcDoseRow(row.drugKey);
+  });
+}
+
+function filterRows() {
+  const q = document.getElementById("drug-search").value.toLowerCase();
+  let visible = 0;
+  document.querySelectorAll("#dose-tbody tr").forEach(tr => {
+    if (tr.classList.contains("section-row") || tr.classList.contains("sub-row")) { tr.style.display=""; return; }
+    const match = !q || (tr.dataset.label||"").includes(q) || (tr.dataset.key||"").includes(q);
+    tr.style.display = match ? "" : "none";
+    if (match) visible++;
+  });
+  document.getElementById("no-results").style.display = visible ? "none" : "block";
+}
+
+/* ────────────────────────────────────────
+   BUILD CRI GRID
+──────────────────────────────────────── */
+function buildCRIGrid() {
+  const grid = document.getElementById("cri-grid");
+  CRI_DRUGS.forEach(d => {
+    const card = document.createElement("div");
+    card.className = "cri-card";
+    card.innerHTML = `
+      <div class="cri-head">
+        <span class="cname"><button class="drug-link-btn" style="color:white" onclick="openModal('${d.drugKey}')">${d.name}</button></span>
+        <span class="cunit">mg/mL</span>
+      </div>
+      <div class="cri-body">
+        <div class="cri-row"><span class="cri-lbl">Range</span><span style="font-size:0.74rem;color:var(--gray-600);text-align:right;flex:1">${d.doseRange}</span></div>
+        <div class="cri-row">
+          <span class="cri-lbl">Dose (mg/kg/min)</span>
+          <input type="number" id="cd-${d.drugKey}" step="0.0001" value="${d.defaultDose}" class="inp-amber" style="width:84px" oninput="calcCRI('${d.drugKey}')"/>
+        </div>
+        <div class="cri-row">
+          <span class="cri-lbl">Conc. (mg/mL)</span>
+          <input type="number" id="cc-${d.drugKey}" step="0.01" value="${d.conc}" class="inp-amber" style="width:84px" oninput="calcCRI('${d.drugKey}')"/>
+        </div>
+        <div class="cri-row result-row">
+          <span class="cri-lbl">Rate (mL/hr)</span>
+          <input type="number" id="cv-${d.drugKey}" class="inp-green" readonly style="width:84px"/>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function recalcCRI() { CRI_DRUGS.forEach(d => calcCRI(d.drugKey)); }
+function calcCRI(key) {
+  const wt   = parseFloat(document.getElementById("cri-wt").value)||0;
+  const dose = parseFloat(document.getElementById(`cd-${key}`).value)||0;
+  const conc = parseFloat(document.getElementById(`cc-${key}`).value)||1;
+  const el   = document.getElementById(`cv-${key}`);
+  if (!el) return;
+  el.value = (wt>0&&dose>0) ? ((dose*wt/conc)*60).toFixed(3) : "";
+}
+
+/* ────────────────────────────────────────
+   KITTY MAGIC
+──────────────────────────────────────── */
+function recalcKitty() {
+  const wt     = parseFloat(document.getElementById("kitty-wt").value)||0;
+  const opioid = document.getElementById("kitty-opioid").value;
+  const level  = document.getElementById("kitty-level").value;
+  let row=null, rowIdx=-1;
+  KM_TABLE.forEach((r,i)=>{
+    const last = i===KM_TABLE.length-1;
+    if(wt>=r.min&&(last?wt<=r.max:wt<r.max)){row=r;rowIdx=i;}
+  });
+  KM_TABLE.forEach((r,i)=>{
+    document.getElementById(r.rowId).querySelectorAll("td").forEach(td=>td.classList.toggle("hl",i===rowIdx));
+  });
+  const band = document.getElementById("kitty-band");
+  band.innerHTML = !row ? (wt<=0?"Enter a cat weight above.":wt<2?"Weight band: <strong>below table range (&lt; 2 kg)</strong>":"Weight band: <strong>above table range (&gt; 8 kg)</strong>") : `Weight band: <strong>${row.min}–${row.max} kg</strong>`;
+
+  const cont = document.getElementById("km-cards");
+  cont.innerHTML="";
+  KM_LEVELS.forEach(lvl=>{
+    const card = document.createElement("div");
+    card.className="km-card"+(lvl.key===level?" selected":"");
+    let vol="",vd="";
+    if(row){
+      if(lvl.key==="mild"){const v=row.mild;vol=(v<0.1?v.toFixed(3):v.toFixed(2))+" mL";vd=`<div class="km-vol">${v<0.1?v.toFixed(3):v.toFixed(2)}</div>`;}
+      else if(lvl.key==="moderate"){vol=row.mod.toFixed(2)+" mL";vd=`<div class="km-vol">${row.mod.toFixed(2)}</div>`;}
+      else{vol=`${row.pLo.toFixed(2)} – ${row.pHi.toFixed(2)} mL`;vd=`<div class="km-vol-range">${row.pLo.toFixed(2)} – ${row.pHi.toFixed(2)}</div>`;}
+    }
+    let h=`<div class="km-level">${lvl.label}</div><div class="km-desc">${lvl.desc}</div>`;
+    if(!row){h+=`<div class="km-oor">Weight out of table range</div>`;}
+    else{
+      h+=`${vd}<div class="km-unit">mL of each drug IM</div>`;
+      if(lvl.key===level){h+=`<div class="km-drugs"><div>Ketamine 100 mg/mL: ${vol}</div><div>Dexmed 0.5 mg/mL: ${vol}</div><div>${KM_OPIOIDS[opioid]}: ${vol}</div></div>`;}
+    }
+    card.innerHTML=h;
+    cont.appendChild(card);
+  });
+}
+
+/* ────────────────────────────────────────
+   DRUG MODAL
+──────────────────────────────────────── */
+function openModal(key) {
+  const d = DRUGS[key]; if(!d) return;
+  document.getElementById("m-name").textContent    = d.name;
+  document.getElementById("m-subtitle").textContent= d.subtitle||"";
+  document.getElementById("m-cat").textContent     = d.category||"";
+  document.getElementById("m-dose").textContent    = d.dose||"";
+  document.getElementById("m-conc").textContent    = d.concentration||"";
+  document.getElementById("m-routes").textContent  = d.routes||"";
+  document.getElementById("m-time").textContent    = d.time||"";
+  document.getElementById("m-sched").textContent   = d.schedule||"";
+  const tags = document.getElementById("m-tags");
+  tags.innerHTML="";
+  (d.tags||[]).forEach(t=>{const s=document.createElement("span");s.className="tag";s.textContent=t;tags.appendChild(s);});
+  fillList("m-mech", d.mechanism);
+  fillList("m-adv",  d.advantages);
+  fillList("m-dis",  d.disadvantages);
+  fillList("m-notes",d.notes);
+  document.getElementById("m-notes-wrap").style.display=(d.notes&&d.notes.length)?"":"none";
+  document.getElementById("drug-modal").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+function fillList(id, arr) {
+  const ul=document.getElementById(id); ul.innerHTML="";
+  (arr||[]).forEach(item=>{const li=document.createElement("li");li.textContent=item;ul.appendChild(li);});
+}
+function closeDrugModal() {
+  document.getElementById("drug-modal").classList.remove("open");
+  document.body.style.overflow="";
+}
+function closeOverlay(e){ if(e.target===document.getElementById("drug-modal")) closeDrugModal(); }
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeDrugModal(); });
+
+/* ────────────────────────────────────────
+   TABS
+──────────────────────────────────────── */
+function showTab(which){
+  ["doses","cri","kitty","protocol"].forEach(t=>{
+    document.getElementById("tab-"+t).classList.toggle("active",t===which);
+    document.getElementById("btn-"+t).classList.toggle("active",t===which);
+  });
+}
+
+/* ────────────────────────────────────────
+   PROTOCOL BUILDER
+──────────────────────────────────────── */
+
+// Drug catalog for picker — sections define which drugs appear where
+const PB_CATALOG = {
+  premed: [
+    {key:"atropine",      lowDog:0.01, highDog:0.04, lowCat:0.01, highCat:0.04, conc:0.54,  note:"SQ, IM, IV"},
+    {key:"glycopyrrolate",lowDog:0.005,highDog:0.02, lowCat:0.005,highCat:0.02, conc:0.2,   note:"SQ, IM, IV"},
+    {key:"acepromazine",  lowDog:0.01, highDog:0.05, lowCat:0.01, highCat:0.05, conc:1,     note:"SQ, IM, IV"},
+    {key:"diazepam",      lowDog:0.1,  highDog:0.5,  lowCat:0.1,  highCat:0.5,  conc:5,     note:"IV"},
+    {key:"midazolam",     lowDog:0.1,  highDog:0.5,  lowCat:0.1,  highCat:0.5,  conc:5,     note:"IM, SQ, IV"},
+    {key:"dexmedetomidine",lowDog:0.005,highDog:0.02,lowCat:0.005,highCat:0.02, conc:0.5,   note:"IM, SQ, IV"},
+    {key:"morphine",      lowDog:0.1,  highDog:0.5,  lowCat:0.05, highCat:0.2,  conc:10,    note:"IM, SQ"},
+    {key:"hydromorphone", lowDog:0.05, highDog:0.2,  lowCat:0.05, highCat:0.1,  conc:2,     note:"IM, IV, SQ"},
+    {key:"methadone",     lowDog:0.1,  highDog:0.7,  lowCat:0.1,  highCat:0.3,  conc:10,    note:"IM, IV, SQ"},
+    {key:"buprenorphine", lowDog:0.01, highDog:0.04, lowCat:0.01, highCat:0.04, conc:0.3,   note:"IM, IV, SQ, OTM"},
+    {key:"butorphanol",   lowDog:0.2,  highDog:0.8,  lowCat:0.2,  highCat:0.8,  conc:10,    note:"IM, IV, SQ"},
+    {key:"carprofen",     lowDog:2.2,  highDog:4.4,  lowCat:1,    highCat:2,    conc:50,    note:"SQ"},
+    {key:"ondansetron",   lowDog:0.5,  highDog:1,    lowCat:0.5,  highCat:1,    conc:2,     note:"IV"},
+  ],
+  induction: [
+    {key:"propofol",      lowDog:2,    highDog:8,    lowCat:2,    highCat:8,    conc:10,    note:"IV to effect"},
+    {key:"ketamine",      lowDog:5,    highDog:7,    lowCat:5,    highCat:7,    conc:100,   note:"IV or IM"},
+    {key:"alfaxalone",    lowDog:2,    highDog:5,    lowCat:2,    highCat:5,    conc:10,    note:"IV to effect; IM cats"},
+    {key:"etomidate",     lowDog:0.5,  highDog:1.5,  lowCat:0.5,  highCat:1.5, conc:2,     note:"IV to effect"},
+    {key:"diazepam",      lowDog:0.1,  highDog:0.5,  lowCat:0.1,  highCat:0.5,  conc:5,    note:"Co-induction IV"},
+    {key:"midazolam",     lowDog:0.1,  highDog:0.5,  lowCat:0.1,  highCat:0.5,  conc:5,    note:"Co-induction IM/IV"},
+    {key:"ketamine",      lowDog:1,    highDog:2,    lowCat:1,    highCat:2,    conc:100,   note:"Co-induction IV"},
+  ],
+  cri: [
+    {key:"fentanyl",       defaultDose:0.006, conc:0.05, isCRI:true, doseRange:"0.003–0.01 mg/kg/min"},
+    {key:"ketamine",       defaultDose:0.01,  conc:1,    isCRI:true, doseRange:"0.003–0.02 mg/kg/min"},
+    {key:"lidocaine",      defaultDose:0.05,  conc:8,    isCRI:true, doseRange:"0.025–0.1 mg/kg/min (dog)"},
+    {key:"morphine",       defaultDose:0.003, conc:1,    isCRI:true, doseRange:"0.001–0.005 mg/kg/min"},
+    {key:"dexmedetomidine",defaultDose:0.001, conc:0.5,  isCRI:true, doseRange:"0.0005–0.002 mg/kg/min"},
+    {key:"dopamine",       defaultDose:0.005, conc:0.8,  isCRI:true, doseRange:"0.001–0.01 mg/kg/min"},
+    {key:"dobutamine",     defaultDose:0.005, conc:1,    isCRI:true, doseRange:"0.001–0.02 mg/kg/min"},
+    {key:"ephedrine",      defaultDose:0.005, conc:1,    isCRI:true, doseRange:"Variable"},
+    {key:"hydromorphone",  defaultDose:0.002, conc:2,    isCRI:true, doseRange:"0.001–0.003 mg/kg/min"},
+    {key:"butorphanol",    defaultDose:0.003, conc:10,   isCRI:true, doseRange:"0.001–0.005 mg/kg/min"},
+  ],
+  local: [
+    {key:"bupivacaine", lowDog:0, highDog:2, lowCat:0, highCat:1, conc:7.5, note:"Nerve block / infiltration"},
+    {key:"lidocaine",   lowDog:0, highDog:4, lowCat:0, highCat:2, conc:20,  note:"Nerve block / wound soaker"},
+  ]
+};
+
+let pbCurrentSection = null;
+let pbEntries = { premed:[], induction:[], cri:[], local:[] };
+let pbNextId = 1;
+
+function openPicker(section) {
+  pbCurrentSection = section;
+  const isCRI = section === 'cri';
+  document.getElementById("picker-title").textContent = isCRI ? "Add CRI Drug" : "Add Drug";
+  document.getElementById("picker-search").value = "";
+  buildPickerList("");
+  document.getElementById("picker-modal").classList.add("open");
+  document.body.style.overflow = "hidden";
+  setTimeout(()=>document.getElementById("picker-search").focus(), 50);
+}
+
+function closePicker() {
+  document.getElementById("picker-modal").classList.remove("open");
+  document.body.style.overflow = "";
+  pbCurrentSection = null;
+}
+
+function closePickerOverlay(e) {
+  if (e.target === document.getElementById("picker-modal")) closePicker();
+}
+
+function buildPickerList(q) {
+  const list = document.getElementById("picker-list");
+  list.innerHTML = "";
+  const catalog = PB_CATALOG[pbCurrentSection] || [];
+  const seen = new Set();
+  catalog.forEach(entry => {
+    const d = DRUGS[entry.key];
+    if (!d) return;
+    const uid = entry.key + (entry.note||"");
+    if (seen.has(uid)) return;
+    seen.add(uid);
+    const lq = q.toLowerCase();
+    if (q && !d.name.toLowerCase().includes(lq) && !d.category.toLowerCase().includes(lq)) return;
+    const item = document.createElement("div");
+    item.className = "picker-item";
+    item.innerHTML = `
+      <div>
+        <div class="pname">${d.name}</div>
+        <div class="psub">${d.subtitle}</div>
+      </div>
+      <div class="ptags">${(d.tags||[]).map(t=>`<span class="ptag">${t}</span>`).join("")}</div>
+    `;
+    item.onclick = () => { addPbDrug(entry); closePicker(); };
+    list.appendChild(item);
+  });
+  if (!list.children.length) {
+    list.innerHTML = `<div style="text-align:center;padding:28px;color:var(--gray-400);font-size:0.85rem">No drugs match your search.</div>`;
+  }
+}
+
+function filterPicker() {
+  buildPickerList(document.getElementById("picker-search").value);
+}
+
+function addPbDrug(entry) {
+  const id = pbNextId++;
+  const d  = DRUGS[entry.key];
+  const sp = document.getElementById("pb-species").value;
+  const wt = parseFloat(document.getElementById("pb-wt").value)||0;
+  const isCRI = !!entry.isCRI;
+
+  let defDose, defConc, defNote;
+  if (isCRI) {
+    defDose = entry.defaultDose;
+    defConc = entry.conc;
+    defNote = entry.doseRange || "";
+  } else {
+    const lo = sp==="dog"?entry.lowDog:entry.lowCat;
+    const hi = sp==="dog"?entry.highDog:entry.highCat;
+    defDose = lo===0&&hi===0 ? "" : ((lo+hi)/2).toFixed(4).replace(/\.?0+$/,"");
+    defConc = entry.conc;
+    defNote = entry.note || "";
+  }
+
+  const routes = DRUGS[entry.key]?.routeOptions || [];
+  const selectedRoute = routes[0] || "";
+  pbEntries[pbCurrentSection].push({
+    id, key:entry.key, isCRI, defDose, defConc, defNote, selectedRoute,
+    lowDog: entry.lowDog, highDog: entry.highDog,
+    lowCat: entry.lowCat, highCat: entry.highCat,
+    doseRange: entry.doseRange || ""
+  });
+  renderPbSection(pbCurrentSection);
+  pbRecalcRow(id);
+}
+
+function removePbDrug(section, id) {
+  pbEntries[section] = pbEntries[section].filter(e=>e.id!==id);
+  renderPbSection(section);
+}
+
+function renderPbSection(section) {
+  const list  = document.getElementById(`pb-list-${section}`);
+  const empty = document.getElementById(`pb-empty-${section}`);
+  const entries = pbEntries[section];
+  list.innerHTML = "";
+  empty.style.display = entries.length ? "none" : "";
+
+  entries.forEach(entry => {
+    const d  = DRUGS[entry.key];
+    const sp = document.getElementById("pb-species")?.value || "dog";
+    const row = document.createElement("div");
+    row.className = entry.isCRI ? "pb-drug-row-cri" : "pb-drug-row";
+    row.id = `pb-row-${entry.id}`;
+
+    // Dose range text from catalog entry
+    const rangeText = entry.isCRI
+      ? (entry.doseRange || "")
+      : (() => {
+          const lo = sp==="dog" ? entry.lowDog : entry.lowCat;
+          const hi = sp==="dog" ? entry.highDog: entry.highCat;
+          return (lo===0 && hi===0) ? "See notes" : `${lo}–${hi}`;
+        })();
+
+    // Route dropdown
+    const routes = d.routeOptions || [];
+    const routeOpts = routes.map(r =>
+      `<option value="${r}" ${r === entry.selectedRoute ? 'selected' : ''}>${r}</option>`
+    ).join("");
+    const routeSel = routes.length > 0
+      ? `<select class="pb-inp" id="pbr-${entry.id}" style="width:100%">${routeOpts}</select>`
+      : `<input class="pb-notes-inp" id="pbr-${entry.id}" value="${entry.selectedRoute||''}" placeholder="Route"/>`;
+
+    const outStyle = `width:100%;font-family:inherit;font-size:0.82rem;font-weight:800;border:2px solid #5aaa6a;border-radius:4px;padding:5px 7px;background:#d4f5dc;color:#000000;outline:none`;
+    const rangeStyle = `font-size:0.72rem;color:var(--gray-600);line-height:1.3`;
+
+    if (entry.isCRI) {
+      const criRoutes = (d.routeOptions||["IV CRI"]);
+      const criRouteOpts = criRoutes.map(r =>
+        `<option value="${r}" ${r === entry.selectedRoute ? 'selected' : ''}>${r}</option>`
+      ).join("");
+      row.innerHTML = `
+        <div class="pb-drug-name">
+          <button class="drug-link-btn" onclick="openModal('${entry.key}')" style="font-size:0.84rem;font-weight:700">${d.name}</button>
+          <span class="pb-cri-badge">CRI</span>
+        </div>
+        <div style="display:flex;gap:4px;align-items:center">
+          <select class="pb-inp" id="pbr-${entry.id}" style="flex:0 0 auto;width:auto;min-width:90px">${criRouteOpts}</select>
+          <input class="pb-notes-inp" id="pbn-${entry.id}" value="${entry.defNote||''}" placeholder="Notes" style="flex:1;min-width:0"/>
+        </div>
+        <input class="pb-inp" type="number" id="pbd-${entry.id}" step="0.0001" value="${entry.defDose}" placeholder="mg/kg/min" oninput="pbRecalcRow(${entry.id})"/>
+        <div style="${rangeStyle}">${rangeText}</div>
+        <input class="pb-inp" type="number" id="pbc-${entry.id}" step="0.01" value="${entry.defConc}" placeholder="mg/mL" oninput="pbRecalcRow(${entry.id})"/>
+        <input type="number" id="pbv-${entry.id}" readonly placeholder="mL/hr" style="${outStyle}"/>
+        <input class="pb-inp" type="number" id="pbh-${entry.id}" step="0.5" placeholder="hours"/>
+        <button class="pb-remove-btn" onclick="removePbDrug('${section}',${entry.id})" title="Remove">✕</button>
+      `;
+    } else {
+      row.innerHTML = `
+        <div class="pb-drug-name">
+          <button class="drug-link-btn" onclick="openModal('${entry.key}')" style="font-size:0.84rem;font-weight:700">${d.name}</button>
+        </div>
+        ${routeSel}
+        <input class="pb-inp" type="number" id="pbd-${entry.id}" step="0.001" value="${entry.defDose}" placeholder="mg/kg" oninput="pbRecalcRow(${entry.id})"/>
+        <div style="${rangeStyle}">${rangeText}</div>
+        <input type="number" id="pbm-${entry.id}" readonly placeholder="mg" style="${outStyle}"/>
+        <input class="pb-inp" type="number" id="pbc-${entry.id}" step="0.01" value="${entry.defConc}" placeholder="mg/mL" oninput="pbRecalcRow(${entry.id})"/>
+        <input type="number" id="pbv-${entry.id}" readonly placeholder="mL" style="${outStyle}"/>
+        <button class="pb-remove-btn" onclick="removePbDrug('${section}',${entry.id})" title="Remove">✕</button>
+      `;
+    }
+    list.appendChild(row);
+  });
+}
+
+function pbRecalcRow(id) {
+  const wt = parseFloat(document.getElementById("pb-wt").value)||0;
+  // find which section this id lives in
+  let isCRI = false;
+  for (const sec in pbEntries) {
+    const e = pbEntries[sec].find(x=>x.id===id);
+    if (e) { isCRI = e.isCRI; break; }
+  }
+
+  const doseEl = document.getElementById(`pbd-${id}`);
+  const concEl = document.getElementById(`pbc-${id}`);
+  const volEl  = document.getElementById(`pbv-${id}`);
+  if (!doseEl || !concEl || !volEl) return;
+
+  const dose = parseFloat(doseEl.value)||0;
+  const conc = parseFloat(concEl.value)||1;
+
+  if (isCRI) {
+    // mL/hr = (dose mg/kg/min × wt) / conc × 60
+    volEl.value = (wt>0&&dose>0) ? ((dose*wt/conc)*60).toFixed(3) : "";
+  } else {
+    const mgEl = document.getElementById(`pbm-${id}`);
+    const mg = dose * wt;
+    if (mgEl) mgEl.value = (wt>0&&dose>0) ? mg.toFixed(3) : "";
+    volEl.value = (wt>0&&dose>0) ? (mg/conc).toFixed(3) : "";
+  }
+}
+
+function pbRecalcAll() {
+  ["premed","induction","cri","local"].forEach(s => renderPbSection(s));
+  for (const sec in pbEntries) {
+    pbEntries[sec].forEach(e => pbRecalcRow(e.id));
+  }
+}
+
+function pbUpdatePrint() {}
+
+function printProtocol() {
+  // Temporarily show only protocol tab for printing
+  const panels = document.querySelectorAll(".tab-panel");
+  panels.forEach(p => p.style.display = "none");
+  document.getElementById("tab-protocol").style.display = "block";
+  window.print();
+  // Restore
+  panels.forEach(p => p.style.display = "");
+  showTab("protocol");
+}
+
+
+/* ────────────────────────────────────────
+   INIT
+──────────────────────────────────────── */
+buildDoseTable();
+buildCRIGrid();
+recalcDoses();
+recalcCRI();
+recalcKitty();
+// Init protocol builder empty states
+["premed","induction","cri","local"].forEach(s => renderPbSection(s));
+// Set today's date
+document.getElementById("pb-date").value = new Date().toLocaleDateString("en-US");
+</script>
+</body>
+</html>

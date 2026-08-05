@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EquiCalc — Equine Veterinary Calculator Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --card: #1e2333;
+    --border: #2a3050;
+    --accent: #7eb8a4;
+    --accent2: #c9a86c;
+    --danger: #e07070;
+    --text: #e8ecf4;
+    --muted: #7a85a3;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Fraunces', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── background grid ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(126,184,164,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(126,184,164,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── noise overlay ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(15,17,23,0.85);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-mark {
+    width: 38px; height: 38px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .nav-logo span { color: var(--accent); }
+
+  .nav-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 100px 40px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(38px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-desc {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.75;
+    margin-bottom: 36px;
+    max-width: 380px;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #0f1117;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 14px 28px;
+    border-radius: 2px;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .hero-cta:hover {
+    background: #a0cfc0;
+    transform: translateY(-1px);
+  }
+  .hero-cta svg {
+    transition: transform 0.2s;
+  }
+  .hero-cta:hover svg {
+    transform: translateX(3px);
+  }
+
+  /* ── HERO VISUAL ── */
+  .hero-visual {
+    position: relative;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px 22px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    transform: translateX(20px);
+    animation: slideIn 0.5s forwards;
+  }
+  .stat-card:nth-child(1) { animation-delay: 0.1s; }
+  .stat-card:nth-child(2) { animation-delay: 0.22s; }
+  .stat-card:nth-child(3) { animation-delay: 0.34s; }
+  .stat-card:nth-child(4) { animation-delay: 0.46s; }
+  .stat-card:nth-child(5) { animation-delay: 0.58s; }
+  .stat-card:nth-child(6) { animation-delay: 0.70s; }
+
+  @keyframes slideIn {
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .stat-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .stat-dot.gold { background: var(--accent2); }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    flex: 1;
+  }
+  .stat-label strong {
+    display: block;
+    color: var(--text);
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .stat-val {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .stat-val.gold { color: var(--accent2); }
+
+  /* ── SECTION DIVIDER ── */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 40px;
+  }
+
+  /* ── MODULES SECTION ── */
+  .modules {
+    padding: 80px 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .section-count {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .module-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 22px 20px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s, transform 0.15s, background 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .module-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s;
+  }
+  .module-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    background: #222840;
+  }
+  .module-card:hover::after {
+    transform: scaleX(1);
+  }
+  .module-card.gold::after { background: var(--accent2); }
+  .module-card.gold:hover { border-color: var(--accent2); }
+
+  .module-icon {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .module-name {
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .module-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .module-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 4px;
+  }
+
+  .tag {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(126,184,164,0.25);
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+  .tag.gold { color: var(--accent2); border-color: rgba(201,168,108,0.25); }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    margin: 0 40px;
+    padding: 20px 24px;
+    background: rgba(224,112,112,0.06);
+    border: 1px solid rgba(224,112,112,0.2);
+    border-radius: 4px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .disclaimer-icon {
+    color: var(--danger);
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .disclaimer-text {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .disclaimer-text strong {
+    color: var(--danger);
+    display: block;
+    margin-bottom: 3px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+  }
+
+  .footer-logo {
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .footer-logo span { color: var(--accent); }
+
+  .footer-note {
+    font-size: 10px;
+    color: var(--muted);
+    opacity: 0.6;
+  }
+
+  a.stat-card {
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a.stat-card:hover {
+    border-color: var(--accent);
+    background: #222840;
+  }
+  a.stat-card:hover .stat-val { color: var(--accent); }
+  a.stat-card:hover .stat-val.gold { color: var(--accent2); }
+
+  /* ── HERO FADE IN ── */
+  .hero-left {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s 0.05s forwards;
+  }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    nav { padding: 16px 20px; }
+    .hero { grid-template-columns: 1fr; padding: 60px 20px 50px; gap: 40px; }
+    .modules { padding: 50px 20px; }
+    .module-grid { grid-template-columns: 1fr 1fr; }
+    .section-divider { margin: 0 20px; }
+    .disclaimer { margin: 0 20px; }
+    footer { padding: 30px 20px; flex-direction: column; gap: 12px; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .module-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<a href="https://desmovet.com" target="_blank" rel="noopener"
+   style="position:fixed;top:110px;left:14px;z-index:9999;
+          font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+          font-size:12px;font-weight:600;color:#1f2f42;
+          background:#ffffff;border:1px solid #d8d8d8;border-radius:20px;
+          padding:6px 14px;text-decoration:none;
+          box-shadow:0 4px 12px rgba(0,0,0,0.12);">
+  ← desmoVet
+</a>
+<nav>
+  <a href="#" class="nav-logo"><div class="logo-mark">🐴</div><span style="letter-spacing:-0.5px"><span style="color:#e8ecf4">Equi</span><span style="color:var(--accent)">Calc</span></span></a>
+  <div class="nav-links" style="display:flex;gap:24px;align-items:center;">
+    <a href="index.html" style="font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;">Home</a>
+    <a href="calculators.html" style="font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;">Calculators</a>
+    <a href="about.html" style="font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;">About</a>
+  </div>
+</nav>
+
+<div style="position:relative;z-index:1;">
+
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Clinical Decision Support</div>
+      <h1>Equine drug and fluid <em>calculators</em> at your fingertips</h1>
+      <p class="hero-desc">A field-ready hub of veterinary calculators built for equine practitioners. From TPN formulation to induction protocols, EquiCalc keeps your math fast and your focus on the patient.</p>
+    </div>
+
+    <div class="hero-visual">
+      <a href="calculators.html#gir" class="stat-card">
+        <div class="stat-dot"></div>
+        <div class="stat-label"><strong>Glucose and GIR</strong>Dextrose concentration and peripheral line safety</div>
+        <div class="stat-val">→</div>
+      </a>
+      <a href="calculators.html#tpn" class="stat-card">
+        <div class="stat-dot"></div>
+        <div class="stat-label"><strong>TPN Formulation</strong>RER, dextrose, amino acids, and lipid volumes</div>
+        <div class="stat-val">→</div>
+      </a>
+      <a href="calculators.html#fluids" class="stat-card">
+        <div class="stat-dot"></div>
+        <div class="stat-label"><strong>Fluids</strong>Deficit, shock bolus, and crystalloid selection</div>
+        <div class="stat-val">→</div>
+      </a>
+      <a href="calculators.html#cri" class="stat-card">
+        <div class="stat-dot gold"></div>
+        <div class="stat-label"><strong>CRI</strong>Lidocaine, ketamine, butorphanol, MLK bags</div>
+        <div class="stat-val gold">→</div>
+      </a>
+      <a href="calculators.html#anesthesia" class="stat-card">
+        <div class="stat-dot gold"></div>
+        <div class="stat-label"><strong>Anesthesia</strong>Induction protocols and TIVA / triple drip</div>
+        <div class="stat-val gold">→</div>
+      </a>
+      <a href="calculators.html#sedation" class="stat-card">
+        <div class="stat-dot gold"></div>
+        <div class="stat-label"><strong>Sedation</strong>Standing sedation, epidurals, and IM doses</div>
+        <div class="stat-val gold">→</div>
+      </a>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <section class="modules">
+    <div class="section-header">
+      <h2 class="section-title">Calculator Modules</h2>
+      <span class="section-count">7 modules</span>
+    </div>
+
+    <div class="module-grid">
+      <a href="calculators.html#gir" class="module-card">
+        <div class="module-icon">🧪</div>
+        <div class="module-name">Glucose and GIR</div>
+        <div class="module-desc">Calculate glucose infusion rate, required dextrose concentration, and volume to add. Flags peripheral vs. central line thresholds.</div>
+        <div class="module-tags">
+          <span class="tag">GIR</span>
+          <span class="tag">Dextrose</span>
+          <span class="tag">Neonatal</span>
+        </div>
+      </a>
+
+      <a href="calculators.html#tpn" class="module-card">
+        <div class="module-icon">💧</div>
+        <div class="module-name">TPN</div>
+        <div class="module-desc">Full parenteral nutrition formulator for foals and adults. RER-based caloric targets with dextrose, amino acid, and lipid outputs.</div>
+        <div class="module-tags">
+          <span class="tag">Foal</span>
+          <span class="tag">Adult</span>
+          <span class="tag">Nutrition</span>
+        </div>
+      </a>
+
+      <a href="calculators.html#fluids" class="module-card">
+        <div class="module-icon">🩺</div>
+        <div class="module-name">Fluids</div>
+        <div class="module-desc">Dehydration deficit calculator, shock and hypertonic bolus dosing, plasma volume, and crystalloid comparison table.</div>
+        <div class="module-tags">
+          <span class="tag">Deficit</span>
+          <span class="tag">Shock</span>
+          <span class="tag">HTS</span>
+        </div>
+      </a>
+
+      <a href="calculators.html#cri" class="module-card gold">
+        <div class="module-icon">⚗️</div>
+        <div class="module-name">CRI</div>
+        <div class="module-desc">Lidocaine loading and maintenance, ketamine and butorphanol CRIs, and full MLK bag builder with mL-of-each-stock outputs.</div>
+        <div class="module-tags">
+          <span class="tag gold">Lidocaine</span>
+          <span class="tag gold">MLK</span>
+          <span class="tag gold">Ketamine</span>
+        </div>
+      </a>
+
+      <a href="calculators.html#anesthesia" class="module-card gold">
+        <div class="module-icon">😴</div>
+        <div class="module-name">Anesthesia</div>
+        <div class="module-desc">Four induction protocols with mg and mL outputs. TIVA and triple drip bag builders for GXK and DXK with rate ranges.</div>
+        <div class="module-tags">
+          <span class="tag gold">Induction</span>
+          <span class="tag gold">TIVA</span>
+          <span class="tag gold">GXK / DXK</span>
+        </div>
+      </a>
+
+      <a href="calculators.html#sedation" class="module-card gold">
+        <div class="module-icon">🐴</div>
+        <div class="module-name">Sedation</div>
+        <div class="module-desc">Standing sedation doses for xylazine, detomidine, romifidine, and medetomidine. Caudal epidural calculator with dilution guidance.</div>
+        <div class="module-tags">
+          <span class="tag gold">Alpha-2</span>
+          <span class="tag gold">Epidural</span>
+          <span class="tag gold">IM Doses</span>
+        </div>
+      </a>
+
+      <a href="calculators.html#reference" class="module-card" style="grid-column: span 3;">
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+          <div class="module-icon">📋</div>
+          <div>
+            <div class="module-name">Reference</div>
+            <div class="module-desc" style="max-width:600px;">Adult and neonatal foal normal values, CRI drug quick-reference table, common dilutions, and unit conversions. The whole cheat-sheet in one place.</div>
+          </div>
+          <div class="module-tags" style="margin-top:0; margin-left:auto;">
+            <span class="tag">Normals</span>
+            <span class="tag">Foal</span>
+            <span class="tag">Conversions</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <div class="disclaimer">
+    <div class="disclaimer-icon">⚠</div>
+    <div class="disclaimer-text">
+      <strong>Clinical Disclaimer</strong>
+      EquiCalc is intended as a calculation aid for licensed veterinary professionals. All drug doses, fluid rates, and formulations must be verified against current references and adapted to the individual patient. This tool does not replace clinical judgment, specialist consultation, or approved prescribing guidelines.
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Equi<span>Calc</span></div>
+    <div class="footer-note">For veterinary use only — not for human medicine</div>
+  </footer>
+
+</div>
+</body>
+</html>

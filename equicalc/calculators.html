@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EquiCalc — Field Drug Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --card: #1e2333;
+    --border: #2a3050;
+    --accent: #7eb8a4;
+    --accent2: #c9a86c;
+    --danger: #e07070;
+    --text: #e8ecf4;
+    --muted: #7a85a3;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Fraunces', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo-mark {
+    width: 38px; height: 38px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif);
+    font-size: 20px;
+    color: #0f1117;
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  header h1 span { color: var(--accent); }
+
+  .header-sub {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: right;
+    line-height: 1.5;
+  }
+
+  /* ── NAV TABS ── */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    padding: 12px 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .tab-btn {
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 14px;
+    white-space: nowrap;
+    transition: all .15s;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .tab-btn:hover { color: var(--text); border-color: var(--border); }
+  .tab-btn.active {
+    background: var(--card);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── LAYOUT ── */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 24px 80px;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .panel-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+  .panel-desc { color: var(--muted); margin-bottom: 24px; font-size: 13px; }
+
+  /* ── GRID ── */
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 700px) { .calc-grid { grid-template-columns: 1fr; } }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card-title {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--accent);
+    color: #0f1117;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+  .badge.warn { background: var(--accent2); }
+  .badge.danger { background: var(--danger); color: #fff; }
+
+  /* ── FORM ELEMENTS ── */
+  .field { margin-bottom: 12px; }
+  label {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .input-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  input[type=number], select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 8px 10px;
+    outline: none;
+    transition: border-color .15s;
+    -moz-appearance: textfield;
+  }
+  input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input[type=number]:focus, select:focus { border-color: var(--accent); }
+  select { cursor: pointer; }
+
+  .unit-select {
+    width: auto;
+    min-width: 70px;
+    flex-shrink: 0;
+  }
+
+  .btn {
+    width: 100%;
+    margin-top: 14px;
+    padding: 10px;
+    background: var(--accent);
+    border: none;
+    border-radius: 7px;
+    color: #0f1117;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity .15s;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .btn:hover { opacity: .85; }
+
+  /* ── RESULTS BOX ── */
+  .result-box {
+    margin-top: 14px;
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px;
+    display: none;
+  }
+  .result-box.show { display: block; }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .result-value { font-size: 18px; color: var(--accent); font-weight: 500; }
+  .result-value.warn { color: var(--accent2); }
+  .result-value.danger { color: var(--danger); }
+
+  .note-box {
+    margin-top: 10px;
+    background: rgba(201,168,108,.08);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--accent2);
+    line-height: 1.5;
+  }
+
+  /* ── REFERENCE TABLE ── */
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+  .ref-table th {
+    text-align: left;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 10px;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ref-table td {
+    padding: 7px 8px;
+    border-bottom: 1px solid rgba(42,48,80,.5);
+    vertical-align: top;
+    line-height: 1.4;
+  }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-table tr:hover td { background: rgba(126,184,164,.04); }
+  .mono { font-family: var(--mono); }
+
+  .full-width { grid-column: 1 / -1; }
+
+  /* ── WARNING BANNER ── */
+  .warn-banner {
+    background: rgba(224,112,112,.1);
+    border: 1px solid var(--danger);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--danger);
+    margin-bottom: 20px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+
+  /* ── RADIO TOGGLE ── */
+  .toggle-group {
+    display: flex;
+    gap: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .toggle-group label {
+    flex: 1;
+    text-align: center;
+    padding: 7px 4px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: all .15s;
+    margin: 0;
+  }
+  .toggle-group input[type=radio] { display: none; }
+  .toggle-group input[type=radio]:checked + label {
+    background: var(--card);
+    color: var(--accent);
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+  
+<a href="https://desmovet.com" target="_blank" rel="noopener"
+   style="position:fixed;top:142px;left:14px;z-index:9999;
+          font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+          font-size:12px;font-weight:600;color:#1f2f42;
+          background:#ffffff;border:1px solid #d8d8d8;border-radius:20px;
+          padding:6px 14px;text-decoration:none;
+          box-shadow:0 4px 12px rgba(0,0,0,0.12);">
+  ← desmoVet
+</a>
+<header>
+  <div class="logo-mark">🐴</div>
+  <div>
+    <h1>Equi<span>Calc</span></h1>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px;">Field Drug Calculator · Equine Focus</div>
+  </div>
+  <div class="header-sub">
+    Verify all doses.<br>Clinical judgment always prevails.
+  </div>
+  <div style="margin-left:auto;display:flex;gap:20px;align-items:center;">
+    <a href="index.html" style="font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Home</a>
+    <a href="about.html" style="font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">About</a>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showPanel('glucose')">Glucose / Fluids</button>
+  <button class="tab-btn" onclick="showPanel('tpn')">TPN</button>
+  <button class="tab-btn" onclick="showPanel('cri')">CRI</button>
+  <button class="tab-btn" onclick="showPanel('anesthesia')">Anesthesia</button>
+  <button class="tab-btn" onclick="showPanel('sedation')">Sedation</button>
+  <button class="tab-btn" onclick="showPanel('resuscitation')">Resuscitation</button>
+  <button class="tab-btn" onclick="showPanel('reference')">Drug Reference</button>
+</div>
+
+<main>
+
+  <!-- ════════════ GLUCOSE / FLUIDS ════════════ -->
+  <div class="panel active" id="panel-glucose">
+    <div class="panel-title">Glucose and Fluid Calculations</div>
+    <div class="panel-desc">GIR, maintenance rates, and glucose supplementation for equine patients.</div>
+    <div class="calc-grid">
+
+      <!-- GIR -->
+      <div class="card">
+        <div class="card-title">Glucose Infusion Rate (GIR) <span class="badge">Equine</span></div>
+        <div class="field">
+          <label>Body Weight</label>
+          <div class="input-row">
+            <input type="number" id="gir-wt" placeholder="500" min="0" />
+            <select id="gir-wt-unit" class="unit-select">
+              <option value="kg">kg</option>
+              <option value="lb">lb</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Fluid Rate</label>
+          <div class="input-row">
+            <input type="number" id="gir-rate" placeholder="2" min="0" step="0.1" />
+            <select id="gir-rate-unit" class="unit-select">
+              <option value="mLhr">mL/hr</option>
+              <option value="mLkghr">mL/kg/hr</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Target GIR (mg/kg/min)</label>
+          <input type="number" id="gir-target" placeholder="2–4 foal; 1–2 adult" value="2" min="0" step="0.5" />
+        </div>
+        <div class="field">
+          <label>Dextrose Stock Concentration (%)</label>
+          <select id="gir-conc">
+            <option value="5">5%</option>
+            <option value="50" selected>50%</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Bag Volume (mL)</label>
+          <input type="number" id="gir-vol" placeholder="1000" value="1000" min="0" />
+        </div>
+        <button class="btn" onclick="calcGIR()">Calculate</button>
+        <div class="result-box" id="gir-result">
+          <div class="result-row"><span class="result-label">Required Glucose Concentration</span><span class="result-value" id="gir-reqconc">–</span></div>
+          <div class="result-row"><span class="result-label">Dextrose to Add to Bag</span><span class="result-value" id="gir-add">–</span></div>
+          <div class="result-row"><span class="result-label">Actual GIR Achieved</span><span class="result-value" id="gir-actual">–</span></div>
+        </div>
+        <div class="note-box">Foal target: 4–6 mg/kg/min · Adult: 1–2 mg/kg/min · Max safe: ~8 mg/kg/min. Remove equal volume of saline before adding dextrose to bag.</div>
+      </div>
+
+      <!-- Maintenance Fluids -->
+      <div class="card">
+        <div class="card-title">Equine Maintenance Fluids</div>
+        <div class="field">
+          <label>Body Weight</label>
+          <div class="input-row">
+            <input type="number" id="maint-wt" placeholder="500" min="0" />
+            <select id="maint-wt-unit" class="unit-select">
+              <option value="kg">kg</option>
+              <option value="lb">lb</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Patient Type</label>
+          <select id="maint-type" onchange="updateMaintDose()">
+            <option value="adult">Adult Horse</option>
+            <option value="foal">Neonatal Foal</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Dose (mL/kg/day)</label>
+          <div class="input-row">
+            <input type="number" id="maint-dose" value="80" min="10" max="200" step="5" />
+            <span class="unit-select" style="display:flex;align-items:center;padding:0 10px;color:var(--muted);font-size:11px;">mL/kg/day</span>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;">Adult: 60–100 &nbsp;|&nbsp; Foal: 80–100 mL/kg/day</div>
+        </div>
+        <button class="btn" onclick="calcMaint()">Calculate</button>
+        <div class="result-box" id="maint-result">
+          <div class="result-row"><span class="result-label">Maintenance Rate</span><span class="result-value" id="maint-rate">–</span></div>
+          <div class="result-row"><span class="result-label">Daily Volume</span><span class="result-value" id="maint-daily">–</span></div>
+          <div class="result-row"><span class="result-label">Shock Bolus (20 mL/kg)</span><span class="result-value" id="maint-shock">–</span></div>
+        </div>
+        <div class="note-box">Adult horse maintenance: 60–100 mL/kg/day (2.5–4 mL/kg/hr). Foal: 80–100 mL/kg/day. Adjust for ongoing losses.</div>
+      </div>
+
+      <!-- Dehydration Deficit -->
+      <div class="card">
+        <div class="card-title">Dehydration Deficit</div>
+        <div class="field">
+          <label>Body Weight (kg)</label>
+          <input type="number" id="dehyd-wt" placeholder="500" min="0" />
+        </div>
+        <div class="field">
+          <label>Estimated % Dehydration</label>
+          <select id="dehyd-pct">
+            <option value="5">5% — mild (skin tent, dry MM)</option>
+            <option value="8" selected>8% — moderate (delayed CRT)</option>
+            <option value="10">10% — severe (sunken eyes)</option>
+            <option value="12">12% — critical (shock)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Replacement over (hours)</label>
+          <input type="number" id="dehyd-hrs" placeholder="24" value="24" min="1" />
+        </div>
+        <button class="btn" onclick="calcDehydration()">Calculate</button>
+        <div class="result-box" id="dehyd-result">
+          <div class="result-row"><span class="result-label">Fluid Deficit</span><span class="result-value" id="dehyd-deficit">–</span></div>
+          <div class="result-row"><span class="result-label">Replacement Rate</span><span class="result-value" id="dehyd-reprate">–</span></div>
+          <div class="result-row"><span class="result-label">Total Rate (incl. maintenance)</span><span class="result-value" id="dehyd-total">–</span></div>
+        </div>
+      </div>
+
+      <!-- Holliday-Segar Calculator -->
+      <div class="card">
+        <div class="card-title">Holliday–Segar Fluid Calculator <span class="badge">Pediatric / Small Equid</span></div>
+        <div class="field">
+          <label>Body Weight</label>
+          <div class="input-row">
+            <input type="number" id="hs-wt" placeholder="30" min="0" />
+            <select id="hs-wt-unit" class="unit-select">
+              <option value="kg">kg</option>
+              <option value="lb">lb</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn" onclick="calcHS()">Calculate</button>
+        <div class="result-box" id="hs-result">
+          <div class="result-row"><span class="result-label">Daily Volume</span><span class="result-value" id="hs-daily">–</span></div>
+          <div class="result-row"><span class="result-label">Hourly Rate</span><span class="result-value" id="hs-hourly">–</span></div>
+          <div class="result-row"><span class="result-label">Rate (mL/kg/hr)</span><span class="result-value" id="hs-rate-kghr">–</span></div>
+        </div>
+        <div class="note-box">Standard Holliday–Segar rates for small equids and foals. Adjust doses above for patient-specific needs.</div>
+      </div>
+
+      <!-- Holliday-Segar Reference Table -->
+      <div class="card">
+        <div class="card-title">Holliday–Segar Reference Table</div>
+        <table class="ref-table">
+          <thead><tr><th>Weight Range</th><th>Daily Requirement</th><th>Hourly Rate</th></tr></thead>
+          <tbody>
+            <tr><td>0–10 kg</td><td class="mono">100 mL/kg/day</td><td class="mono">4.2 mL/kg/hr</td></tr>
+            <tr><td>11–20 kg</td><td class="mono">1,000 + 50 mL/kg &gt;10kg</td><td class="mono">41.7 + 2.1 mL/kg/hr</td></tr>
+            <tr><td>&gt;20 kg</td><td class="mono">1,500 + 20 mL/kg &gt;20kg</td><td class="mono">62.5 + 0.8 mL/kg/hr</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+          <div style="font-family:var(--serif);font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text)">Equine Quick Reference</div>
+          <table class="ref-table">
+            <thead><tr><th>Patient</th><th>Daily Volume</th><th>Hourly Rate</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>Adult Horse</td><td class="mono">60–100 mL/kg/day</td><td class="mono">2.5–4 mL/kg/hr</td><td>Adjust for sweat, GI losses</td></tr>
+              <tr><td>Neonatal Foal</td><td class="mono">80–100 mL/kg/day</td><td class="mono">3.3–4.2 mL/kg/hr</td><td>Higher requirement; monitor glucose</td></tr>
+              <tr><td>Foal (older)</td><td class="mono">60–80 mL/kg/day</td><td class="mono">2.5–3.3 mL/kg/hr</td><td>Reduce as GI function matures</td></tr>
+              <tr><td>Shock / Resus</td><td class="mono">20 mL/kg bolus</td><td class="mono">Repeat ×2–3 prn</td><td>Reassess after each bolus</td></tr>
+            </tbody>
+          </table>
+          <div class="note-box" style="margin-top:10px">Adjust for ongoing losses (diarrhea, sweat, nasogastric reflux). Consider colloid support if TP &lt;4 g/dL.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════ TPN ════════════ -->
+  <div class="panel" id="panel-tpn">
+    <div class="panel-title">Total Parenteral Nutrition</div>
+    <div class="panel-desc">Amino acid, dextrose, and lipid calculations for equine TPN. Primarily for neonatal foals and perioperative adult horses.</div>
+    <div class="warn-banner">⚠ TPN formulation should be confirmed with a clinical nutritionist or internist. Use strict aseptic technique. Dedicated IV catheter required.</div>
+    <div class="calc-grid">
+
+      <div class="card">
+        <div class="card-title">TPN Component Calculator <span class="badge warn">ICU</span></div>
+        <div class="field">
+          <label>Body Weight (kg)</label>
+          <input type="number" id="tpn-wt" placeholder="50" min="0" />
+        </div>
+        <div class="field">
+          <label>Patient Type</label>
+          <select id="tpn-type">
+            <option value="foal">Neonatal Foal</option>
+            <option value="adult">Adult Horse</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Caloric Target (kcal/kg/day)</label>
+          <input type="number" id="tpn-kcal" placeholder="50" value="50" min="0" step="5" />
+        </div>
+        <div class="field">
+          <label>Dextrose Concentration Available (%)</label>
+          <select id="tpn-dex">
+            <option value="50">50% Dextrose</option>
+            <option value="5">5% Dextrose</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Amino Acid Solution Available (%)</label>
+          <select id="tpn-aa">
+            <option value="8.5">8.5% AA (Travasol)</option>
+            <option value="10">10% AA</option>
+          </select>
+        </div>
+        <button class="btn" onclick="calcTPN()">Calculate TPN</button>
+        <div class="result-box" id="tpn-result">
+          <div class="result-row"><span class="result-label">Total Daily Energy</span><span class="result-value" id="tpn-energy">–</span></div>
+          <div class="result-row"><span class="result-label">Dextrose (60% kcal)</span><span class="result-value" id="tpn-dex-vol">–</span></div>
+          <div class="result-row"><span class="result-label">Amino Acids (20% kcal → protein)</span><span class="result-value" id="tpn-aa-vol">–</span></div>
+          <div class="result-row"><span class="result-label">Total TPN Volume/Day</span><span class="result-value" id="tpn-total">–</span></div>
+          <div class="result-row"><span class="result-label">TPN Infusion Rate</span><span class="result-value" id="tpn-rate">–</span></div>
+          <div class="result-row"><span class="result-label">GIR from Dextrose</span><span class="result-value" id="tpn-gir">–</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">TPN Reference</div>
+        <table class="ref-table">
+          <tr><th>Parameter</th><th>Foal</th><th>Adult</th></tr>
+          <tr><td>Caloric target</td><td class="mono">50–80 kcal/kg/day</td><td class="mono">30–40 kcal/kg/day</td></tr>
+          <tr><td>Dextrose GIR</td><td class="mono">4–8 mg/kg/min</td><td class="mono">1–2 mg/kg/min</td></tr>
+          <tr><td>Amino acids</td><td class="mono">2–4 g/kg/day</td><td class="mono">1–2 g/kg/day</td></tr>
+          <tr><td>Lipids</td><td class="mono">1–2 g/kg/day</td><td class="mono">0.5–1 g/kg/day</td></tr>
+          <tr><td>Monitor glucose</td><td class="mono">q4–6h</td><td class="mono">q6–8h</td></tr>
+          <tr><td>Target glucose</td><td class="mono">80–140 mg/dL</td><td class="mono">80–120 mg/dL</td></tr>
+          <tr><td>Triglycerides</td><td class="mono">&lt;500 mg/dL</td><td class="mono">&lt;400 mg/dL</td></tr>
+        </table>
+        <div class="note-box">Start at 50% of target rate and increase over 24h. Monitor electrolytes (K, PO4, Mg) daily — refeeding syndrome risk. Dedicated catheter, change every 72h.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════ CRIs ════════════ -->
+  <div class="panel" id="panel-cri">
+    <div class="panel-title">Constant Rate Infusions</div>
+    <div class="panel-desc">Lidocaine, ketamine, butorphanol, morphine, and detomidine CRIs for equine pain management and anesthesia.</div>
+    <div class="calc-grid">
+
+      <!-- Lidocaine CRI -->
+      <div class="card">
+        <div class="card-title">Lidocaine CRI <span class="badge">Prokinetic / Analgesic</span></div>
+        <div class="field">
+          <label>Body Weight (kg)</label>
+          <input type="number" id="lido-wt" placeholder="500" min="0" />
+        </div>
+        <div class="field">
+          <label>Loading Dose?</label>
+          <select id="lido-load">
+            <option value="yes">Yes — give loading dose</option>
+            <option value="no">No — start CRI only</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Target Dose (µg/kg/min)</label>
+          <select id="lido-dose">
+            <option value="25">25 µg/kg/min — prokinetic</option>
+            <option value="50" selected>50 µg/kg/min — analgesia</option>
+            <option value="75">75 µg/kg/min — max</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Lidocaine Concentration</label>
+          <select id="lido-conc">
+            <option value="20">2% (20 mg/mL)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Diluent Bag (mL)</label>
+          <input type="number" id="lido-bag" placeholder="1000" value="1000" min="0" />
+        </div>
+        <button class="btn" onclick="calcLido()">Calculate</button>
+        <div class="result-box" id="lido-result">
+          <div class="result-row"><span class="result-label">Loading Dose (1.3 mg/kg IV slow)</span><span class="result-value" id="lido-load-dose">–</span></div>
+          <div class="result-row"><span class="result-label">Loading Dose Volume</span><span class="result-value" id="lido-load-vol">–</span></div>
+          <div class="result-row"><span class="result-label">Lidocaine to Add to Bag</span><span class="result-value" id="lido-bag-add">–</span></div>
+          <div class="result-row"><span class="result-label">Infusion Rate</span><span class="result-value" id="lido-inf-rate">–</span></div>
+        </div>
+        <div class="note-box">Give loading dose over 5–15 min. Watch for muscle fasciculations, ataxia — reduce dose. Avoid in horses with cardiac arrhythmias or seizure history.</div>
+      </div>
+
+      <!-- Ketamine CRI -->
+      <div class="card">
+        <div class="card-title">Ketamine CRI <span class="badge">Analgesic</span></div>
+        <div class="field">
+          <label>Body Weight (kg)</label>
+          <input type="number" id="ket-wt" placeholder="500" min="0" />
+        </div>
+        <div class="field">
+          <label>Indication</label>
+          <select id="ket-ind">
+            <option value="subanesth">Sub-anesthetic analgesia (0.4 µg/kg/min)</option>
+            <option value="maint">Anesthesia maintenance (3 mg/kg/hr)</option>
+            <option value="custom">Custom dose</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Custom Dose (mg/kg/hr) — if custom selected</label>
+          <input type="number" id="ket-custom" placeholder="3" value="3" min="0" step="0.5" />
+        </div>
+        <button class="btn" onclick="calcKetCRI()">Calculate</button>
+        <div class="result-box" id="ket-result">
+          <div class="result-row"><span class="result-label">Ketamine (100 mg/mL) Volume/hr</span><span class="result-value" id="ket-vol">–</span></div>
+          <div class="result-row"><span class="result-label">Dose Rate</span><span class="result-value" id="ket-rate">–</span></div>
+        </div>
+        <div class="note-box">For TIVA: combine with guaifenesin (GKX). Sub-anesthetic ketamine reduces isoflurane requirement. Titrate to effect.</div>
+      </div>
+
+      <!-- Detomidine CRI -->
+      <div class="card">
+        <div class="card-title">Detomidine CRI <span class="badge">Sedation</span></div>
+        <div class="field">
+          <label>Body Weight (kg)</label>
+          <input type="number" id="det-wt" placeholder="500" min="0" />
+        </div>
+        <div class="field">
+          <label>Loading Dose?</label>
+          <select id="det-load">
+            <option value="yes">Yes (10–20 µg/kg IV)</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>CRI Target (µg/kg/hr)</label>
+          <select id="det-rate-sel">
+            <option value="10">10 µg/kg/hr — light sedation</option>
+            <option value="20" selected>20 µg/kg/hr — moderate</option>
+            <option value="30">30 µg/kg/hr — deep</option>
+          </select>
+        </div>
+        <button class="btn" onclick="calcDetCRI()">Calculate</button>
+        <div class="result-box" id="det-result">
+          <div class="result-row"><span class="result-label">Loading Dose Volume (10 mg/mL)</span><span class="result-value" id="det-load-vol">–</span></div>
+          <div class="result-row"><span class="result-label">CRI Dose/hr</span><span class="result-value" id="det-cri-dose">–</span></div>
+          <div class="result-row"><span class="result-label">CRI Rate (10 mg/mL, undiluted)</span><span class="result-value" id="det-cri-rate">–</span></div>
+        </div>
+        <div class="note-box">Detomidine CRI provides excellent standing sedation. Monitor HR, GI motility. Combine with butorphanol for enhanced analgesia. Yohimbine available for partial reversal.</div>
+      </div>
+
+      <!-- Butorphanol CRI -->
+      <div class="card">
+        <div class="card-title">Butorphanol CRI <span class="badge">Opioid</span></div>
+        <div class="field">
+          <label>Body Weight (kg)</label>
+          <input type="number" id="but-wt" placeholder="500" min="0" />
+        </div>
+        <div class="field">
+          <label>Target Dose (µg/kg/hr)</label>
+          <select id="but-dose">
+            <option value="13">13 µg/kg/hr — low</option>
+            <option value="23" selected>23 µg/kg/hr — standard</option>
+            <option value="36">36 µg/kg/hr — high</option>
+          </select>
+        </div>
+        <button class="btn" onclick="calcButCRI()">Calculate</button>
+        <div class="result-box" id="but-result">
+          <div class="result-row"><span class="result-label">Dose/hr</span><span class="result-value" id="but-dose-hr">–</span></div>
+          <div class="result-row"><span class="result-label">Vol/hr (10 mg/mL)</span><span class="result-value" id="but-vol">–</span></div>
+        </div>
+        <div class="note-box">Butorphanol CRI reduces excitation vs. intermittent dosing. Often combined with alpha-2 CRI. Sedation/ataxia possible at high doses.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════ ANESTHESIA ════════════ -->
+  <div class="panel" id="panel-anesthesia">
+    <div class="panel-title">Anesthetic Drug Dosing</div>
+    <div class="panel-desc">Induction agents, maintenance drugs, and emergency calculations for equine anesthesia.</div>
+    <div class="warn-banner">⚠ All anesthetic drugs carry risk of cardiovascular depression and apnea. Ensure resuscitation equipment is available before administration.</div>
+    <div class="calc-grid">
+
+      <!-- Induction Drug Calculator -->
+      <div class="card full-width">
+        <div class="card-title">Induction Drug Calculator <span class="badge danger">Anesthesia</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div class="field">
+            <label>Body Weight</label>
+            <div class="input-row">
+              <input type="number" id="ind-wt" placeholder="500" min="0" />
+              <select id="ind-wt-unit" class="unit-select">
+                <option value="kg">kg</option>
+                <option value="lb">lb</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Pre-medication Level</label>
+            <select id="ind-premed">
+              <option value="light">Light (less sedated)</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="deep">Deep (more sedated)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Protocol</label>
+            <select id="ind-protocol">
+              <option value="ketxyl">Ketamine + Xylazine (field)</option>
+              <option value="ketdet">Ketamine + Detomidine</option>
+              <option value="ketdiazkyl">Ketamine + Diazepam + Xylazine</option>
+              <option value="propofol">Propofol (small equid)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn" style="width:200px;" onclick="calcInduction()">Calculate Doses</button>
+        <div class="result-box" id="ind-result">
+          <div id="ind-result-content"></div>
+        </div>
+      </div>
+
+      <!-- TIVA / GKX -->
+      <div class="card">
+        <div class="card-title">GKX (Triple Drip) — TIVA <span class="badge danger">Anesthesia</span></div>
+        <div class="field">
+          <label>Body Weight (kg)</label>
+          <input type="number" id="gkx-wt" placeholder="500" min="0" />
+        </div>
+        <div class="field">
+          <label>Bag Volume</label>
+          <select id="gkx-bag">
+            <option value="500">500 mL</option>
+            <option value="1000" selected>1000 mL</option>
+          </select>
+        </div>
+        <button class="btn" onclick="calcGKX()">Calculate GKX Bag</button>
+        <div class="result-box" id="gkx-result">
+          <div class="result-row"><span class="result-label">Guaifenesin (50 mg/mL in bag)</span><span class="result-value" id="gkx-g">–</span></div>
+          <div class="result-row"><span class="result-label">Ketamine (100 mg/mL)</span><span class="result-value" id="gkx-k">–</span></div>
+          <div class="result-row"><span class="result-label">Xylazine (100 mg/mL)</span><span class="result-value" id="gkx-x">–</span></div>
+          <div class="result-row"><span class="result-label">Infusion Rate</span><span class="result-value" id="gkx-rate">–</span></div>
+        </div>
+        <div class="note-box">Standard GKX: 1 L guaifenesin + 2 g ketamine + 500 mg xylazine. Rate: 1–2 mL/kg/hr (55–110 mL/hr for 500 kg). Supplement with inhalant if prolonged.</div>
+      </div>
+
+      <!-- Isoflurane MAC -->
+      <div class="card">
+        <div class="card-title">Anesthetic Gas Reference</div>
+        <table class="ref-table">
+          <tr><th>Agent</th><th>Equine MAC</th><th>Notes</th></tr>
+          <tr><td>Isoflurane</td><td class="mono">1.31%</td><td>Most common; cardiovascular depression dose-dependent</td></tr>
+          <tr><td>Sevoflurane</td><td class="mono">2.31%</td><td>Smoother recovery, expensive</td></tr>
+          <tr><td>Desflurane</td><td class="mono">7.6%</td><td>Rapid elimination; pungent</td></tr>
+        </table>
+        <div style="margin-top:12px;"></div>
+        <table class="ref-table">
+          <tr><th>Adjunct</th><th>MAC Reduction</th></tr>
+          <tr><td>Xylazine premedication</td><td class="mono">~25%</td></tr>
+          <tr><td>Detomidine premedication</td><td class="mono">~30%</td></tr>
+          <tr><td>Ketamine CRI</td><td class="mono">~25%</td></tr>
+          <tr><td>Lidocaine CRI</td><td class="mono">~15–25%</td></tr>
+          <tr><td>Butorphanol CRI</td><td class="mono">~10%</td></tr>
+        </table>
+        <div class="note-box">Use multimodal analgesia to reduce inhalant requirements and improve cardiovascular function during anesthesia.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════ SEDATION ════════════ -->
+  <div class="panel" id="panel-sedation">
+    <div class="panel-title">Sedation and IM Drug Doses</div>
+    <div class="panel-desc">Standing sedation, premedication, and IM doses for the field — alpha-2 agonists, opioids, and combinations.</div>
+    <div class="calc-grid">
+
+      <!-- Alpha-2 Dosing -->
+      <div class="card">
+        <div class="card-title">Alpha-2 Agonist Dosing</div>
+        <div class="field">
+          <label>Body Weight</label>
+          <div class="input-row">
+            <input type="number" id="a2-wt" placeholder="500" min="0" />
+            <select id="a2-wt-unit" class="unit-select">
+              <option value="kg">kg</option>
+              <option value="lb">lb</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Drug</label>
+          <select id="a2-drug">
+            <option value="xyl-iv-low">Xylazine IV — light (0.3 mg/kg)</option>
+            <option value="xyl-iv-mod">Xylazine IV — moderate (0.6 mg/kg)</option>
+            <option value="xyl-iv-high">Xylazine IV — deep (1.1 mg/kg)</option>
+            <option value="xyl-im">Xylazine IM (1.0–2.0 mg/kg)</option>
+            <option value="det-iv-low">Detomidine IV — light (10 µg/kg)</option>
+            <option value="det-iv-mod">Detomidine IV — moderate (20 µg/kg)</option>
+            <option value="det-iv-high">Detomidine IV — deep (40 µg/kg)</option>
+            <option value="det-im">Detomidine IM (40–80 µg/kg)</option>
+            <option value="rom-iv">Romifidine IV (80–100 µg/kg)</option>
+            <option value="med-iv">Medetomidine IV (5–7 µg/kg)</option>
+          </select>
+        </div>
+        <button class="btn" onclick="calcA2()">Calculate</button>
+        <div class="result-box" id="a2-result">
+          <div class="result-row"><span class="result-label">Dose</span><span class="result-value" id="a2-dose">–</span></div>
+          <div class="result-row"><span class="result-label">Volume</span><span class="result-value" id="a2-vol">–</span></div>
+          <div class="result-row"><span class="result-label">Concentration Used</span><span class="result-value" id="a2-conc">–</span></div>
+        </div>
+      </div>
+
+      <!-- Opioid / Combination -->
+      <div class="card">
+        <div class="card-title">Opioid and Combination Doses</div>
+        <div class="field">
+          <label>Body Weight (kg)</label>
+          <input type="number" id="op-wt" placeholder="500" min="0" />
+        </div>
+        <div class="field">
+          <label>Drug</label>
+          <select id="op-drug">
+            <option value="but-iv">Butorphanol IV (0.02–0.05 mg/kg)</option>
+            <option value="but-im">Butorphanol IM (0.05–0.1 mg/kg)</option>
+            <option value="morph-im">Morphine IM (0.05–0.1 mg/kg) — preop</option>
+            <option value="nalbup">Nalbuphine IV (0.1 mg/kg)</option>
+            <option value="acedet">Acepromazine IV (0.02–0.05 mg/kg, max 25 mg)</option>
+            <option value="azaper">Azaperone IM (0.04–0.08 mg/kg)</option>
+          </select>
+        </div>
+        <button class="btn" onclick="calcOpioid()">Calculate</button>
+        <div class="result-box" id="op-result">
+          <div class="result-row"><span class="result-label">Dose</span><span class="result-value" id="op-dose">–</span></div>
+          <div class="result-row"><span class="result-label">Volume</span><span class="result-value" id="op-vol">–</span></div>
+          <div class="result-row"><span class="result-label">Notes</span><span class="result-value" id="op-notes" style="font-size:13px;color:var(--accent2);">–</span></div>
+        </div>
+      </div>
+
+      <!-- Reversal Agents -->
+      <div class="card">
+        <div class="card-title">Reversal Agents <span class="badge danger">Emergency</span></div>
+        <div class="field">
+          <label>Body Weight (kg)</label>
+          <input type="number" id="rev-wt" placeholder="500" min="0" />
+        </div>
+        <div class="field">
+          <label>Agent</label>
+          <select id="rev-drug">
+            <option value="yohim">Yohimbine IV (0.075–0.15 mg/kg) — xylazine reversal</option>
+            <option value="atip">Atipamezole IV (0.05 mg/kg) — medetomidine reversal</option>
+            <option value="nalox">Naloxone IV (0.01–0.02 mg/kg) — opioid reversal</option>
+            <option value="flumazenil">Flumazenil IV (0.01 mg/kg) — benzodiazepine reversal</option>
+          </select>
+        </div>
+        <button class="btn" onclick="calcReversal()">Calculate</button>
+        <div class="result-box" id="rev-result">
+          <div class="result-row"><span class="result-label">Dose</span><span class="result-value" id="rev-dose">–</span></div>
+          <div class="result-row"><span class="result-label">Volume</span><span class="result-value" id="rev-vol">–</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════ RESUSCITATION ════════════ -->
+  <div class="panel" id="panel-resuscitation">
+    <div class="panel-title">Emergency and Resuscitation</div>
+    <div class="panel-desc">Epinephrine, atropine, and emergency drug doses for equine cardiac arrest and crisis management.</div>
+    <div class="warn-banner">⚠ Emergency drug dosing — confirm weight and double-check calculations before administration. Have crash cart ready.</div>
+    <div class="calc-grid">
+
+      <div class="card">
+        <div class="card-title">Emergency Drug Doses <span class="badge danger">Crash Cart</span></div>
+        <div class="field">
+          <label>Body Weight (kg)</label>
+          <input type="number" id="crash-wt" placeholder="500" min="0" />
+        </div>
+        <button class="btn" onclick="calcCrash()">Generate Crash Sheet</button>
+        <div class="result-box" id="crash-result">
+          <div id="crash-content"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Dobutamine / Dopamine CRI</div>
+        <div class="field">
+          <label>Body Weight (kg)</label>
+          <input type="number" id="dob-wt" placeholder="500" min="0" />
+        </div>
+        <div class="field">
+          <label>Drug</label>
+          <select id="dob-drug">
+            <option value="dobutamine">Dobutamine (1–5 µg/kg/min)</option>
+            <option value="dopamine">Dopamine (1–5 µg/kg/min)</option>
+            <option value="norepinephrine">Norepinephrine (0.1–0.5 µg/kg/min)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Target Dose (µg/kg/min)</label>
+          <input type="number" id="dob-dose" placeholder="3" value="3" min="0" step="0.5" />
+        </div>
+        <div class="field">
+          <label>Diluent Bag (mL)</label>
+          <input type="number" id="dob-bag" placeholder="250" value="250" min="0" />
+        </div>
+        <button class="btn" onclick="calcDob()">Calculate</button>
+        <div class="result-box" id="dob-result">
+          <div class="result-row"><span class="result-label">Drug Concentration (stock)</span><span class="result-value" id="dob-conc">–</span></div>
+          <div class="result-row"><span class="result-label">Volume to Add to Bag</span><span class="result-value" id="dob-add">–</span></div>
+          <div class="result-row"><span class="result-label">Final Concentration</span><span class="result-value" id="dob-final">–</span></div>
+          <div class="result-row"><span class="result-label">Infusion Rate</span><span class="result-value" id="dob-rate">–</span></div>
+        </div>
+        <div class="note-box">Dobutamine is first-line for anesthesia-induced hypotension (MAP &lt;70). Start at 1–2 µg/kg/min and titrate. Monitor HR for tachycardia.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════ REFERENCE ════════════ -->
+  <div class="panel" id="panel-reference">
+    <div class="panel-title">Quick Drug Reference</div>
+    <div class="panel-desc">Common equine drug doses, concentrations, and clinical notes.</div>
+    <div class="calc-grid">
+
+      <div class="card full-width">
+        <div class="card-title">Equine Drug Dose Reference</div>
+        <table class="ref-table">
+          <tr>
+            <th>Drug</th>
+            <th>Route</th>
+            <th>Dose</th>
+            <th>Concentration</th>
+            <th>Notes</th>
+          </tr>
+          <tr><td><b>Xylazine</b></td><td>IV</td><td class="mono">0.3–1.1 mg/kg</td><td class="mono">100 mg/mL</td><td>Duration 30–45 min IV; longer IM</td></tr>
+          <tr><td><b>Detomidine</b></td><td>IV/IM</td><td class="mono">10–40 µg/kg IV; 40–80 µg/kg IM</td><td class="mono">10 mg/mL</td><td>Duration 60–90 min; SL gel available</td></tr>
+          <tr><td><b>Romifidine</b></td><td>IV</td><td class="mono">80–120 µg/kg</td><td class="mono">10 mg/mL</td><td>Less ataxia than xylazine</td></tr>
+          <tr><td><b>Butorphanol</b></td><td>IV/IM</td><td class="mono">0.02–0.1 mg/kg</td><td class="mono">10 mg/mL</td><td>Combine with alpha-2 for best effect</td></tr>
+          <tr><td><b>Ketamine</b></td><td>IV</td><td class="mono">2.2 mg/kg induction</td><td class="mono">100 mg/mL</td><td>Give after adequate sedation; don't use alone</td></tr>
+          <tr><td><b>Diazepam</b></td><td>IV</td><td class="mono">0.05–0.1 mg/kg</td><td class="mono">5 mg/mL</td><td>Co-induction; muscle relaxation</td></tr>
+          <tr><td><b>Midazolam</b></td><td>IV/IM</td><td class="mono">0.05–0.1 mg/kg</td><td class="mono">5 mg/mL</td><td>Faster onset than diazepam</td></tr>
+          <tr><td><b>Guaifenesin</b></td><td>IV</td><td class="mono">50–100 mg/kg to effect</td><td class="mono">50 mg/mL</td><td>Stop at buckle/knuckling; do not exceed 150 mg/kg</td></tr>
+          <tr><td><b>Propofol</b></td><td>IV</td><td class="mono">2–4 mg/kg</td><td class="mono">10 mg/mL</td><td>Small equids / foals only; apnea risk</td></tr>
+          <tr><td><b>Lidocaine</b></td><td>IV CRI</td><td class="mono">1.3 mg/kg load; 25–50 µg/kg/min</td><td class="mono">20 mg/mL (2%)</td><td>Prokinetic, analgesic, anti-inflammatory</td></tr>
+          <tr><td><b>Flunixin</b></td><td>IV/PO</td><td class="mono">1.1 mg/kg q12–24h</td><td class="mono">50 mg/mL</td><td>Do NOT give IM — tissue necrosis</td></tr>
+          <tr><td><b>Phenylbutazone</b></td><td>IV/PO</td><td class="mono">2.2–4.4 mg/kg q12–24h</td><td class="mono">200 mg/mL</td><td>Max 4.4 mg/kg/day; GI/renal risk</td></tr>
+          <tr><td><b>Meloxicam</b></td><td>IV/PO</td><td class="mono">0.6 mg/kg q24h</td><td class="mono">15 mg/mL (IV)</td><td>Improved GI safety profile vs. bute</td></tr>
+          <tr><td><b>Dobutamine</b></td><td>IV CRI</td><td class="mono">1–5 µg/kg/min</td><td class="mono">12.5 mg/mL</td><td>Anesthesia hypotension; tachycardia risk</td></tr>
+          <tr><td><b>Epinephrine</b></td><td>IV</td><td class="mono">0.01 mg/kg q3–5 min</td><td class="mono">1 mg/mL (1:1000)</td><td>Cardiac arrest; dilute in saline</td></tr>
+          <tr><td><b>Atropine</b></td><td>IV</td><td class="mono">0.01–0.02 mg/kg</td><td class="mono">0.5 mg/mL</td><td>Bradycardia/AV block; large volumes needed</td></tr>
+          <tr><td><b>Acepromazine</b></td><td>IV/IM</td><td class="mono">0.02–0.05 mg/kg (max 25 mg)</td><td class="mono">10 mg/mL</td><td>No analgesia; avoid in hypotensive/excited patients</td></tr>
+          <tr><td><b>Yohimbine</b></td><td>IV</td><td class="mono">0.075–0.15 mg/kg</td><td class="mono">2 mg/mL</td><td>Partial xylazine reversal; give slowly</td></tr>
+          <tr><td><b>Naloxone</b></td><td>IV</td><td class="mono">0.01–0.02 mg/kg</td><td class="mono">0.4 mg/mL</td><td>Opioid reversal; short duration — may need repeat</td></tr>
+          <tr><td><b>Calcium gluconate</b></td><td>IV slow</td><td class="mono">0.2–0.4 mL/kg (23% solution)</td><td class="mono">230 mg/mL</td><td>Monitor ECG; dilute 1:4 in saline</td></tr>
+          <tr><td><b>Dexamethasone</b></td><td>IV/IM</td><td class="mono">0.05–0.2 mg/kg</td><td class="mono">2 mg/mL</td><td>Shock, anaphylaxis, airway edema</td></tr>
+          <tr><td><b>Omeprazole</b></td><td>PO</td><td class="mono">4 mg/kg q24h (treatment)</td><td class="mono">37 g paste</td><td>Gastric ulcer treatment; 1 mg/kg for prevention</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Normal Vitals Reference</div>
+        <table class="ref-table">
+          <tr><th>Parameter</th><th>Adult Horse</th><th>Foal</th></tr>
+          <tr><td>Heart Rate</td><td class="mono">28–44 bpm</td><td class="mono">60–100 bpm</td></tr>
+          <tr><td>Resp Rate</td><td class="mono">8–16 rpm</td><td class="mono">20–40 rpm</td></tr>
+          <tr><td>Temp</td><td class="mono">37–38.5°C (99–101.5°F)</td><td class="mono">37.2–38.9°C</td></tr>
+          <tr><td>MAP (anesthesia)</td><td class="mono">&gt;70 mmHg</td><td class="mono">&gt;60 mmHg</td></tr>
+          <tr><td>PCV</td><td class="mono">32–52%</td><td class="mono">32–45%</td></tr>
+          <tr><td>TP</td><td class="mono">6–8 g/dL</td><td class="mono">4.5–7 g/dL</td></tr>
+          <tr><td>Glucose</td><td class="mono">80–120 mg/dL</td><td class="mono">80–140 mg/dL</td></tr>
+          <tr><td>Lactate</td><td class="mono">&lt;2 mmol/L</td><td class="mono">&lt;2 mmol/L</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Common Dilutions and Stock Concentrations</div>
+        <table class="ref-table">
+          <tr><th>Drug</th><th>Stock</th><th>Common Dilution</th></tr>
+          <tr><td>Lidocaine</td><td class="mono">2% (20 mg/mL)</td><td>Add to LRS for CRI</td></tr>
+          <tr><td>Dextrose</td><td class="mono">50% (500 mg/mL)</td><td>Add to LRS for target %</td></tr>
+          <tr><td>Ketamine</td><td class="mono">100 mg/mL</td><td>Add to GKX bag</td></tr>
+          <tr><td>Xylazine</td><td class="mono">100 mg/mL</td><td>—</td></tr>
+          <tr><td>Detomidine</td><td class="mono">10 mg/mL</td><td>Dilute 1:10 for CRI</td></tr>
+          <tr><td>Butorphanol</td><td class="mono">10 mg/mL</td><td>Dilute for CRI</td></tr>
+          <tr><td>Dobutamine</td><td class="mono">12.5 mg/mL</td><td>Add to 250–500 mL saline</td></tr>
+          <tr><td>Epinephrine</td><td class="mono">1 mg/mL (1:1000)</td><td>Dilute 1:10 for IV</td></tr>
+          <tr><td>Guaifenesin</td><td class="mono">50 mg/mL</td><td>Premixed or dissolve powder</td></tr>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ─────────────────────────────────────────────
+// UTILITY
+// ─────────────────────────────────────────────
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function wt(val, unit) {
+  return unit === 'lb' ? val * 0.453592 : +val;
+}
+
+function showResult(id) {
+  document.getElementById(id).classList.add('show');
+}
+
+function fmt(n, dec=1) {
+  if (isNaN(n) || !isFinite(n)) return '—';
+  return n.toFixed(dec);
+}
+
+// ─────────────────────────────────────────────
+// GLUCOSE
+// ─────────────────────────────────────────────
+function calcGIR() {
+  const kg = wt(document.getElementById('gir-wt').value, document.getElementById('gir-wt-unit').value);
+  const rateUnit = document.getElementById('gir-rate-unit').value;
+  let rate = +document.getElementById('gir-rate').value;
+  if (rateUnit === 'mLkghr') rate = rate * kg;
+  const target = +document.getElementById('gir-target').value; // mg/kg/min
+  const concStock = +document.getElementById('gir-conc').value; // %
+  const bagVol = +document.getElementById('gir-vol').value;
+
+  if (!kg || !rate || !bagVol) return;
+
+  // Required conc in bag = (target mg/kg/min * kg * 60) / rate_mLhr = mg/mL
+  const reqConc_mgmL = (target * kg * 60) / rate; // mg/mL
+  const reqConc_pct = reqConc_mgmL / 10; // %
+
+  // Vol of stock dextrose to add: dexVol * concStock*10 = reqConc_mgmL * bagVol
+  const dexVol = (reqConc_mgmL * bagVol) / (concStock * 10);
+
+  // Actual GIR
+  const actualGIR = (reqConc_mgmL * rate) / (kg * 60);
+
+  document.getElementById('gir-reqconc').textContent = fmt(reqConc_pct, 1) + '%';
+  document.getElementById('gir-add').textContent = fmt(dexVol, 1) + ' mL of ' + concStock + '% dextrose';
+  document.getElementById('gir-actual').textContent = fmt(actualGIR, 2) + ' mg/kg/min';
+  showResult('gir-result');
+}
+
+// ─────────────────────────────────────────────
+// MAINTENANCE
+// ─────────────────────────────────────────────
+function calcHS() {
+  const wtRaw = parseFloat(document.getElementById('hs-wt').value);
+  const unit = document.getElementById('hs-wt-unit').value;
+  const kg = unit === 'lb' ? wtRaw * 0.453592 : wtRaw;
+  const d1 = 100;
+  const d2 = 50;
+  const d3 = 20;
+  if (!kg || kg <= 0) return;
+
+  let daily = 0;
+  if (kg <= 10) {
+    daily = kg * d1;
+  } else if (kg <= 20) {
+    daily = (10 * d1) + ((kg - 10) * d2);
+  } else {
+    daily = (10 * d1) + (10 * d2) + ((kg - 20) * d3);
+  }
+
+  const hourly = daily / 24;
+  const rateKgHr = hourly / kg;
+
+  document.getElementById('hs-daily').textContent = fmt(daily, 0) + ' mL/day (' + fmt(daily/1000, 2) + ' L/day)';
+  document.getElementById('hs-hourly').textContent = fmt(hourly, 1) + ' mL/hr';
+  document.getElementById('hs-rate-kghr').textContent = rateKgHr.toFixed(2) + ' mL/kg/hr';
+  showResult('hs-result');
+}
+
+function updateMaintDose() {
+  const type = document.getElementById('maint-type').value;
+  document.getElementById('maint-dose').value = type === 'foal' ? 90 : 80;
+}
+
+function calcMaint() {
+  const kg = wt(document.getElementById('maint-wt').value, document.getElementById('maint-wt-unit').value);
+  const type = document.getElementById('maint-type').value;
+  if (!kg) return;
+  const mLkgDay = parseFloat(document.getElementById('maint-dose').value) || (type === 'foal' ? 90 : 80);
+  const daily = kg * mLkgDay;
+  const hourly = daily / 24;
+  const shock = kg * 20;
+  document.getElementById('maint-rate').textContent = fmt(hourly, 0) + ' mL/hr';
+  document.getElementById('maint-daily').textContent = fmt(daily/1000, 1) + ' L/day';
+  document.getElementById('maint-shock').textContent = fmt(shock/1000, 1) + ' L';
+  showResult('maint-result');
+}
+
+// ─────────────────────────────────────────────
+// DEHYDRATION
+// ─────────────────────────────────────────────
+function calcDehydration() {
+  const kg = +document.getElementById('dehyd-wt').value;
+  const pct = +document.getElementById('dehyd-pct').value / 100;
+  const hrs = +document.getElementById('dehyd-hrs').value;
+  if (!kg || !hrs) return;
+  const deficit = kg * pct * 1000; // mL
+  const repRate = deficit / hrs;
+  const maint = kg * 80 / 24;
+  const total = repRate + maint;
+  document.getElementById('dehyd-deficit').textContent = fmt(deficit/1000, 1) + ' L (' + fmt(deficit,0) + ' mL)';
+  document.getElementById('dehyd-reprate').textContent = fmt(repRate, 0) + ' mL/hr';
+  document.getElementById('dehyd-total').textContent = fmt(total, 0) + ' mL/hr';
+  showResult('dehyd-result');
+}
+
+// ─────────────────────────────────────────────
+// TPN
+// ─────────────────────────────────────────────
+function calcTPN() {
+  const kg = +document.getElementById('tpn-wt').value;
+  const kcalKgDay = +document.getElementById('tpn-kcal').value;
+  const dexConc = +document.getElementById('tpn-dex').value; // %
+  const aaConc = +document.getElementById('tpn-aa').value; // %
+  if (!kg) return;
+
+  const totalKcal = kg * kcalKgDay;
+  // 60% from dextrose (3.4 kcal/g), 20% from AA (4 kcal/g), 20% from lipid
+  const dexKcal = totalKcal * 0.60;
+  const aaKcal = totalKcal * 0.20;
+  const dexGrams = dexKcal / 3.4;
+  const aaGrams = aaKcal / 4;
+  const dexVol = dexGrams / (dexConc * 10); // mL
+  const aaVol = aaGrams / (aaConc * 10);
+  const totalVol = dexVol + aaVol;
+  const rate = totalVol / 24;
+  const girFromDex = (dexGrams * 1000) / (kg * 60 * 1440); // mg/kg/min
+
+  document.getElementById('tpn-energy').textContent = fmt(totalKcal, 0) + ' kcal/day';
+  document.getElementById('tpn-dex-vol').textContent = fmt(dexVol, 0) + ' mL ' + dexConc + '% dextrose (' + fmt(dexGrams,0) + 'g)';
+  document.getElementById('tpn-aa-vol').textContent = fmt(aaVol, 0) + ' mL ' + aaConc + '% AA (' + fmt(aaGrams,0) + 'g protein)';
+  document.getElementById('tpn-total').textContent = fmt(totalVol, 0) + ' mL/day';
+  document.getElementById('tpn-rate').textContent = fmt(rate, 1) + ' mL/hr';
+  document.getElementById('tpn-gir').textContent = fmt(girFromDex, 2) + ' mg/kg/min';
+  showResult('tpn-result');
+}
+
+// ─────────────────────────────────────────────
+// LIDOCAINE CRI
+// ─────────────────────────────────────────────
+function calcLido() {
+  const kg = +document.getElementById('lido-wt').value;
+  const loadQ = document.getElementById('lido-load').value;
+  const targetUgKgMin = +document.getElementById('lido-dose').value;
+  const concMgmL = 20; // 2%
+  const bagVol = +document.getElementById('lido-bag').value;
+  if (!kg || !bagVol) return;
+
+  const loadDoseMg = 1.3 * kg;
+  const loadVol = loadDoseMg / concMgmL;
+
+  // Add lidocaine to bag for CRI
+  // mg/hr needed = targetUgKgMin * 60 * kg / 1000
+  const mgHr = (targetUgKgMin / 1000) * kg * 60;
+  // Add total lidocaine for 8hr supply to bag
+  const totalMgInBag = mgHr * (bagVol / (bagVol / 1)); // simplified: put enough for bag
+  // Actually: decide rate of bag infusion first
+  // Approach: add fixed amount, then run at calculated rate
+  // Let's put 24h supply in bag and calculate rate
+  const mgIn24 = mgHr * 24;
+  const volAdd = mgIn24 / concMgmL; // will be large; show rate instead
+  // Simpler: infusion rate from undiluted 2%
+  const infRate = mgHr / concMgmL; // mL/hr undiluted
+  // Bag diluted: add X mL to bag, then rate = bagVol/24
+  const bagRate = bagVol / 24;
+  const bagAddVol = mgHr * 24 / concMgmL;
+
+  document.getElementById('lido-load-dose').textContent = loadQ === 'yes' ? fmt(loadDoseMg,0) + ' mg' : 'Skipped';
+  document.getElementById('lido-load-vol').textContent = loadQ === 'yes' ? fmt(loadVol,1) + ' mL of 2% lidocaine (give over 5–15 min)' : '—';
+  document.getElementById('lido-bag-add').textContent = fmt(bagAddVol,1) + ' mL (provides 24h at target dose)';
+  document.getElementById('lido-inf-rate').textContent = fmt(bagRate,1) + ' mL/hr (run ' + bagVol + ' mL bag over 24h)';
+  showResult('lido-result');
+}
+
+// ─────────────────────────────────────────────
+// KETAMINE CRI
+// ─────────────────────────────────────────────
+function calcKetCRI() {
+  const kg = +document.getElementById('ket-wt').value;
+  const ind = document.getElementById('ket-ind').value;
+  if (!kg) return;
+  let mgKgHr;
+  if (ind === 'subanesth') mgKgHr = 0.4 * 60 / 1000; // 0.4 µg/kg/min → mg/kg/hr
+  else if (ind === 'maint') mgKgHr = 3;
+  else mgKgHr = +document.getElementById('ket-custom').value;
+  const doseHr = mgKgHr * kg;
+  const volHr = doseHr / 100; // 100 mg/mL
+  document.getElementById('ket-vol').textContent = fmt(volHr, 2) + ' mL/hr';
+  document.getElementById('ket-rate').textContent = fmt(doseHr, 1) + ' mg/hr (' + fmt(mgKgHr,2) + ' mg/kg/hr)';
+  showResult('ket-result');
+}
+
+// ─────────────────────────────────────────────
+// DETOMIDINE CRI
+// ─────────────────────────────────────────────
+function calcDetCRI() {
+  const kg = +document.getElementById('det-wt').value;
+  const loadQ = document.getElementById('det-load').value;
+  const targetUgKgHr = +document.getElementById('det-rate-sel').value;
+  if (!kg) return;
+  const loadMg = (15 / 1000) * kg; // 15 µg/kg
+  const loadVol = loadMg / 10; // 10 mg/mL
+  const criMgHr = (targetUgKgHr / 1000) * kg;
+  const criVol = criMgHr / 10;
+  document.getElementById('det-load-vol').textContent = loadQ === 'yes' ? fmt(loadVol,2) + ' mL (15 µg/kg)' : 'Skipped';
+  document.getElementById('det-cri-dose').textContent = fmt(criMgHr*1000,0) + ' µg/hr (' + fmt(criMgHr,3) + ' mg/hr)';
+  document.getElementById('det-cri-rate').textContent = fmt(criVol,3) + ' mL/hr undiluted (10 mg/mL)';
+  showResult('det-result');
+}
+
+// ─────────────────────────────────────────────
+// BUTORPHANOL CRI
+// ─────────────────────────────────────────────
+function calcButCRI() {
+  const kg = +document.getElementById('but-wt').value;
+  const ugKgHr = +document.getElementById('but-dose').value;
+  if (!kg) return;
+  const doseHr = ugKgHr * kg / 1000; // mg/hr
+  const volHr = doseHr / 10; // 10 mg/mL
+  document.getElementById('but-dose-hr').textContent = fmt(doseHr, 3) + ' mg/hr';
+  document.getElementById('but-vol').textContent = fmt(volHr, 3) + ' mL/hr';
+  showResult('but-result');
+}
+
+// ─────────────────────────────────────────────
+// INDUCTION
+// ─────────────────────────────────────────────
+function calcInduction() {
+  const kg = wt(document.getElementById('ind-wt').value, document.getElementById('ind-wt-unit').value);
+  const premed = document.getElementById('ind-premed').value;
+  const protocol = document.getElementById('ind-protocol').value;
+  if (!kg) return;
+
+  let content = '';
+  const modifier = premed === 'deep' ? 0.8 : premed === 'light' ? 1.2 : 1.0;
+
+  if (protocol === 'ketxyl') {
+    const xylDose = 1.1 * kg;
+    const xylVol = xylDose / 100;
+    const ketDose = 2.2 * modifier * kg;
+    const ketVol = ketDose / 100;
+    content = row('Xylazine (1.1 mg/kg IV)', fmt(xylDose,0)+' mg / '+fmt(xylVol,1)+' mL (100mg/mL)', '') +
+              row('Ketamine (2.2 mg/kg IV)', fmt(ketDose,0)+' mg / '+fmt(ketVol,1)+' mL (100mg/mL)', 'warn') +
+              row('Wait for sedation then give ketamine', 'Give over 30–60 sec', '');
+  } else if (protocol === 'ketdet') {
+    const detDose = 20 * kg / 1000;
+    const detVol = detDose / 10;
+    const ketDose = 2.2 * modifier * kg;
+    const ketVol = ketDose / 100;
+    content = row('Detomidine (20 µg/kg IV)', fmt(detDose,3)+' mg / '+fmt(detVol,2)+' mL (10mg/mL)', '') +
+              row('Ketamine (2.2 mg/kg IV)', fmt(ketDose,0)+' mg / '+fmt(ketVol,1)+' mL (100mg/mL)', 'warn') +
+              row('Excellent recovery profile', 'Combine with butorphanol for analgesia', '');
+  } else if (protocol === 'ketdiazkyl') {
+    const xylDose = 1.1 * kg;
+    const xylVol = xylDose / 100;
+    const diazDose = 0.05 * kg;
+    const diazVol = diazDose / 5;
+    const ketDose = 2.2 * modifier * kg;
+    const ketVol = ketDose / 100;
+    content = row('Xylazine (1.1 mg/kg IV)', fmt(xylDose,0)+' mg / '+fmt(xylVol,1)+' mL', '') +
+              row('Diazepam (0.05 mg/kg IV)', fmt(diazDose,1)+' mg / '+fmt(diazVol,1)+' mL (5mg/mL)', '') +
+              row('Ketamine (2.2 mg/kg IV)', fmt(ketDose,0)+' mg / '+fmt(ketVol,1)+' mL', 'warn') +
+              row('Good for older/sick horses', 'Better muscle relaxation; co-induction', '');
+  } else if (protocol === 'propofol') {
+    const propDose = 3 * modifier * kg;
+    const propVol = propDose / 10;
+    content = row('Propofol (3 mg/kg IV)', fmt(propDose,1)+' mg / '+fmt(propVol,1)+' mL (10mg/mL)', 'danger') +
+              row('⚠ Foals and small equids ONLY', 'Apnea risk — have O₂ ready', 'danger');
+  }
+  document.getElementById('ind-result-content').innerHTML = content;
+  showResult('ind-result');
+}
+
+function row(label, value, cls) {
+  return `<div class="result-row"><span class="result-label">${label}</span><span class="result-value ${cls}" style="font-size:14px;">${value}</span></div>`;
+}
+
+// ─────────────────────────────────────────────
+// GKX
+// ─────────────────────────────────────────────
+function calcGKX() {
+  const kg = +document.getElementById('gkx-wt').value;
+  const bag = +document.getElementById('gkx-bag').value;
+  if (!kg) return;
+  // Standard: per 1L: guaifenesin 50 mg/mL (pre-made), ketamine 2g, xylazine 500mg
+  // Scale by bag size
+  const scaleFactor = bag / 1000;
+  const gVol = bag; // 1L of 5% guaifenesin = bag vol (mL of 50mg/mL)
+  const kVol = 20 * scaleFactor; // 2000mg / 100mg/mL
+  const xVol = 5 * scaleFactor;  // 500mg / 100mg/mL
+  const infRate = 1.5 * kg; // mL/hr (1–2 mL/kg/hr)
+  document.getElementById('gkx-g').textContent = fmt(bag,0) + ' mL of 5% guaifenesin (base)';
+  document.getElementById('gkx-k').textContent = fmt(20*scaleFactor,1) + ' mL ketamine (2000mg/L)';
+  document.getElementById('gkx-x').textContent = fmt(5*scaleFactor,1) + ' mL xylazine (500mg/L)';
+  document.getElementById('gkx-rate').textContent = fmt(infRate,0) + ' mL/hr (1.5 mL/kg/hr starting rate)';
+  showResult('gkx-result');
+}
+
+// ─────────────────────────────────────────────
+// ALPHA-2
+// ─────────────────────────────────────────────
+const a2Data = {
+  'xyl-iv-low':  { dose: 0.3,    conc: 100, unit: 'mg/kg', drug: 'Xylazine IV' },
+  'xyl-iv-mod':  { dose: 0.6,    conc: 100, unit: 'mg/kg', drug: 'Xylazine IV' },
+  'xyl-iv-high': { dose: 1.1,    conc: 100, unit: 'mg/kg', drug: 'Xylazine IV' },
+  'xyl-im':      { dose: 1.5,    conc: 100, unit: 'mg/kg', drug: 'Xylazine IM' },
+  'det-iv-low':  { dose: 0.010,  conc: 10,  unit: 'mg/kg', drug: 'Detomidine IV' },
+  'det-iv-mod':  { dose: 0.020,  conc: 10,  unit: 'mg/kg', drug: 'Detomidine IV' },
+  'det-iv-high': { dose: 0.040,  conc: 10,  unit: 'mg/kg', drug: 'Detomidine IV' },
+  'det-im':      { dose: 0.060,  conc: 10,  unit: 'mg/kg', drug: 'Detomidine IM' },
+  'rom-iv':      { dose: 0.090,  conc: 10,  unit: 'mg/kg', drug: 'Romifidine IV' },
+  'med-iv':      { dose: 0.006,  conc: 1,   unit: 'mg/kg', drug: 'Medetomidine IV' },
+};
+
+function calcA2() {
+  const kg = wt(document.getElementById('a2-wt').value, document.getElementById('a2-wt-unit').value);
+  const key = document.getElementById('a2-drug').value;
+  if (!kg) return;
+  const d = a2Data[key];
+  const totalMg = d.dose * kg;
+  const vol = totalMg / d.conc;
+  document.getElementById('a2-dose').textContent = fmt(totalMg, 3) + ' mg';
+  document.getElementById('a2-vol').textContent = fmt(vol, 2) + ' mL';
+  document.getElementById('a2-conc').textContent = d.conc + ' mg/mL';
+  showResult('a2-result');
+}
+
+// ─────────────────────────────────────────────
+// OPIOID
+// ─────────────────────────────────────────────
+const opData = {
+  'but-iv':   { lo: 0.02, hi: 0.05, conc: 10, note: 'Titrate IV slowly; combine with alpha-2' },
+  'but-im':   { lo: 0.05, hi: 0.1,  conc: 10, note: 'IM; onset 15–20 min' },
+  'morph-im': { lo: 0.05, hi: 0.1,  conc: 10, note: 'Give IM preop; may cause GI hypomotility' },
+  'nalbup':   { lo: 0.1,  hi: 0.1,  conc: 10, note: 'Opioid agonist-antagonist; equianalgesic to morphine in horses' },
+  'acedet':   { lo: 0.02, hi: 0.05, conc: 10, note: 'Max 25 mg total; no analgesia; avoid in shock' },
+  'azaper':   { lo: 0.04, hi: 0.08, conc: 10, note: 'IM only; useful for weaning aggression; watch hypotension' },
+};
+
+function calcOpioid() {
+  const kg = +document.getElementById('op-wt').value;
+  const key = document.getElementById('op-drug').value;
+  if (!kg) return;
+  const d = opData[key];
+  const loMg = d.lo * kg;
+  const hiMg = d.hi * kg;
+  const maxMg = key === 'acedet' ? Math.min(hiMg, 25) : hiMg;
+  const loVol = loMg / d.conc;
+  const hiVol = maxMg / d.conc;
+  document.getElementById('op-dose').textContent = fmt(loMg,2) + '–' + fmt(maxMg,2) + ' mg';
+  document.getElementById('op-vol').textContent = fmt(loVol,2) + '–' + fmt(hiVol,2) + ' mL (' + d.conc + ' mg/mL)';
+  document.getElementById('op-notes').textContent = d.note;
+  showResult('op-result');
+}
+
+// ─────────────────────────────────────────────
+// REVERSAL
+// ─────────────────────────────────────────────
+const revData = {
+  'yohim':      { lo: 0.075, hi: 0.15,  conc: 2,   name: 'Yohimbine' },
+  'atip':       { lo: 0.05,  hi: 0.05,  conc: 5,   name: 'Atipamezole' },
+  'nalox':      { lo: 0.01,  hi: 0.02,  conc: 0.4, name: 'Naloxone' },
+  'flumazenil': { lo: 0.01,  hi: 0.01,  conc: 0.1, name: 'Flumazenil' },
+};
+
+function calcReversal() {
+  const kg = +document.getElementById('rev-wt').value;
+  const key = document.getElementById('rev-drug').value;
+  if (!kg) return;
+  const d = revData[key];
+  const loMg = d.lo * kg; const hiMg = d.hi * kg;
+  const loVol = loMg / d.conc; const hiVol = hiMg / d.conc;
+  document.getElementById('rev-dose').textContent = fmt(loMg,2) + (loMg!==hiMg?'–'+fmt(hiMg,2):'') + ' mg';
+  document.getElementById('rev-vol').textContent = fmt(loVol,1) + (loVol!==hiVol?'–'+fmt(hiVol,1):'') + ' mL (' + d.conc + ' mg/mL)';
+  showResult('rev-result');
+}
+
+// ─────────────────────────────────────────────
+// CRASH
+// ─────────────────────────────────────────────
+function calcCrash() {
+  const kg = +document.getElementById('crash-wt').value;
+  if (!kg) return;
+  const drugs = [
+    { name: 'Epinephrine', dose: 0.01, conc: 1, unit: 'mg/kg', note: 'q3–5 min during arrest' },
+    { name: 'Atropine', dose: 0.02, conc: 0.5, unit: 'mg/kg', note: 'Bradycardia / AV block' },
+    { name: 'Dexamethasone', dose: 0.1, conc: 2, unit: 'mg/kg', note: 'Shock, anaphylaxis' },
+    { name: 'Flunixin', dose: 1.1, conc: 50, unit: 'mg/kg', note: 'Pain, endotoxemia' },
+    { name: 'Furosemide', dose: 1.0, conc: 50, unit: 'mg/kg', note: 'Pulmonary edema' },
+    { name: 'Calcium Gluconate 23%', dose: 0.3, conc: 230, unit: 'mL/kg', mLonly: true, note: 'Dilute 1:4; ECG monitor' },
+    { name: 'Hypertonic Saline 7.2%', dose: 4, conc: 1, unit: 'mL/kg', mLonly: true, note: 'Shock: rapid bolus over 10 min' },
+    { name: 'Mannitol 20%', dose: 0.25, conc: 0.2, unit: 'g/kg', note: 'CNS edema; give over 20 min' },
+  ];
+  let html = '';
+  drugs.forEach(d => {
+    let doseAmt = d.dose * kg;
+    let vol = d.mLonly ? doseAmt : doseAmt / d.conc;
+    html += `<div class="result-row">
+      <span class="result-label">${d.name}<br><span style="font-size:10px;color:var(--muted)">${d.note}</span></span>
+      <span class="result-value" style="font-size:13px;text-align:right;">
+        ${d.mLonly ? fmt(doseAmt,1)+' mL' : fmt(doseAmt,1)+' mg'}<br>
+        <span style="font-size:12px;color:var(--muted)">${d.mLonly ? '('+d.dose+' mL/kg)' : fmt(vol,1)+' mL'}</span>
+      </span>
+    </div>`;
+  });
+  document.getElementById('crash-content').innerHTML = html;
+  showResult('crash-result');
+}
+
+// ─────────────────────────────────────────────
+// DOBUTAMINE
+// ─────────────────────────────────────────────
+function calcDob() {
+  const kg = +document.getElementById('dob-wt').value;
+  const drug = document.getElementById('dob-drug').value;
+  const targetUgKgMin = +document.getElementById('dob-dose').value;
+  const bagVol = +document.getElementById('dob-bag').value;
+  if (!kg || !bagVol) return;
+
+  const concMap = { dobutamine: 12.5, dopamine: 40, norepinephrine: 1 };
+  const concStock = concMap[drug];
+
+  // mg/hr needed
+  const mgHr = (targetUgKgMin / 1000) * kg * 60;
+  // over 24h: total mg in bag run over bagVol/rate
+  // Set infusion time: 8h per bag for flexibility
+  const infHr = 8;
+  const totalMg = mgHr * infHr;
+  const volAdd = totalMg / concStock;
+  const finalConc = totalMg / bagVol; // mg/mL
+  const infRate = bagVol / infHr; // mL/hr (should yield correct dose)
+
+  document.getElementById('dob-conc').textContent = concStock + ' mg/mL';
+  document.getElementById('dob-add').textContent = fmt(volAdd,1) + ' mL (8h supply)';
+  document.getElementById('dob-final').textContent = fmt(finalConc,3) + ' mg/mL in bag';
+  document.getElementById('dob-rate').textContent = fmt(infRate,0) + ' mL/hr';
+  showResult('dob-result');
+}
+</script>
+</body>
+</html>

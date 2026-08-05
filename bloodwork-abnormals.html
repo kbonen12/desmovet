@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloodwork Abnormals — desmoVet</title>
+<meta name="description" content="Paste raw veterinary analyzer output and get a single prose sentence of only the abnormal values.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{
+    --navy:#0f1c2b;
+    --panel:#16273a;
+    --panel-2:#1c3247;
+    --line:#28405a;
+    --ink:#ffffff;
+    --sub:#ffffff;
+    --sage:#ffffff;
+    --sage-tint:rgba(255,255,255,0.08);
+    --high:#f0a3a3;
+    --low:#9ec9f0;
+    --amber:#f0c95a;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--navy);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    line-height:1.6;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+
+  /* NAV */
+  nav{border-bottom:1px solid var(--line);background:rgba(15,28,43,0.92);backdrop-filter:blur(8px);position:sticky;top:0;z-index:50;}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;}
+  .brand{font-weight:700;font-size:1.15rem;color:var(--ink);}
+  .navlinks{display:flex;gap:26px;font-size:0.92rem;font-weight:600;}
+  .navlinks a{color:var(--sub);}
+  .navlinks a:hover{color:var(--sage);opacity:.8;}
+
+  /* HEAD */
+  header.tool{padding:44px 0 8px;}
+  header.tool h1{font-size:1.7rem;margin:0 0 8px;font-weight:700;}
+  header.tool .tagline{color:var(--sub);opacity:.8;margin:0;max-width:640px;font-size:1rem;}
+
+  section{padding:28px 0;}
+  section.bordered{border-top:1px solid var(--line);}
+
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 22px;
+  }
+  .card + .card{margin-top:16px;}
+  .card-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  .card-head h2{font-size:1.05rem;margin:0;font-weight:700;}
+  .hint{font-size:0.82rem;color:var(--sub);opacity:.65;}
+
+  textarea{
+    width:100%;min-height:260px;resize:vertical;
+    background:var(--navy);color:var(--ink);
+    border:1px solid var(--line);border-radius:8px;padding:14px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:0.85rem;line-height:1.55;
+  }
+  textarea:focus{outline:none;border-color:var(--sage);}
+  textarea::placeholder{color:rgba(255,255,255,0.35);}
+
+  .btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+  button{
+    background:var(--panel-2);border:1px solid var(--line);color:var(--ink);
+    padding:9px 16px;border-radius:8px;font-size:0.88rem;font-weight:600;cursor:pointer;
+    font-family:inherit;transition:border-color .15s ease, background .15s ease;
+  }
+  button:hover{border-color:var(--sage);background:var(--sage-tint);}
+  button.primary{background:var(--sage-tint);border-color:rgba(255,255,255,0.35);}
+
+  .output{
+    background:var(--navy);border:1px solid var(--line);border-radius:8px;
+    padding:16px;min-height:64px;font-size:1rem;
+  }
+  .output p{margin:0 0 10px;}
+  .output p:last-child{margin-bottom:0;}
+  .output .none{color:var(--sub);opacity:.7;}
+  .output .placeholder{color:rgba(255,255,255,0.35);font-style:italic;}
+
+  .summary-line{font-size:0.82rem;color:var(--sub);opacity:.65;margin-top:10px;}
+
+  table{width:100%;border-collapse:collapse;font-size:0.85rem;margin-top:4px;}
+  th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-size:0.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--sub);opacity:.6;font-weight:700;}
+  td.num{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap;}
+  tr.abn td{font-weight:600;}
+  .pill{display:inline-block;font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid var(--line);background:var(--panel-2);}
+  .pill.h{color:var(--high);border-color:rgba(240,163,163,.4);}
+  .pill.l{color:var(--low);border-color:rgba(158,201,240,.4);}
+  .pill.ok{color:var(--sub);opacity:.55;}
+  .pill.skip{color:var(--amber);border-color:rgba(240,201,90,.35);}
+
+  details{margin-top:16px;}
+  details > summary{
+    cursor:pointer;font-size:0.88rem;font-weight:600;color:var(--sub);
+    list-style:none;padding:8px 0;
+  }
+  details > summary::-webkit-details-marker{display:none;}
+  details > summary:before{content:"▸ ";}
+  details[open] > summary:before{content:"▾ ";}
+  details > summary:hover{opacity:.8;}
+
+  .toggles{display:flex;flex-wrap:wrap;gap:18px;margin-top:14px;font-size:0.85rem;color:var(--sub);}
+  .toggles label{display:flex;align-items:center;gap:7px;cursor:pointer;}
+  .toggles input{accent-color:#7aa7d9;width:15px;height:15px;cursor:pointer;}
+
+  .disclaimer{
+    background:rgba(230,178,79,0.08);border:1px solid rgba(230,178,79,0.3);border-radius:10px;
+    padding:20px 22px;display:flex;gap:14px;align-items:flex-start;
+  }
+  .disclaimer .icon{font-size:1.3rem;}
+  .disclaimer b{color:var(--amber);}
+  .disclaimer p{margin:6px 0 0;color:#d9c496;font-size:0.9rem;}
+
+  footer{border-top:1px solid var(--line);padding:36px 0;text-align:center;color:var(--sub);font-size:0.85rem;margin-top:20px;}
+  footer .brand{color:var(--ink);margin-bottom:8px;display:block;}
+  footer .note{margin-bottom:14px;}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--panel-2);border:1px solid var(--line);color:var(--ink);
+    padding:10px 20px;border-radius:8px;font-size:0.88rem;font-weight:600;
+    opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;z-index:100;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:640px){
+    header.tool h1{font-size:1.4rem;}
+    .card{padding:16px;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="brand">desmoVet</a>
+    <div class="navlinks">
+      <a href="index.html#tools">Tools</a>
+      <a href="index.html#story">About</a>
+    </div>
+  </div>
+</nav>
+
+<header class="tool">
+  <div class="wrap">
+    <h1>🩸 Bloodwork Abnormals</h1>
+    <p class="tagline">Paste raw analyzer output — CBC, chemistry, blood gas, urinalysis, coagulation — and get back a single prose sentence containing only the abnormal values. Everything runs in your browser; nothing is uploaded.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-head">
+        <h2>Paste lab results</h2>
+        <span class="hint">One analyte per line, reference interval included</span>
+      </div>
+      <textarea id="input" spellcheck="false" placeholder="WBC            8.4        K/uL      5.0 - 16.8&#10;PLASMA PROTEIN 8.0   H    g/dL      6.0 - 7.5&#10;PLATELETS      174   L    K/uL      200 - 500&#10;&#10;Paste a whole panel — or several panels separated by a blank line."></textarea>
+      <div class="btnrow">
+        <button class="primary" id="btn-format">Format</button>
+        <button id="btn-example">Load example</button>
+        <button id="btn-clear">Clear</button>
+      </div>
+      <div class="toggles">
+        <label><input type="checkbox" id="opt-panels" checked> One sentence per panel</label>
+        <label><input type="checkbox" id="opt-units"> Include units</label>
+        <label><input type="checkbox" id="opt-ref"> Include reference intervals</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Result</h2>
+        <button id="btn-copy">Copy</button>
+      </div>
+      <div class="output" id="output"><span class="placeholder">Formatted output will appear here.</span></div>
+      <div class="summary-line" id="summary"></div>
+
+      <details id="detail-wrap">
+        <summary>Show every line the parser read</summary>
+        <div style="overflow-x:auto">
+          <table id="detail">
+            <thead>
+              <tr><th>Analyte</th><th>Value</th><th>Reference</th><th>Status</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="hint" style="margin-top:12px">
+          <b>No interval</b> means no reference range was found on that line, so it could not be checked — verify those manually.
+          Lines the parser could not read at all are listed at the bottom.
+        </p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="bordered">
+  <div class="wrap">
+    <div class="disclaimer">
+      <div class="icon">⚠️</div>
+      <div>
+        <b>Clinical Disclaimer</b>
+        <p>This tool reformats text you paste in. It compares each value to the reference interval printed on the same line and does not interpret results, apply species- or age-specific intervals, or substitute for reading the original report. Always verify against the analyzer printout before entering values in a medical record. desmoVet's tools are study and documentation aids for licensed veterinary professionals and veterinary students. KB Enterprises LLC assumes no liability for clinical decisions made using this platform.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">desmoVet</span>
+    <div class="note">desmoVet is a product of KB Enterprises LLC.</div>
+    <div>© <span id="year"></span> KB Enterprises LLC · All rights reserved</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+(function(global){
+  "use strict";
+
+  /* ---------------- Naming ---------------- */
+
+  /* Values are the MID-SENTENCE form; the first item of a sentence gets
+     capitalized later, unless it is a cased abbreviation (nRBC, A/G, pH...). */
+  var NAME_MAP = {
+    "PLASMA PROTEIN": "plasma protein",
+    "PLATELETS": "platelets",
+    "PLATELET": "platelets",
+    "PLT": "platelets",
+    "LYMPHOCYTE#": "lymphocytes",
+    "LYMPHOCYTE %": "lymphocytes %",
+    "LYMPHOCYTE%": "lymphocytes %",
+    "NEUTROPHIL#": "neutrophils",
+    "NEUTROPHIL%": "neutrophils %",
+    "MONOCYTE#": "monocytes",
+    "MONOCYTE%": "monocytes %",
+    "EOSINOPHIL#": "eosinophils",
+    "EOSINOPHIL%": "eosinophils %",
+    "BASOPHIL#": "basophils",
+    "BASOPHIL%": "basophils %",
+    "BAND#": "bands",
+    "BAND NEUTROPHIL#": "band neutrophils",
+    "NRBC#": "nRBC",
+    "NRBC": "nRBC",
+    "NUCLEATED CELLS": "nucleated cells",
+    "GLUCOSE": "glucose",
+    "CALCIUM": "calcium",
+    "MAGNESIUM": "magnesium",
+    "T-BILIRUBIN": "total bilirubin",
+    "TOTAL BILIRUBIN": "total bilirubin",
+    "T. BILIRUBIN": "total bilirubin",
+    "TBILI": "total bilirubin",
+    "BICARB(HCO3-)": "bicarbonate",
+    "BICARB": "bicarbonate",
+    "HCO3-": "bicarbonate",
+    "HCO3": "bicarbonate",
+    "CALC. OSMOLALITY": "calculated osmolality",
+    "CALCULATED OSMOLALITY": "calculated osmolality",
+    "A/G RATIO": "A/G ratio",
+    "CCA2+ PH CORRECTED": "cCa2+ (pH corrected)",
+    "CCA2+ (PH CORRECTED)": "cCa2+ (pH corrected)",
+    "BLOOD CHLORIDE": "blood chloride",
+    "T-PROTEIN": "total protein",
+    "TOTAL PROTEIN": "total protein",
+    "ANION GAP": "anion gap",
+    "BASE EXCESS": "base excess",
+    "URINE SPECIFIC GRAVITY": "urine specific gravity",
+    "SPECIFIC GRAVITY": "specific gravity",
+    "USG": "USG",
+    "WBC": "WBC",
+    "SEG NEUTROPHIL#": "segmented neutrophils"
+  };
+
+  /* Abbreviations that stay uppercase (or take specific casing). */
+  var CASE_MAP = {
+    "MPV": "MPV", "HGB": "HGB", "HCT": "HCT", "RBC": "RBC", "MCV": "MCV",
+    "MCH": "MCH", "MCHC": "MCHC", "CHCM": "CHCM", "RDW": "RDW", "HDW": "HDW",
+    "ALP": "ALP", "ALT": "ALT", "AST": "AST", "GGT": "GGT", "GLDH": "GLDH",
+    "CK": "CK", "CRP": "CRP", "BUN": "BUN", "SDMA": "SDMA", "TLI": "TLI",
+    "PLI": "PLI", "NT-PROBNP": "NT-proBNP", "PROBNP": "proBNP", "CTNI": "cTnI",
+    "PT": "PT", "APTT": "aPTT", "PTT": "PTT", "PCV": "PCV", "TS": "TS",
+    "WBC": "WBC", "MCHC%": "MCHC", "PH": "pH", "PCO2": "pCO2", "PO2": "pO2",
+    "SO2": "sO2", "TCO2": "tCO2", "NA+": "Na+", "K+": "K+", "CL-": "Cl-",
+    "ICA": "iCa", "USG": "USG", "T4": "T4", "TT4": "TT4", "FT4": "fT4",
+    "TSH": "TSH", "ACTH": "ACTH", "AG": "AG", "NA": "Na", "K": "K", "CL": "Cl"
+  };
+
+  var WBC_LINES = ["NEUTROPHIL", "LYMPHOCYTE", "MONOCYTE", "EOSINOPHIL",
+                   "BASOPHIL", "BAND", "SEG", "LYMPH", "NEUT", "MONO", "EOS", "BASO"];
+
+  function normKey(s){
+    return s.replace(/\s+/g, " ").trim().toUpperCase();
+  }
+
+  function formatWord(w){
+    var key = w.toUpperCase();
+    if (CASE_MAP[key]) return CASE_MAP[key];
+    var isAllCaps = w === w.toUpperCase() && /[A-Z]/.test(w);
+    /* preserve deliberate mixed case like pH, cCa2+ */
+    return isAllCaps ? w.toLowerCase() : w;
+  }
+
+  /* Capitalize the first letter of a sentence, unless the leading word carries
+     deliberate casing (nRBC, A/G, pH, cCa2+) — those are left alone. */
+  function capFirst(s){
+    if (!s) return s;
+    var firstWord = s.split(" ")[0];
+    if (/[A-Z]/.test(firstWord)) return s;
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function formatName(raw){
+    var trimmed = raw.replace(/\s+/g, " ").trim().replace(/[:：]$/, "");
+    var key = normKey(trimmed);
+    if (NAME_MAP[key]) return NAME_MAP[key];
+
+    var pluralize = false;
+    var base = trimmed;
+    if (/#$/.test(base)) {
+      base = base.slice(0, -1).trim();
+      pluralize = true;
+      var k2 = normKey(base) + "#";
+      if (NAME_MAP[k2]) return NAME_MAP[k2];
+      if (NAME_MAP[normKey(base)]) return NAME_MAP[normKey(base)];
+    }
+
+    var words = base.split(" ").filter(Boolean);
+    var out = words.map(function(w){ return formatWord(w); }).join(" ");
+    if (pluralize && !/s$/i.test(out)) out += "s";
+    return out;
+  }
+
+  /* ---------------- Line parsing ---------------- */
+
+  var NUM = "-?\\d+(?:\\.\\d+)?";
+  var PURE_NUM_RE = new RegExp("^" + NUM + "$");
+  var NUM_FLAG_RE = new RegExp("^(" + NUM + ")(\\*?[HL]\\*?)$", "i");
+  var FLAG_RE = /^\*{0,2}(H|L|HH|LL|HI|LO|HIGH|LOW|↑|↓)\*{0,2}$/i;
+
+  function flagLetter(tok){
+    var t = tok.replace(/\*/g, "").toUpperCase();
+    if (t === "↑" || t.charAt(0) === "H") return "H";
+    if (t === "↓" || t.charAt(0) === "L") return "L";
+    return null;
+  }
+
+  function parseLine(line){
+    var s = line.replace(/[‒–—―]/g, "-")
+                .replace(/[−]/g, "-")
+                .replace(/\t/g, "  ")
+                .replace(/\s+/g, " ")
+                .trim();
+    if (!s) return null;
+    s = s.replace(/^[•\-\*·]\s+/, "");
+    if (!/\d/.test(s)) return { kind: "header", text: s };
+
+    /* normalize "70 to 138" -> "70 - 138" */
+    s = s.replace(/(\d)\s+to\s+(-?\d)/gi, "$1 - $2");
+    /* drop label words that precede an interval */
+    var work = s.replace(/\b(ref(erence)?\s*(range|interval|int)?\s*:?)/gi, " ")
+                .replace(/\s+/g, " ").trim();
+
+    /* --- reference interval: take the LAST range-looking match --- */
+    var rangeRe = new RegExp("(" + NUM + ")\\s*-\\s*(" + NUM + ")", "g");
+    var m, rLow = null, rHigh = null, rRaw = "", rStart = -1, rEnd = -1;
+    while ((m = rangeRe.exec(work)) !== null) {
+      rLow = parseFloat(m[1]);
+      rHigh = parseFloat(m[2]);
+      rRaw = m[1] + " - " + m[2];
+      rStart = m.index;
+      rEnd = m.index + m[0].length;
+      rangeRe.lastIndex = rEnd;
+    }
+
+    var head, tail = "";
+    if (rStart >= 0) {
+      head = work.slice(0, rStart).trim();
+      tail = work.slice(rEnd).trim();
+    } else {
+      head = work;
+    }
+
+    /* one-sided bound at end: "< 0.5" / "> 1.0" */
+    var oneSided = null;
+    if (rStart < 0) {
+      var os = head.match(new RegExp("(?:^|\\s)([<>\\u2264\\u2265])\\s*(" + NUM + ")\\s*[A-Za-z%\\/\\u00b5^\\d\\.\\-]*$"));
+      if (os) {
+        var stripped = head.slice(0, os.index).trim();
+        if (new RegExp("(?:^|\\s)" + NUM + "(?:\\s|$)").test(stripped)) {
+          oneSided = { op: os[1], val: parseFloat(os[2]) };
+          head = stripped;
+        }
+      }
+    }
+
+    /* if the head has no number, the value may sit after the interval */
+    var scan = head;
+    var swapped = false;
+    if (!/\d/.test(scan.replace(/[A-Za-z][\w+\-]*\d+/g, "")) && /\d/.test(tail)) {
+      /* head has only name-embedded digits; try tail */
+    }
+    var tokens = scan.split(" ").filter(Boolean);
+
+    var valIdx = -1, valStr = null, flag = null;
+    for (var i = 0; i < tokens.length; i++) {
+      if (i === 0) continue; /* first token is always part of the name */
+      var t = tokens[i];
+      if (PURE_NUM_RE.test(t)) { valIdx = i; valStr = t; break; }
+      var nf = t.match(NUM_FLAG_RE);
+      if (nf) { valIdx = i; valStr = nf[1]; flag = flagLetter(nf[2]); break; }
+    }
+
+    if (valIdx < 0 && tail) {
+      var ttok = tail.split(" ").filter(Boolean);
+      for (var j = 0; j < ttok.length; j++) {
+        if (PURE_NUM_RE.test(ttok[j])) { valStr = ttok[j]; swapped = true; break; }
+      }
+      if (swapped) { tokens = scan.split(" ").filter(Boolean); valIdx = tokens.length; }
+    }
+
+    if (valStr === null) return { kind: "unparsed", text: s };
+
+    var name = tokens.slice(0, Math.min(valIdx, tokens.length)).join(" ").trim();
+    if (!name) return { kind: "unparsed", text: s };
+
+    /* flag + units after the value */
+    var units = [];
+    if (!flag) {
+      for (var k = valIdx + 1; k < tokens.length; k++) {
+        var tk = tokens[k];
+        if (FLAG_RE.test(tk)) { flag = flagLetter(tk); continue; }
+        if (!PURE_NUM_RE.test(tk)) units.push(tk);
+      }
+    } else {
+      for (var k2 = valIdx + 1; k2 < tokens.length; k2++) {
+        if (!PURE_NUM_RE.test(tokens[k2])) units.push(tokens[k2]);
+      }
+    }
+    if (!flag && tail) {
+      var tailTok = tail.split(" ").filter(Boolean);
+      for (var q = 0; q < tailTok.length; q++) {
+        if (FLAG_RE.test(tailTok[q])) { flag = flagLetter(tailTok[q]); break; }
+      }
+    }
+
+    var value = parseFloat(valStr);
+    var computed = null;
+    if (rLow !== null && rHigh !== null) {
+      var lo = Math.min(rLow, rHigh), hi = Math.max(rLow, rHigh);
+      if (value > hi) computed = "H";
+      else if (value < lo) computed = "L";
+    } else if (oneSided) {
+      if ((oneSided.op === "<" || oneSided.op === "≤") && value > oneSided.val) computed = "H";
+      if ((oneSided.op === ">" || oneSided.op === "≥") && value < oneSided.val) computed = "L";
+    }
+
+    var hasInterval = (rLow !== null && rHigh !== null) || !!oneSided;
+    var finalFlag = flag || computed;
+
+    return {
+      kind: "analyte",
+      raw: s,
+      rawName: name,
+      name: formatName(name),
+      valueStr: valStr,
+      value: value,
+      units: units.join(" "),
+      refLow: rLow,
+      refHigh: rHigh,
+      refRaw: rRaw,
+      oneSided: oneSided,
+      hasInterval: hasInterval,
+      labFlag: flag,
+      flag: finalFlag,
+      abnormal: !!finalFlag && (hasInterval || !!flag)
+    };
+  }
+
+  function refText(r){
+    if (r.refRaw) return r.refRaw;
+    if (r.oneSided) return r.oneSided.op + " " + r.oneSided.val;
+    return "";
+  }
+
+  /* ---------------- Panel + sentence assembly ---------------- */
+
+  function wbcBase(rawName){
+    var k = rawName.toUpperCase().replace(/[^A-Z]/g, "");
+    for (var i = 0; i < WBC_LINES.length; i++) {
+      if (k.indexOf(WBC_LINES[i]) === 0) return WBC_LINES[i];
+    }
+    return null;
+  }
+
+  function dedupeWbc(rows){
+    var absoluteBases = {};
+    rows.forEach(function(r){
+      if (!r.abnormal) return;
+      if (/#\s*$/.test(r.rawName)) {
+        var b = wbcBase(r.rawName);
+        if (b) absoluteBases[b] = true;
+      }
+    });
+    return rows.filter(function(r){
+      if (!r.abnormal) return true;
+      if (!/%\s*$/.test(r.rawName)) return true;
+      var b = wbcBase(r.rawName);
+      return !(b && absoluteBases[b]);
+    });
+  }
+
+  function itemText(r, opts){
+    var s = r.name + " " + r.valueStr;
+    if (opts && opts.units && r.units) s += " " + r.units;
+    s += " " + r.flag;
+    if (opts && opts.ref && refText(r)) s += " (ref " + refText(r) + ")";
+    return s;
+  }
+
+  function joinItems(items){
+    if (items.length === 0) return "No abnormalities.";
+    items = items.slice();
+    items[0] = capFirst(items[0]);
+    if (items.length === 1) return items[0] + ".";
+    if (items.length === 2) return items[0] + " and " + items[1] + ".";
+    return items.slice(0, -1).join(", ") + ", and " + items[items.length - 1] + ".";
+  }
+
+  function splitPanels(text){
+    var blocks = text.replace(/\r\n?/g, "\n").split(/\n\s*\n+/);
+    return blocks.map(function(b){ return b.trim(); }).filter(function(b){ return b.length > 0; });
+  }
+
+  function processBlock(text, opts){
+    var lines = text.replace(/\r\n?/g, "\n").split("\n");
+    var rows = [], unparsed = [];
+    lines.forEach(function(l){
+      var p = parseLine(l);
+      if (!p) return;
+      if (p.kind === "analyte") rows.push(p);
+      else if (p.kind === "unparsed") unparsed.push(p.text);
+    });
+    var kept = dedupeWbc(rows);
+    var abn = kept.filter(function(r){ return r.abnormal; });
+    var items = abn.map(function(r){ return itemText(r, opts); });
+    return { rows: rows, kept: kept, abnormal: abn, unparsed: unparsed, sentence: joinItems(items) };
+  }
+
+  function process(text, opts){
+    opts = opts || {};
+    var blocks = opts.perPanel ? splitPanels(text) : [text];
+    if (blocks.length === 0) blocks = [""];
+    var results = blocks.map(function(b){ return processBlock(b, opts); });
+    var usable = results.filter(function(r){ return r.rows.length > 0; });
+    if (usable.length === 0) usable = results.slice(0, 1);
+    return {
+      panels: usable,
+      sentences: usable.map(function(r){ return r.sentence; }),
+      rows: results.reduce(function(a, r){ return a.concat(r.rows); }, []),
+      unparsed: results.reduce(function(a, r){ return a.concat(r.unparsed); }, [])
+    };
+  }
+
+  global.BW = {
+    parseLine: parseLine,
+    formatName: formatName,
+    capFirst: capFirst,
+    process: process,
+    processBlock: processBlock,
+    refText: refText,
+    joinItems: joinItems
+  };
+
+})(typeof window !== "undefined" ? window : globalThis);
+
+
+/* ---------------- UI ---------------- */
+if (typeof document !== "undefined") (function(){
+  "use strict";
+
+  var EXAMPLE = [
+    "WBC              8.4         K/uL      5.0 - 16.8",
+    "RBC              6.12        M/uL      5.50 - 8.50",
+    "HGB              14.1        g/dL      12.0 - 18.0",
+    "HCT              41.2        %         37.0 - 55.0",
+    "MCV              67.3        fL        60.0 - 77.0",
+    "MCHC             34.2        g/dL      32.0 - 36.0",
+    "MPV              15.2   H    fL        8.0 - 14.0",
+    "PLATELETS        174    L    K/uL      200 - 500",
+    "PLASMA PROTEIN   8.0    H    g/dL      6.0 - 7.5",
+    "NEUTROPHIL#      6.10        K/uL      3.00 - 11.50",
+    "LYMPHOCYTE#      0.8    L    K/uL      1.00 - 4.80",
+    "MONOCYTE#        0.45        K/uL      0.15 - 1.35",
+    "EOSINOPHIL#      0.22        K/uL      0.10 - 1.25",
+    "nRBC#            0.1    H    K/uL      0.0 - 0.0",
+    "RETIC% auto      0.6         %",
+    "",
+    "GLUCOSE          142         mg/dL     70 - 138",
+    "BUN              18          mg/dL     7 - 27",
+    "CREATININE       1.1         mg/dL     0.5 - 1.8",
+    "T-PROTEIN        7.9         g/dL      5.2 - 8.2",
+    "ALBUMIN          2.4         g/dL      2.3 - 4.0",
+    "A/G RATIO        0.44        ratio     0.60 - 1.10",
+    "CALCIUM          14.3   H    mg/dL     7.9 - 12.0",
+    "MAGNESIUM        1.4         mg/dL     1.5 - 2.5",
+    "T-BILIRUBIN      0.2         mg/dL     0.0 - 0.4",
+    "ALP              310    H    U/L       5 - 160",
+    "ALT              66          U/L       10 - 125",
+    "Ionized Calcium  1.88        mmol/L",
+    "",
+    "pH               7.31        7.35 - 7.45",
+    "pCO2             48          mmHg      35 - 45",
+    "BICARB(HCO3-)    21.0        mmol/L    20.0 - 29.0",
+    "BASE EXCESS      -4.2        mmol/L    -4.0 - 4.0",
+    "Blood Chloride   130    H    mmol/L    109 - 122",
+    "CALC. OSMOLALITY 312         mOsm/kg   290 - 310",
+    "Barometric Pressure 633      mmHG"
+  ].join("\n");
+
+  var $ = function(id){ return document.getElementById(id); };
+  var input = $("input"), output = $("output"), summary = $("summary");
+  var detailBody = $("detail").querySelector("tbody");
+  var toast = $("toast");
+  var last = "";
+
+  function opts(){
+    return {
+      perPanel: $("opt-panels").checked,
+      units: $("opt-units").checked,
+      ref: $("opt-ref").checked
+    };
+  }
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(function(){ toast.classList.remove("show"); }, 1400);
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"]/g, function(c){
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  function render(){
+    var text = input.value;
+    if (!text.trim()) {
+      output.innerHTML = '<span class="placeholder">Formatted output will appear here.</span>';
+      summary.textContent = "";
+      detailBody.innerHTML = "";
+      last = "";
+      return;
+    }
+    var res = window.BW.process(text, opts());
+    last = res.sentences.join("\n");
+
+    output.innerHTML = res.sentences.map(function(s){
+      var cls = s === "No abnormalities." ? ' class="none"' : "";
+      return "<p" + cls + ">" + esc(s) + "</p>";
+    }).join("");
+
+    var nAbn = res.panels.reduce(function(a, p){ return a + p.abnormal.length; }, 0);
+    var nNoRef = res.rows.filter(function(r){ return !r.hasInterval; }).length;
+    var bits = [res.rows.length + " analyte" + (res.rows.length === 1 ? "" : "s") + " read",
+                nAbn + " abnormal"];
+    if (nNoRef) bits.push(nNoRef + " with no reference interval");
+    if (res.unparsed.length) bits.push(res.unparsed.length + " line(s) not recognized");
+    summary.textContent = bits.join(" · ");
+
+    var html = "";
+    res.rows.forEach(function(r){
+      var status;
+      if (r.abnormal) {
+        status = '<span class="pill ' + r.flag.toLowerCase() + '">' + r.flag +
+                 (r.labFlag ? "" : " (calc)") + "</span>";
+      } else if (!r.hasInterval) {
+        status = '<span class="pill skip">no interval</span>';
+      } else {
+        status = '<span class="pill ok">in range</span>';
+      }
+      html += "<tr" + (r.abnormal ? ' class="abn"' : "") + ">" +
+        "<td>" + esc(window.BW.capFirst(r.name)) + "</td>" +
+        '<td class="num">' + esc(r.valueStr) + (r.units ? " " + esc(r.units) : "") + "</td>" +
+        '<td class="num">' + esc(window.BW.refText(r) || "—") + "</td>" +
+        "<td>" + status + "</td></tr>";
+    });
+    res.unparsed.forEach(function(u){
+      html += '<tr><td colspan="3" style="opacity:.5">' + esc(u) + "</td>" +
+              '<td><span class="pill skip">not read</span></td></tr>';
+    });
+    detailBody.innerHTML = html;
+  }
+
+  var t;
+  input.addEventListener("input", function(){ clearTimeout(t); t = setTimeout(render, 150); });
+  ["opt-panels", "opt-units", "opt-ref"].forEach(function(id){
+    $(id).addEventListener("change", render);
+  });
+  $("btn-format").addEventListener("click", render);
+  $("btn-clear").addEventListener("click", function(){ input.value = ""; render(); input.focus(); });
+  $("btn-example").addEventListener("click", function(){ input.value = EXAMPLE; render(); });
+  $("btn-copy").addEventListener("click", function(){
+    if (!last) { showToast("Nothing to copy"); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(last).then(function(){ showToast("Copied"); },
+                                              function(){ showToast("Copy failed"); });
+    } else {
+      var ta = document.createElement("textarea");
+      ta.value = last; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); showToast("Copied"); }
+      catch (e) { showToast("Copy failed"); }
+      document.body.removeChild(ta);
+    }
+  });
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+})();
+</script>
+
+</body>
+</html>
