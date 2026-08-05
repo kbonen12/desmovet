@@ -4,20 +4,61 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EquiCalc — Field Drug Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f1117;
-    --surface: #181c27;
-    --card: #1e2333;
-    --border: #2a3050;
+    color-scheme: light;
+    --bg: #f5f2eb;
+    --surface: #faf8f3;
+    --card: #ffffff;
+    --card-hover: #f2efe7;
+    --border: #d4cfc4;
+    --border-soft: #e8e4da;
+    --text: #1a1714;
+    --muted: #6b6560;
+
+    --accent: #2b5240;
+    --accent-hover: #1e3d2f;
+    --accent-soft: #e8f0ec;
+    --on-accent: #f7f5f0;
+
+    --accent2: #8a5a00;
+    --accent2-soft: #fff8ec;
+    --danger: #9a3520;
+    --danger-soft: #fdf0ec;
+    --low: #2f5d7c;
+    --low-soft: #e6eef4;
+
+    --shadow-sm: 0 1px 3px rgba(26,23,20,.07);
+    --mono: 'DM Mono', ui-monospace, monospace;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  [data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #151210;
+    --surface: #1c1916;
+    --card: #23201c;
+    --card-hover: #2b2723;
+    --border: #35302a;
+    --border-soft: #2a2622;
+    --text: #f0ece6;
+    --muted: #9e9790;
+
     --accent: #7eb8a4;
-    --accent2: #c9a86c;
-    --danger: #e07070;
-    --text: #e8ecf4;
-    --muted: #7a85a3;
-    --mono: 'DM Mono', monospace;
-    --serif: 'Fraunces', serif;
+    --accent-hover: #a0cfc0;
+    --accent-soft: #1f332b;
+    --on-accent: #151210;
+
+    --accent2: #dda800;
+    --accent2-soft: #302511;
+    --danger: #e08163;
+    --danger-soft: #331c14;
+    --low: #7fa8dd;
+    --low-soft: #17242f;
+
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.3);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,7 +66,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: var(--mono);
+    font-family: var(--sans);
     font-size: 14px;
     min-height: 100vh;
   }
@@ -50,7 +91,7 @@
     display: flex; align-items: center; justify-content: center;
     font-family: var(--serif);
     font-size: 20px;
-    color: #0f1117;
+    color: var(--on-accent);
     flex-shrink: 0;
   }
 
@@ -87,13 +128,12 @@
     border-radius: 6px;
     color: var(--muted);
     cursor: pointer;
-    font-family: var(--mono);
-    font-size: 12px;
+    font-family: var(--sans);
+    font-size: 12.5px;
     padding: 6px 14px;
     white-space: nowrap;
     transition: all .15s;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    letter-spacing: 0;
   }
   .tab-btn:hover { color: var(--text); border-color: var(--border); }
   .tab-btn.active {
@@ -135,6 +175,7 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 20px;
+    box-shadow: var(--shadow-sm);
   }
   .card-title {
     font-family: var(--serif);
@@ -148,28 +189,27 @@
     gap: 8px;
   }
   .badge {
-    font-family: var(--mono);
+    font-family: var(--sans);
     font-size: 10px;
     padding: 2px 7px;
     border-radius: 4px;
     background: var(--accent);
-    color: #0f1117;
+    color: var(--on-accent);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-weight: 500;
   }
   .badge.warn { background: var(--accent2); }
-  .badge.danger { background: var(--danger); color: #fff; }
+  .badge.danger { background: var(--danger); color: var(--on-accent); }
 
   /* ── FORM ELEMENTS ── */
   .field { margin-bottom: 12px; }
   label {
     display: block;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--muted);
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    margin-bottom: 5px;
+    letter-spacing: 0;
   }
   .input-row {
     display: flex;
@@ -206,16 +246,15 @@
     background: var(--accent);
     border: none;
     border-radius: 7px;
-    color: #0f1117;
-    font-family: var(--mono);
+    color: var(--on-accent);
+    font-family: var(--sans);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    transition: opacity .15s;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    transition: background .15s;
+    letter-spacing: 0;
   }
-  .btn:hover { opacity: .85; }
+  .btn:hover { background: var(--accent-hover); }
 
   /* ── RESULTS BOX ── */
   .result-box {
@@ -236,14 +275,14 @@
     font-size: 13px;
   }
   .result-row:last-child { border-bottom: none; }
-  .result-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
-  .result-value { font-size: 18px; color: var(--accent); font-weight: 500; }
+  .result-label { color: var(--muted); font-size: 12px; }
+  .result-value { font-family: var(--mono); font-size: 18px; color: var(--accent); font-weight: 500; }
   .result-value.warn { color: var(--accent2); }
   .result-value.danger { color: var(--danger); }
 
   .note-box {
     margin-top: 10px;
-    background: rgba(201,168,108,.08);
+    background: var(--accent2-soft);
     border-left: 3px solid var(--accent2);
     border-radius: 0 6px 6px 0;
     padding: 8px 12px;
@@ -270,19 +309,19 @@
   }
   .ref-table td {
     padding: 7px 8px;
-    border-bottom: 1px solid rgba(42,48,80,.5);
+    border-bottom: 1px solid var(--border-soft);
     vertical-align: top;
     line-height: 1.4;
   }
   .ref-table tr:last-child td { border-bottom: none; }
-  .ref-table tr:hover td { background: rgba(126,184,164,.04); }
+  .ref-table tr:hover td { background: var(--accent-soft); }
   .mono { font-family: var(--mono); }
 
   .full-width { grid-column: 1 / -1; }
 
   /* ── WARNING BANNER ── */
   .warn-banner {
-    background: rgba(224,112,112,.1);
+    background: var(--danger-soft);
     border: 1px solid var(--danger);
     border-radius: 8px;
     padding: 10px 14px;
@@ -311,9 +350,7 @@
     padding: 7px 4px;
     cursor: pointer;
     color: var(--muted);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    font-size: 12px;
     transition: all .15s;
     margin: 0;
   }
@@ -323,11 +360,158 @@
     color: var(--accent);
   }
 
+
+  /* ── FOAL BLOODWORK ── */
+  .foal-ta {
+    width: 100%;
+    min-height: 170px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.65;
+    padding: 10px 12px;
+    outline: none;
+    resize: vertical;
+    transition: border-color .15s;
+  }
+  .foal-ta:focus { border-color: var(--accent); }
+  .foal-ta::placeholder { color: var(--muted); opacity: .55; }
+
+  .btn.ghost {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn.ghost:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+  .btn-row { display: flex; gap: 8px; }
+  .btn-row .btn { margin-top: 14px; }
+
+  .flag-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .flag-row:last-child { border-bottom: none; }
+  .flag-name {
+    min-width: 118px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .flag-val { font-family: var(--mono); font-size: 19px; font-weight: 500; }
+  .flag-val.h { color: var(--accent2); }
+  .flag-val.l { color: var(--low); }
+  .flag-dir {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.08em;
+  }
+  .flag-dir.h { background: var(--accent2-soft); color: var(--accent2); }
+  .flag-dir.l { background: var(--low-soft); color: var(--low); }
+  .flag-ref { margin-left: auto; color: var(--muted); font-family: var(--mono); font-size: 11px; text-align: right; }
+  .flag-ref em { color: var(--accent2); font-style: normal; }
+
+  .foal-summary {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .foal-clear { color: var(--accent); font-size: 14px; text-transform: none; letter-spacing: 0; }
+
+  details.foal-det { margin-top: 12px; }
+  details.foal-det summary {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 4px 0;
+  }
+  details.foal-det summary:hover { color: var(--accent); }
+  details.foal-det ul { margin: 6px 0 0 18px; }
+  details.foal-det li { font-size: 12px; color: var(--muted); line-height: 1.7; }
+
+  .age-pill-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+  .age-pill {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 4px 11px;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .age-pill:hover { color: var(--text); border-color: var(--muted); }
+  .age-pill.active { background: var(--card); border-color: var(--accent); color: var(--accent); }
+
+  .ref-group-title {
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 22px 0 0;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .ref-group-title span { font-family: var(--sans); font-size: 11px; color: var(--muted); }
+  .ref-group-title:first-of-type { margin-top: 4px; }
+  .ref-na { color: var(--muted); opacity: .6; }
+
+  .src-box { font-size: 12px; line-height: 1.8; color: var(--muted); }
+  .src-box b { color: var(--text); font-weight: 500; }
+  .src-box ol { margin: 4px 0 0 18px; }
+  .src-box li { margin-bottom: 10px; }
+  .src-box code {
+    font-size: 11px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+  }
+
+  /* ── THEME TOGGLE ── */
+  .theme-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 5px 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all .15s;
+  }
+  .theme-btn:hover { color: var(--accent); border-color: var(--accent); }
+
   /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 </style>
+<script>
+(function () {
+  var k = 'equicalc-theme', v = null;
+  try { v = localStorage.getItem(k); } catch (e) {}
+  if (!v) v = 'light';
+  document.documentElement.setAttribute('data-theme', v);
+})();
+</script>
 </head>
 <body>
   
@@ -349,9 +533,10 @@
   <div class="header-sub">
     Verify all doses.<br>Clinical judgment always prevails.
   </div>
-  <div style="margin-left:auto;display:flex;gap:20px;align-items:center;">
-    <a href="index.html" style="font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Home</a>
-    <a href="about.html" style="font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">About</a>
+  <div style="margin-left:auto;display:flex;gap:18px;align-items:center;">
+    <a href="index.html" style="font-size:12.5px;color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Home</a>
+    <a href="about.html" style="font-size:12.5px;color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">About</a>
+    <button class="theme-btn" onclick="toggleTheme()" aria-label="Switch between light and dark mode"><span id="theme-icon">☾</span><span id="theme-word">Night</span></button>
   </div>
 </header>
 
@@ -362,6 +547,7 @@
   <button class="tab-btn" onclick="showPanel('anesthesia')">Anesthesia</button>
   <button class="tab-btn" onclick="showPanel('sedation')">Sedation</button>
   <button class="tab-btn" onclick="showPanel('resuscitation')">Resuscitation</button>
+  <button class="tab-btn" onclick="showPanel('foal')">Foal Bloodwork</button>
   <button class="tab-btn" onclick="showPanel('reference')">Drug Reference</button>
 </div>
 
@@ -976,6 +1162,102 @@
     </div>
   </div>
 
+  <!-- ════════════ FOAL BLOODWORK ════════════ -->
+  <div class="panel" id="panel-foal">
+    <div class="panel-title">Foal Bloodwork Checker</div>
+    <div class="panel-desc">Age-specific neonatal reference intervals for the equine neonate. Paste a CBC or chemistry panel, set the foal's age, and get back only the values that fall outside the published foal range.</div>
+
+    <div class="warn-banner">
+      <span>⚠</span>
+      <span>Foal reference intervals change rapidly over the first weeks of life and differ substantially from adult equine ranges. Do not interpret neonatal bloodwork against an adult or in-house analyser range. Intervals below are from published neonatology texts (see Sources) and are not a substitute for your own laboratory's validated intervals.</span>
+    </div>
+
+    <div class="calc-grid">
+
+      <!-- ── checker ── -->
+      <div class="card full-width">
+        <div class="card-title">Check a Panel <span class="badge">Age-specific</span></div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;" class="foal-top">
+          <div class="field">
+            <label>Foal Age</label>
+            <div class="input-row">
+              <input type="number" id="foal-age" placeholder="3" min="0" step="0.5" oninput="foalSyncAge()" />
+              <select id="foal-age-unit" class="unit-select" onchange="foalSyncAge()">
+                <option value="0.0416667">Hours</option>
+                <option value="1" selected>Days</option>
+                <option value="7">Weeks</option>
+                <option value="30">Months</option>
+              </select>
+            </div>
+            <div class="foal-summary" id="foal-bracket" style="margin:8px 0 0; border:none; padding:0;">Enter an age to select a reference bracket</div>
+          </div>
+
+          <div class="field">
+            <label>Serial / Cumulative Report</label>
+            <div class="toggle-group">
+              <input type="radio" name="foal-col" id="foal-col-first" value="first" checked>
+              <label for="foal-col-first">First value per line</label>
+              <input type="radio" name="foal-col" id="foal-col-last" value="last">
+              <label for="foal-col-last">Last value per line</label>
+            </div>
+            <div class="foal-summary" style="margin:0; border:none; padding:0;">Pick the column holding the most recent draw</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Paste Lab Results</label>
+          <textarea class="foal-ta" id="foal-input" spellcheck="false" placeholder="HGB          9.5   g/dL   (11.0-16.6)&#10;HCT          30    %&#10;PLATELETS    82  L&#10;NUCLEATED CELLS  4.0&#10;NEUTROPHIL#  2.10&#10;AST          770   IU/L&#10;GGT          150&#10;GLU          180&#10;CREAT        1.0&#10;&#10;Units, analyser H/L flags and the lab's own printed reference intervals are ignored."></textarea>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" onclick="foalRun()">Check Against Foal Ranges</button>
+          <button class="btn ghost" style="width:auto; padding-left:22px; padding-right:22px;" onclick="foalReset()">Clear</button>
+        </div>
+
+        <div class="result-box" id="foal-result"></div>
+
+        <div class="note-box">Analytes with no published foal equivalent — RDW, MPV, differential percentages, SAA, A/G ratio, osmolality and sample-quality indices — are listed as <b>not evaluated</b> rather than silently dropped. Magnesium is suppressed at ages where the mean ± 2SD conversion produces a negative lower bound.</div>
+      </div>
+
+      <!-- ── reference tables ── -->
+      <div class="card full-width">
+        <div class="card-title">Reference Intervals by Age <span class="badge warn">Browse</span></div>
+        <div class="panel-desc" style="margin-bottom:14px;">Select an age bracket to see every published interval for that age. A dash means the source table has no value at that age; the checker falls back to the nearest bracket for that analyte individually.</div>
+        <div class="age-pill-row" id="foal-age-pills"></div>
+        <div id="foal-ref-tables"></div>
+      </div>
+
+      <!-- ── sources ── -->
+      <div class="card full-width">
+        <div class="card-title">Sources</div>
+        <div class="src-box">
+          <ol>
+            <li>
+              Koterba AM, Drummond WH, Kosch PC, eds. <b>Equine Clinical Neonatology.</b>
+              Philadelphia: Lea &amp; Febiger; 1990. ISBN <code>978-0-8121-1184-2</code>.<br>
+              Chemistry intervals — Tables 27-2 (enzyme activities), 27-3 (electrolytes and minerals),
+              27-4 (small organic molecules) and 27-5 (serum proteins).
+            </li>
+            <li>
+              Paradis MR. <b>Equine Neonatal Medicine: A Case-Based Approach.</b>
+              Philadelphia: Saunders Elsevier; 2006. ISBN <code>978-1-4160-2353-1</code>.<br>
+              Haematology intervals — Tables 24-1 (erythrocyte parameters), 24-2 (leukocyte counts)
+              and 24-3 (haematologic values).
+            </li>
+          </ol>
+          <div class="note-box" style="margin-top:14px;">
+            Electrolyte, mineral and anion gap intervals in Koterba Table 27-3 are published as mean ± SD rather than as
+            ranges. They are presented here as mean ± 2SD. On small, skewed neonatal samples this arithmetic can push a
+            lower bound below zero, so treat flags near the low boundary of any derived interval as a prompt to check the
+            value rather than as a result in itself.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ════════════ REFERENCE ════════════ -->
   <div class="panel" id="panel-reference">
     <div class="panel-title">Quick Drug Reference</div>
@@ -1055,14 +1337,46 @@
 
 <script>
 // ─────────────────────────────────────────────
+// THEME
+// ─────────────────────────────────────────────
+function applyThemeLabel() {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const i = document.getElementById('theme-icon'), w = document.getElementById('theme-word');
+  if (i) i.textContent = dark ? '☀' : '☾';
+  if (w) w.textContent = dark ? 'Day' : 'Night';
+}
+function toggleTheme() {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('equicalc-theme', next); } catch (e) {}
+  applyThemeLabel();
+}
+
+// ─────────────────────────────────────────────
 // UTILITY
 // ─────────────────────────────────────────────
 function showPanel(id) {
+  const panel = document.getElementById('panel-' + id);
+  if (!panel) return;
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + id).classList.add('active');
-  event.target.classList.add('active');
+  panel.classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if ((b.getAttribute('onclick') || '').indexOf("'" + id + "'") !== -1) b.classList.add('active');
+  });
 }
+
+// Deep links from index.html (calculators.html#gir, #foal, ...) open the right tab.
+const PANEL_ROUTES = {
+  gir: 'glucose', fluids: 'glucose', glucose: 'glucose', tpn: 'tpn', cri: 'cri',
+  anesthesia: 'anesthesia', sedation: 'sedation', resuscitation: 'resuscitation',
+  reference: 'reference', foal: 'foal', bloodwork: 'foal'
+};
+function routeFromHash() {
+  const h = (location.hash || '').replace('#', '').toLowerCase();
+  if (PANEL_ROUTES[h]) showPanel(PANEL_ROUTES[h]);
+}
+window.addEventListener('hashchange', routeFromHash);
 
 function wt(val, unit) {
   return unit === 'lb' ? val * 0.453592 : +val;
@@ -1506,6 +1820,290 @@ function calcDob() {
   document.getElementById('dob-rate').textContent = fmt(infRate,0) + ' mL/hr';
   showResult('dob-result');
 }
+
+const FOAL_AGES = [
+  {label:"<1 hour",days:0},
+  {label:"<12 hours",days:0.5},
+  {label:"1 day",days:1},
+  {label:"3 days",days:3},
+  {label:"5 days",days:5},
+  {label:"1 week",days:7},
+  {label:"2 weeks",days:14},
+  {label:"3 weeks",days:21},
+  {label:"1 month",days:30},
+  {label:"2 months",days:60},
+  {label:"3 months",days:90},
+  {label:"4 months",days:120},
+  {label:"5 months",days:150},
+  {label:"6 months",days:180},
+  {label:"9 months",days:270},
+  {label:"12 months",days:365},
+  {label:"Adult",days:730},
+];
+
+const FOAL_PANELS = [{"id":"cbc-rbc","label":"CBC · Erythrocyte Parameters","table":"Paradis Table 24-1"},{"id":"cbc-wbc","label":"CBC · Leukocyte Counts","table":"Paradis Table 24-2"},{"id":"cbc-heme","label":"CBC · Hematologic Values","table":"Paradis Table 24-3"},{"id":"chem-enz","label":"Chemistry · Enzyme Activities","table":"Koterba Table 27-2"},{"id":"chem-lyte","label":"Chemistry · Electrolytes & Minerals","table":"Koterba Table 27-3 (derived)"},{"id":"chem-org","label":"Chemistry · Small Organic Molecules","table":"Koterba Table 27-4"},{"id":"chem-prot","label":"Chemistry · Serum Proteins","table":"Koterba Table 27-5"}];
+
+const FOAL_ANALYTES = [
+  {"key":"hgb","label":"HGB","units":"g/dL","panel":"cbc-rbc","aliases":["haemoglobin","hemoglobin","hgb","hb"],"derived":false,"ranges":{"<1 hour":[13.4,19.9],"<12 hours":[12.6,17.4],"1 day":[12.0,16.6],"3 days":[11.5,16.7],"5 days":[11.0,16.6],"1 week":[10.7,15.8],"2 weeks":[10.1,15.3],"3 weeks":[10.5,14.8],"1 month":[10.9,15.3],"2 months":[11.6,16.0],"3 months":[11.7,15.3],"4 months":[11.6,17.2],"5 months":[10.5,15.2],"6 months":[10.8,15.4],"9 months":[10.9,15.9],"12 months":[11.0,15.4],"Adult":[11.0,18.0]},"noflag":[]},
+  {"key":"hct","label":"HCT / PCV","units":"%","panel":"cbc-rbc","aliases":["packed cell volume","haematocrit","hematocrit","hct","pcv"],"derived":false,"ranges":{"<1 hour":[40.0,52.0],"<12 hours":[37.0,49.0],"1 day":[32.0,46.0],"3 days":[30.0,46.0],"5 days":[30.0,44.0],"1 week":[28.0,43.0],"2 weeks":[28.0,41.0],"3 weeks":[29.0,40.0],"1 month":[29.0,41.0],"2 months":[31.0,44.0],"3 months":[32.0,42.0],"4 months":[32.0,43.0],"5 months":[29.0,41.0],"6 months":[29.0,41.0],"9 months":[31.0,44.0],"12 months":[31.0,42.0],"Adult":[31.0,47.0]},"noflag":[]},
+  {"key":"rbc","label":"RBC","units":"10⁶/µL","panel":"cbc-rbc","aliases":["red blood cells","red cell count","erythrocytes","rbc"],"derived":false,"ranges":{"<1 hour":[9.3,12.9],"<12 hours":[9.0,12.0],"1 day":[8.2,11.0],"3 days":[7.8,11.4],"5 days":[7.2,11.6],"1 week":[7.4,10.6],"2 weeks":[7.2,10.8],"3 weeks":[7.8,10.6],"1 month":[7.9,11.1],"2 months":[9.1,13.2],"3 months":[9.2,12.0],"4 months":[8.9,12.7],"5 months":[8.8,11.4],"6 months":[7.9,11.6],"9 months":[8.0,11.2],"12 months":[7.7,10.9],"Adult":[5.9,9.9]},"noflag":[]},
+  {"key":"mcv","label":"MCV","units":"fL","panel":"cbc-rbc","aliases":["mcv"],"derived":false,"ranges":{"<1 hour":[37.0,45.0],"<12 hours":[36.0,45.0],"1 day":[36.0,46.0],"3 days":[35.0,44.0],"5 days":[35.0,45.0],"1 week":[35.0,44.0],"2 weeks":[35.0,41.0],"3 weeks":[34.0,41.0],"1 month":[33.0,40.0],"2 months":[32.0,38.0],"3 months":[31.0,38.0],"4 months":[31.0,37.0],"5 months":[32.0,38.0],"6 months":[32.0,39.0],"9 months":[36.0,43.0],"12 months":[35.0,44.0],"Adult":[41.0,51.0]},"noflag":[]},
+  {"key":"mchc","label":"MCHC","units":"g/dL","panel":"cbc-rbc","aliases":["chcm","mchc"],"derived":false,"ranges":{"<1 hour":[33.0,39.0],"<12 hours":[32.0,40.0],"1 day":[32.0,40.0],"3 days":[34.0,40.0],"5 days":[34.0,40.0],"1 week":[35.0,40.0],"2 weeks":[34.0,40.0],"3 weeks":[34.0,40.0],"1 month":[34.0,40.0],"2 months":[33.0,40.0],"3 months":[34.0,40.0],"4 months":[34.0,41.0],"5 months":[33.0,40.0],"6 months":[32.0,40.0],"9 months":[34.0,40.0],"12 months":[33.0,41.0],"Adult":[33.0,41.0]},"noflag":[]},
+  {"key":"wbc","label":"WBC / NCC","units":"10³/µL","panel":"cbc-wbc","aliases":["total nucleated cells","nucleated cell count","white blood cells","total leukocytes","nucleated cells","leukocytes","tncc","ncc","wbc"],"derived":false,"ranges":{"<12 hours":[6.9,14.4],"1 day":[4.9,11.7],"3 days":[5.1,10.1],"1 week":[6.3,13.6],"2 weeks":[5.2,11.9],"3 weeks":[5.4,12.4],"1 month":[5.3,12.2],"2 months":[5.4,13.5],"3 months":[6.7,16.8],"4 months":[6.2,14.2],"5 months":[6.4,14.6],"6 months":[7.8,11.6],"9 months":[6.3,11.1],"12 months":[6.5,11.8],"Adult":[5.4,14.3]},"noflag":[]},
+  {"key":"neut","label":"Neutrophils","units":"10³/µL","panel":"cbc-wbc","aliases":["segmented neutrophils","neutrophils#","neutrophil#","neutrophils","neutrophil","neut#","neut","seg#","segs","pmn"],"derived":false,"ranges":{"<12 hours":[5.55,12.38],"1 day":[3.36,9.57],"3 days":[3.21,8.58],"1 week":[4.35,10.55],"2 weeks":[3.99,9.08],"3 weeks":[3.16,8.94],"1 month":[2.76,9.27],"2 months":[2.7,9.46],"3 months":[3.92,10.35],"4 months":[3.01,7.48],"5 months":[1.7,8.4],"6 months":[2.89,5.56],"9 months":[2.6,5.38],"12 months":[2.66,5.9],"Adult":[2.26,8.58]},"noflag":[]},
+  {"key":"lymph","label":"Lymphocytes","units":"10³/µL","panel":"cbc-wbc","aliases":["lymphocytes#","lymphocyte#","lymphocytes","lymphocyte","lymph#","lymphs","lymph"],"derived":false,"ranges":{"<12 hours":[0.46,2.54],"1 day":[0.67,2.12],"3 days":[0.73,2.17],"1 week":[1.43,2.28],"2 weeks":[1.32,3.12],"3 weeks":[1.47,3.26],"1 month":[1.73,4.85],"2 months":[2.37,4.72],"3 months":[2.88,7.15],"4 months":[2.8,7.32],"5 months":[2.37,7.88],"6 months":[3.2,6.01],"9 months":[2.98,6.59],"12 months":[2.01,6.53],"Adult":[1.5,7.7]},"noflag":[]},
+  {"key":"mono","label":"Monocytes","units":"10³/µL","panel":"cbc-wbc","aliases":["monocytes#","monocyte#","monocytes","monocyte","mono#","monos","mono"],"derived":false,"ranges":{"<12 hours":[0.04,0.43],"1 day":[0.07,0.39],"3 days":[0.08,0.58],"1 week":[0.03,0.54],"2 weeks":[0.07,0.58],"3 weeks":[0.06,0.69],"1 month":[0.05,0.63],"2 months":[0.05,0.61],"3 months":[0.12,0.76],"4 months":[0.08,0.66],"5 months":[0.09,0.51],"6 months":[0.04,0.45],"9 months":[0.05,0.42],"12 months":[0.04,0.44],"Adult":[0.0,1.0]},"noflag":[]},
+  {"key":"eos","label":"Eosinophils","units":"10³/µL","panel":"cbc-wbc","aliases":["eosinophils#","eosinophil#","eosinophils","eosinophil","eos#","eos"],"derived":false,"ranges":{"<12 hours":[0.0,0.0],"1 day":[0.0,0.02],"3 days":[0.0,0.22],"1 week":[0.0,0.09],"2 weeks":[0.0,0.1],"3 weeks":[0.0,0.16],"1 month":[0.0,0.12],"2 months":[0.0,0.28],"3 months":[0.0,0.55],"4 months":[0.0,0.99],"5 months":[0.0,0.58],"6 months":[0.0,0.55],"9 months":[0.0,0.7],"12 months":[0.0,0.78],"Adult":[0.0,1.0]},"noflag":[]},
+  {"key":"baso","label":"Basophils","units":"10³/µL","panel":"cbc-wbc","aliases":["basophils#","basophil#","basophils","basophil","baso#","baso"],"derived":false,"ranges":{"<12 hours":[0.0,0.02],"1 day":[0.0,0.03],"3 days":[0.0,0.12],"1 week":[0.0,0.18],"2 weeks":[0.0,0.1],"3 weeks":[0.0,0.09],"1 month":[0.0,0.08],"2 months":[0.0,0.1],"3 months":[0.0,0.07],"4 months":[0.0,0.07],"5 months":[0.0,0.06],"6 months":[0.0,0.06],"9 months":[0.0,0.07],"12 months":[0.0,0.09],"Adult":[0.0,0.4]},"noflag":[]},
+  {"key":"plt","label":"Platelets","units":"10³/µL","panel":"cbc-heme","aliases":["thrombocytes","platelets","plt count","platelet","plt"],"derived":false,"ranges":{"<12 hours":[105.0,446.0],"1 day":[129.0,409.0],"3 days":[105.0,353.0],"1 week":[111.0,387.0],"2 weeks":[133.0,457.0],"3 weeks":[134.0,442.0],"1 month":[136.0,468.0],"2 months":[152.0,456.0],"3 months":[200.0,376.0],"4 months":[140.0,388.0],"5 months":[132.0,376.0],"6 months":[128.0,368.0],"9 months":[105.0,337.0],"12 months":[120.0,316.0],"Adult":[100.0,350.0]},"noflag":[]},
+  {"key":"fib","label":"Fibrinogen","units":"mg/dL","panel":"cbc-heme","aliases":["fibrinogen","fibr","fib"],"derived":false,"ranges":{"<1 hour":[100.0,500.0],"<12 hours":[100.0,350.0],"1 day":[100.0,400.0],"3 days":[150.0,500.0],"5 days":[100.0,500.0],"1 week":[150.0,450.0],"2 weeks":[150.0,600.0],"3 weeks":[150.0,600.0],"1 month":[200.0,700.0],"2 months":[150.0,650.0],"3 months":[100.0,800.0],"4 months":[250.0,800.0],"5 months":[300.0,800.0],"6 months":[200.0,550.0],"9 months":[200.0,550.0],"12 months":[200.0,550.0],"Adult":[100.0,600.0]},"noflag":[]},
+  {"key":"pp","label":"Plasma protein (CBC)","units":"g/dL","panel":"cbc-heme","aliases":["refractometer protein","total plasma protein","plasma protein","tpp","pp"],"derived":false,"ranges":{"<1 hour":[4.4,5.9],"<12 hours":[5.1,7.6],"1 day":[5.2,8.0],"3 days":[5.3,7.9],"5 days":[5.4,7.6],"1 week":[5.2,7.5],"2 weeks":[5.2,7.2],"3 weeks":[5.2,6.8],"1 month":[5.1,7.1],"2 months":[5.2,6.8],"3 months":[5.5,7.1],"4 months":[5.9,7.5],"5 months":[6.1,7.3],"6 months":[5.9,7.1],"9 months":[5.6,6.8],"12 months":[5.4,7.0],"Adult":[6.2,8.0]},"noflag":[]},
+  {"key":"alp","label":"ALP","units":"IU/L","panel":"chem-enz","aliases":["alkaline phosphatase","alkp","alp","sap"],"derived":false,"ranges":{"<12 hours":[152.0,2835.0],"1 day":[861.0,2671.0],"3 days":[283.0,1462.0],"5 days":[156.0,1294.0],"1 week":[137.0,1169.0],"2 weeks":[182.0,859.0],"3 weeks":[146.0,752.0],"1 month":[210.0,866.0],"2 months":[201.0,741.0],"3 months":[206.0,458.0],"4 months":[124.0,222.0],"5 months":[105.0,239.0],"6 months":[155.0,226.0],"9 months":[158.0,232.0],"Adult":[64.0,214.0]},"noflag":[]},
+  {"key":"ggt","label":"GGT","units":"U/L","panel":"chem-enz","aliases":["gamma-glutamyl transferase","gamma gt","ggtp","ggt"],"derived":false,"ranges":{"<12 hours":[13.0,39.0],"1 day":[18.0,43.0],"3 days":[9.0,40.0],"5 days":[8.0,89.0],"1 week":[14.0,164.0],"2 weeks":[16.0,169.0],"3 weeks":[16.0,132.0],"1 month":[17.0,99.0],"2 months":[8.0,38.0],"3 months":[0.0,27.0],"4 months":[0.0,27.0],"5 months":[0.0,30.0],"6 months":[0.0,26.0],"9 months":[0.0,26.0],"Adult":[5.0,28.0]},"noflag":[]},
+  {"key":"sdh","label":"SDH","units":"IU/L","panel":"chem-enz","aliases":["sorbitol dehydrogenase","iddh","sdh"],"derived":false,"ranges":{"<12 hours":[0.2,4.8],"1 day":[0.6,4.6],"3 days":[0.6,3.7],"5 days":[0.8,5.3],"1 week":[0.8,8.2],"2 weeks":[0.6,4.3],"3 weeks":[1.0,8.4],"1 month":[1.2,5.9],"2 months":[1.1,4.6],"3 months":[1.1,3.9],"4 months":[1.5,4.4],"5 months":[1.3,4.8],"6 months":[0.3,3.3],"9 months":[0.3,3.3],"Adult":[0.5,3.0]},"noflag":[]},
+  {"key":"ast","label":"AST","units":"IU/L","panel":"chem-enz","aliases":["aspartate aminotransferase","sgot","ast"],"derived":false,"ranges":{"<12 hours":[97.0,315.0],"1 day":[146.0,340.0],"3 days":[80.0,580.0],"1 week":[237.0,620.0],"2 weeks":[240.0,540.0],"3 weeks":[226.0,540.0],"1 month":[252.0,440.0],"2 months":[282.0,484.0],"3 months":[282.0,480.0],"4 months":[280.0,520.0],"5 months":[225.0,420.0],"6 months":[300.0,620.0],"9 months":[246.0,728.0],"12 months":[283.0,720.0],"Adult":[149.0,267.0]},"noflag":[]},
+  {"key":"alt","label":"ALT","units":"IU/L","panel":"chem-enz","aliases":["alanine aminotransferase","sgpt","alt"],"derived":false,"ranges":{"<12 hours":[0.0,47.0],"1 day":[0.0,49.0],"3 days":[0.0,52.0],"1 week":[4.0,50.0],"2 weeks":[1.0,9.0],"3 weeks":[0.0,45.0],"1 month":[5.0,47.0],"2 months":[7.0,57.0],"3 months":[8.0,65.0],"4 months":[8.0,65.0],"5 months":[0.0,65.0],"6 months":[7.0,20.0],"9 months":[4.0,27.0],"12 months":[5.0,20.0],"Adult":[4.0,10.0]},"noflag":[]},
+  {"key":"ck","label":"CK","units":"IU/L","panel":"chem-enz","aliases":["creatine kinase","cpk","ck"],"derived":false,"ranges":{"<12 hours":[65.0,380.0],"1 day":[40.0,909.0],"3 days":[21.0,97.0],"5 days":[29.0,208.0],"1 week":[52.0,143.0],"2 weeks":[46.0,208.0],"3 weeks":[44.0,210.0],"1 month":[81.0,585.0],"2 months":[50.0,170.0],"3 months":[57.0,204.0],"4 months":[60.0,266.0],"5 months":[60.0,125.0],"6 months":[97.0,396.0],"9 months":[97.0,396.0],"Adult":[69.0,272.0]},"noflag":[]},
+  {"key":"na","label":"Sodium","units":"mEq/L","panel":"chem-lyte","aliases":["serum sodium","sodium","s/na","na+","na"],"derived":true,"ranges":{"<12 hours":[133.0,163.0],"1 day":[123.0,159.0],"3 days":[123.0,161.0],"1 week":[130.0,154.0],"3 weeks":[136.0,152.0],"1 month":[136.0,152.0],"2 months":[136.0,160.0],"3 months":[140.0,156.0],"4 months":[135.0,159.0],"5 months":[133.0,157.0],"6 months":[133.0,153.0],"9 months":[138.0,148.0],"12 months":[134.0,158.0],"Adult":[131.0,147.0]},"noflag":[]},
+  {"key":"k","label":"Potassium","units":"mEq/L","panel":"chem-lyte","aliases":["serum potassium","potassium","s/k","k+","k"],"derived":true,"ranges":{"<12 hours":[2.4,6.4],"1 day":[2.6,6.6],"3 days":[2.0,7.6],"1 week":[2.8,6.8],"3 weeks":[2.6,6.6],"1 month":[2.6,6.6],"2 months":[2.8,6.8],"3 months":[2.2,7.0],"4 months":[2.8,6.8],"5 months":[1.7,7.3],"6 months":[1.4,7.0],"9 months":[1.7,5.7],"12 months":[0.6,7.0],"Adult":[2.2,6.2]},"noflag":[]},
+  {"key":"cl","label":"Chloride","units":"mEq/L","panel":"chem-lyte","aliases":["blood chloride","serum chloride","chloride","s/cl","cl-","cl"],"derived":true,"ranges":{"<12 hours":[81.0,129.0],"1 day":[78.0,126.0],"3 days":[79.0,123.0],"1 week":[86.0,118.0],"3 weeks":[82.0,126.0],"1 month":[91.0,117.0],"2 months":[93.0,117.0],"3 months":[98.0,114.0],"4 months":[94.0,116.0],"5 months":[93.0,121.0],"6 months":[91.0,119.0],"9 months":[90.0,114.0],"12 months":[94.0,114.0],"Adult":[89.0,113.0]},"noflag":[]},
+  {"key":"hco3","label":"CO2 / Bicarbonate","units":"mEq/L","panel":"chem-lyte","aliases":["bicarb(hco3-)","bicarbonate","total co2","bicarb","hco3-","hco3","tco2","co2"],"derived":true,"ranges":{"<12 hours":[15.0,35.0],"1 day":[15.0,39.0],"3 days":[4.0,52.0],"1 week":[20.0,36.0],"3 weeks":[15.0,39.0],"1 month":[13.0,41.0],"2 months":[17.0,37.0],"3 months":[21.0,33.0],"4 months":[19.0,35.0],"5 months":[17.0,37.0],"6 months":[18.0,34.0],"9 months":[20.0,36.0],"12 months":[25.0,33.0],"Adult":[18.0,34.0]},"noflag":[]},
+  {"key":"phos","label":"Phosphorus","units":"mg/dL","panel":"chem-lyte","aliases":["inorganic phosphorus","phosphorus","phosphate","hpo4","phos","p"],"derived":true,"ranges":{"<12 hours":[1.5,7.9],"1 day":[2.0,9.2],"3 days":[1.2,11.6],"1 week":[3.4,11.4],"3 weeks":[6.0,9.2],"1 month":[4.9,9.2],"2 months":[4.6,10.2],"3 months":[5.3,9.3],"4 months":[3.1,10.3],"5 months":[3.1,9.5],"6 months":[3.4,9.0],"9 months":[3.2,8.8],"12 months":[4.4,7.6],"Adult":[1.7,7.3]},"noflag":[]},
+  {"key":"ca","label":"Calcium","units":"mg/dL","panel":"chem-lyte","aliases":["serum calcium","total calcium","calcium","ca2+","ca"],"derived":true,"ranges":{"<12 hours":[8.8,16.8],"1 day":[7.7,15.7],"3 days":[3.3,20.9],"1 week":[10.1,14.9],"3 weeks":[10.3,14.7],"1 month":[10.1,14.5],"2 months":[10.3,14.3],"3 months":[11.1,13.5],"4 months":[9.9,14.7],"5 months":[9.0,14.6],"6 months":[8.6,15.0],"9 months":[9.6,14.4],"12 months":[9.9,15.5],"Adult":[9.6,14.4]},"noflag":[]},
+  {"key":"mg","label":"Magnesium","units":"mg/dL","panel":"chem-lyte","aliases":["magnesium","mg2+","mg"],"derived":true,"ranges":{"<12 hours":[-0.1,3.1],"1 day":[-1.2,5.1],"3 days":[-2.7,6.9],"5 days":[0.2,4.2],"3 weeks":[-3.7,8.3],"2 months":[0.4,3.6],"3 months":[1.0,3.4],"4 months":[1.0,3.8],"5 months":[1.2,3.6],"6 months":[1.0,3.8],"9 months":[1.5,3.1],"Adult":[1.0,3.4]},"noflag":["<12 hours","1 day","3 days","3 weeks"]},
+  {"key":"ag","label":"Anion gap","units":"mEq/L","panel":"chem-lyte","aliases":["anion gap","an gap","angap","ag"],"derived":true,"ranges":{"<12 hours":[-3.0,45.0],"1 day":[0.0,32.0],"3 days":[15.0,31.0],"1 week":[1.0,33.0],"3 weeks":[2.0,34.0],"1 month":[2.0,34.0],"2 months":[1.0,41.0],"3 months":[4.0,36.0],"4 months":[1.0,41.0],"5 months":[0.0,32.0],"6 months":[0.0,33.0],"9 months":[0.0,32.0],"12 months":[5.0,29.0],"Adult":[2.0,34.0]},"noflag":[]},
+  {"key":"glu","label":"Glucose","units":"mg/dL","panel":"chem-org","aliases":["blood glucose","glucose","glu","bg"],"derived":false,"ranges":{"<12 hours":[108.0,190.0],"1 day":[121.0,233.0],"3 days":[101.0,226.0],"1 week":[121.0,192.0],"2 weeks":[137.0,205.0],"3 weeks":[130.0,240.0],"1 month":[130.0,216.0],"2 months":[119.0,204.0],"3 months":[88.0,179.0],"4 months":[113.0,196.0],"5 months":[95.0,210.0],"6 months":[110.0,210.0],"9 months":[104.0,207.0],"12 months":[105.0,165.0],"Adult":[57.0,96.0]},"noflag":[]},
+  {"key":"bun","label":"BUN","units":"mg/dL","panel":"chem-org","aliases":["blood urea nitrogen","urea nitrogen","urea","bun"],"derived":false,"ranges":{"<12 hours":[12.0,27.0],"1 day":[9.0,40.0],"3 days":[2.0,29.0],"1 week":[4.0,20.0],"2 weeks":[6.0,13.0],"3 weeks":[6.0,14.0],"1 month":[6.0,21.0],"2 months":[6.0,11.0],"3 months":[7.0,20.0],"4 months":[9.0,25.0],"5 months":[11.0,33.0],"6 months":[15.0,30.0],"9 months":[16.0,26.0],"12 months":[15.0,24.0],"Adult":[12.0,24.0]},"noflag":[]},
+  {"key":"creat","label":"Creatinine","units":"mg/dL","panel":"chem-org","aliases":["creatinine","creat","crea","cre"],"derived":false,"ranges":{"<12 hours":[1.7,4.2],"1 day":[1.2,4.3],"3 days":[0.4,2.1],"1 week":[1.0,1.7],"2 weeks":[0.9,1.8],"3 weeks":[0.6,2.0],"1 month":[1.1,1.8],"2 months":[1.1,2.1],"3 months":[0.7,2.2],"4 months":[1.3,2.1],"5 months":[1.2,2.1],"6 months":[1.2,2.1],"9 months":[1.1,2.2],"12 months":[1.3,2.1],"Adult":[0.9,2.0]},"noflag":[]},
+  {"key":"tbil","label":"Total bilirubin","units":"mg/dL","panel":"chem-org","aliases":["total bilirubin","t-bilirubin","total bili","bilirubin","t bili","t-bil","tbil"],"derived":false,"ranges":{"<12 hours":[0.9,2.8],"1 day":[1.3,4.5],"3 days":[0.5,3.9],"5 days":[1.2,3.6],"1 week":[0.8,3.0],"2 weeks":[0.7,2.2],"3 weeks":[0.5,1.6],"1 month":[0.5,1.7],"2 months":[0.5,2.0],"3 months":[0.4,2.0],"4 months":[0.3,1.0],"5 months":[0.3,1.8],"6 months":[0.3,1.3],"9 months":[0.3,1.1],"12 months":[0.4,1.4],"Adult":[0.5,1.8]},"noflag":[]},
+  {"key":"dbil","label":"Conjugated bilirubin","units":"mg/dL","panel":"chem-org","aliases":["bilirubin conjugated","conjugated bilirubin","direct bilirubin","conj bilirubin","d-bil","dbil"],"derived":false,"ranges":{"<12 hours":[0.3,0.6],"1 day":[0.3,0.7],"3 days":[0.2,0.8],"5 days":[0.1,0.7],"1 week":[0.3,0.7],"2 weeks":[0.3,0.6],"3 weeks":[0.2,0.5],"1 month":[0.1,0.6],"2 months":[0.2,0.5],"3 months":[0.1,0.7],"4 months":[0.1,0.6],"5 months":[0.1,0.7],"6 months":[0.1,0.7],"9 months":[0.1,0.7],"12 months":[0.1,1.0],"Adult":[0.2,0.7]},"noflag":[]},
+  {"key":"ibil","label":"Unconjugated bilirubin","units":"mg/dL","panel":"chem-org","aliases":["bilirubin unconjugated","unconjugated bilirubin","indirect bilirubin","i-bil","ibil"],"derived":false,"ranges":{"<12 hours":[0.8,2.5],"1 day":[1.0,3.8],"3 days":[0.2,3.3],"5 days":[0.8,2.8],"1 week":[0.5,2.3],"2 weeks":[0.5,1.6],"3 weeks":[0.2,1.1],"1 month":[0.4,1.2],"2 months":[0.3,1.5],"3 months":[0.4,1.4],"4 months":[0.2,0.4],"5 months":[0.1,1.1],"6 months":[0.1,0.6],"9 months":[0.2,0.6],"12 months":[0.2,0.6],"Adult":[0.3,1.0]},"noflag":[]},
+  {"key":"chol","label":"Cholesterol","units":"mg/dL","panel":"chem-org","aliases":["cholesterol","chol"],"derived":false,"ranges":{"<12 hours":[111.0,432.0],"1 day":[110.0,562.0],"3 days":[142.0,350.0],"5 days":[127.0,361.0],"1 week":[139.0,445.0],"2 weeks":[164.0,287.0],"3 weeks":[74.0,276.0],"1 month":[83.0,233.0],"2 months":[98.0,242.0],"3 months":[110.0,226.0],"4 months":[91.0,207.0],"5 months":[51.0,137.0],"6 months":[83.0,173.0],"9 months":[11.0,187.0],"Adult":[58.0,109.0]},"noflag":[]},
+  {"key":"trig","label":"Triglycerides","units":"mg/dL","panel":"chem-org","aliases":["triglycerides","triglyceride","trig","tg"],"derived":false,"ranges":{"<12 hours":[24.0,88.0],"1 day":[30.0,193.0],"3 days":[63.0,342.0],"5 days":[52.0,340.0],"1 week":[30.0,239.0],"2 weeks":[39.0,200.0],"3 weeks":[34.0,124.0],"1 month":[45.0,155.0],"2 months":[10.0,148.0],"3 months":[28.0,151.0],"4 months":[14.0,148.0],"5 months":[14.0,57.0],"6 months":[35.0,76.0],"9 months":[38.0,86.0],"Adult":[6.0,44.0]},"noflag":[]},
+  {"key":"tp","label":"Total protein (chem)","units":"g/dL","panel":"chem-prot","aliases":["serum total protein","total protein","t protein","tprot","tp"],"derived":false,"ranges":{"<12 hours":[4.0,7.9],"1 day":[4.3,8.1],"3 days":[4.4,7.6],"1 week":[4.4,6.8],"2 weeks":[4.8,6.7],"3 weeks":[4.7,6.5],"1 month":[5.0,6.7],"2 months":[5.2,6.5],"3 months":[5.5,7.0],"4 months":[5.7,7.3],"5 months":[6.0,6.9],"6 months":[6.0,6.9],"9 months":[5.6,6.7],"12 months":[5.8,6.6],"Adult":[5.5,7.9]},"noflag":[]},
+  {"key":"alb","label":"Albumin","units":"g/dL","panel":"chem-prot","aliases":["albumin","alb"],"derived":false,"ranges":{"<12 hours":[2.7,3.9],"1 day":[2.5,3.6],"3 days":[2.8,3.7],"1 week":[2.7,3.4],"2 weeks":[2.6,3.3],"3 weeks":[2.6,3.2],"1 month":[2.7,3.4],"2 months":[2.7,3.5],"3 months":[2.8,3.5],"4 months":[2.8,3.7],"5 months":[2.9,3.4],"6 months":[3.0,3.5],"9 months":[3.0,3.6],"12 months":[3.1,3.8],"Adult":[2.8,4.8]},"noflag":[]},
+  {"key":"glob","label":"Globulin","units":"g/dL","panel":"chem-prot","aliases":["total globulin","globulin","glob","glb"],"derived":false,"ranges":{"<12 hours":[1.1,4.8],"1 day":[1.5,4.6],"3 days":[1.6,4.5],"1 week":[1.6,3.9],"2 weeks":[2.0,3.5],"3 weeks":[1.7,3.6],"1 month":[1.8,3.7],"2 months":[1.9,3.8],"3 months":[2.6,4.1],"4 months":[2.7,3.9],"5 months":[2.7,4.0],"6 months":[2.8,3.7],"9 months":[2.2,3.1],"12 months":[2.2,3.5],"Adult":[1.9,3.8]},"noflag":[]},
+];
+// ── age bracket selection ───────────────────────────────────────────
+function foalAgeIndex(days) {
+  let best = 0, bestD = Infinity;
+  for (let i = 0; i < FOAL_AGES.length; i++) {
+    const d = Math.abs(FOAL_AGES[i].days - days);
+    if (d < bestD - 1e-9) { bestD = d; best = i; }   // ties keep the younger (earlier) bracket
+  }
+  return best;
+}
+
+// nearest bracket that actually has data for this analyte
+function foalRange(a, days) {
+  const idx = foalAgeIndex(days);
+  // A range that exists but is flagged unusable at this age (derived Mg with a
+  // negative low bound) is a hard exclusion — do NOT borrow a neighbouring age.
+  if (a.noflag.indexOf(FOAL_AGES[idx].label) !== -1) return null;
+  const order = [idx];
+  for (let step = 1; step < FOAL_AGES.length; step++) {
+    if (idx - step >= 0) order.push(idx - step);
+    if (idx + step < FOAL_AGES.length) order.push(idx + step);
+  }
+  for (const i of order) {
+    const lab = FOAL_AGES[i].label;
+    if (a.noflag.indexOf(lab) !== -1) continue;
+    const r = a.ranges[lab];
+    if (r) return { lo: r[0], hi: r[1], age: lab, fallback: i !== idx };
+  }
+  return null;
+}
+
+// ── parsing pasted lab text ─────────────────────────────────────────
+const FOAL_ALIAS = (function () {
+  const list = [];
+  FOAL_ANALYTES.forEach(a => a.aliases.forEach(al => list.push({ alias: al, a: a })));
+  list.sort((x, y) => y.alias.length - x.alias.length);
+  return list;
+})();
+
+function foalStripNoise(s) {
+  return s
+    .replace(/\([^)]*\)/g, ' ')                       // (11.0-16.6)
+    .replace(/\[[^\]]*\]/g, ' ')                      // [11.0-16.6]
+    .replace(/\b\d+(?:\.\d+)?\s*[-–—]\s*\d+(?:\.\d+)?/g, ' ')  // bare 11.0-16.6 intervals
+    .replace(/x?\s*10\s*[\^]?\s*[\d³⁶⁹]+\s*\/?\s*[µu]?l?/gi, ' ') // 10^3/uL, x10⁶/µL
+    .replace(/\b(?:ref|reference|range|normal|rr)\b\s*[:=]?/gi, ' ')
+    .replace(/\b[hl]\b/gi, ' ');                      // analyzer H / L flags
+}
+
+function foalParse(text, useLast) {
+  const rows = [], skipped = [];
+  text.split(/\r?\n/).forEach(raw => {
+    const line = raw.trim();
+    if (!line) return;
+    const norm = line.replace(/^[^A-Za-z]+/, '');
+    const lower = norm.toLowerCase();
+    let hit = null;
+    for (const e of FOAL_ALIAS) {
+      if (lower.startsWith(e.alias)) {
+        const next = lower.charAt(e.alias.length);
+        if (next === '' || !/[a-z]/.test(next)) { hit = e; break; }
+      }
+    }
+    if (!hit) { skipped.push(line); return; }
+    const rest = foalStripNoise(norm.slice(hit.alias.length));
+    const nums = (rest.match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
+    if (!nums.length) { skipped.push(line); return; }
+    rows.push({
+      a: hit.a,
+      shown: norm.slice(0, hit.alias.length).trim(),
+      value: useLast ? nums[nums.length - 1] : nums[0],
+      raw: line
+    });
+  });
+  return { rows, skipped };
+}
+
+// ── the check ───────────────────────────────────────────────────────
+function foalCheck(text, days, useLast) {
+  const { rows, skipped } = foalParse(text, useLast);
+  const flags = [], normal = [], noRange = [];
+  const seen = {};
+  rows.forEach(r => {
+    if (seen[r.a.key]) return;                        // first match per analyte wins
+    seen[r.a.key] = true;
+    const rg = foalRange(r.a, days);
+    if (!rg) { noRange.push(r); return; }
+    let dir = null;
+    if (r.value > rg.hi) dir = 'H';
+    else if (r.value < rg.lo) dir = 'L';
+    const rec = { row: r, rg: rg, dir: dir };
+    if (dir) flags.push(rec); else normal.push(rec);
+  });
+  return { flags, normal, noRange, skipped, count: rows.length };
+}
+
+// ─────────────────────────────────────────────
+// FOAL BLOODWORK — UI
+// ─────────────────────────────────────────────
+function foalDays() {
+  const v = parseFloat(document.getElementById('foal-age').value);
+  if (isNaN(v) || v < 0) return null;
+  return v * parseFloat(document.getElementById('foal-age-unit').value);
+}
+
+function foalSyncAge() {
+  const d = foalDays();
+  const el = document.getElementById('foal-bracket');
+  if (d === null) { el.textContent = 'Enter an age to select a reference bracket'; return; }
+  const lab = FOAL_AGES[foalAgeIndex(d)].label;
+  el.innerHTML = 'Reference bracket: <span class="foal-clear">' + lab + '</span>';
+  foalRenderRef(lab);
+}
+
+function foalFmtRange(rg, units) {
+  return rg.lo + '–' + rg.hi + (units ? ' ' + units : '');
+}
+
+function foalRun() {
+  const box = document.getElementById('foal-result');
+  const days = foalDays();
+  const text = document.getElementById('foal-input').value;
+
+  if (days === null) {
+    box.innerHTML = '<div class="foal-summary" style="border:none;margin:0;padding:0;color:var(--danger)">Enter the foal\'s age first — every interval on this page is age-specific.</div>';
+    box.classList.add('show'); return;
+  }
+  if (!text.trim()) {
+    box.innerHTML = '<div class="foal-summary" style="border:none;margin:0;padding:0;color:var(--danger)">Paste some lab values to check.</div>';
+    box.classList.add('show'); return;
+  }
+
+  const r = foalCheck(text, days, document.getElementById('foal-col-last').checked);
+  const bracket = FOAL_AGES[foalAgeIndex(days)].label;
+  let html = '<div class="foal-summary">' + bracket + ' bracket · ' + r.count + ' analyte' +
+             (r.count === 1 ? '' : 's') + ' checked · ' + r.flags.length + ' abnormal</div>';
+
+  if (!r.flags.length) {
+    html += '<div class="foal-clear" style="padding:6px 0 2px;">No abnormalities against foal reference ranges.</div>';
+  } else {
+    r.flags.forEach(f => {
+      const d = f.dir.toLowerCase();
+      html += '<div class="flag-row">' +
+        '<span class="flag-name">' + foalEsc(f.row.shown) + '</span>' +
+        '<span class="flag-val ' + d + '">' + f.row.value + '</span>' +
+        '<span class="flag-dir ' + d + '">' + f.dir + '</span>' +
+        '<span class="flag-ref">' + foalFmtRange(f.rg, f.row.a.units) +
+          (f.rg.fallback ? '<br><em>no ' + bracket + ' value — using ' + f.rg.age + '</em>' : '') +
+          (f.row.a.derived ? '<br><em>derived interval</em>' : '') +
+        '</span></div>';
+    });
+    html += '<button class="btn ghost" style="margin-top:14px" onclick="foalCopy()">Copy as text</button>';
+  }
+
+  const un = r.noRange.map(x => x.a.label + ' (no usable interval at this age)')
+             .concat(r.skipped.map(s => s));
+  if (un.length) {
+    html += '<details class="foal-det"><summary>Not evaluated · ' + un.length + '</summary><ul>' +
+            un.map(s => '<li>' + foalEsc(s) + '</li>').join('') + '</ul></details>';
+  }
+
+  box.innerHTML = html;
+  box.classList.add('show');
+  window.__foalLast = r;
+}
+
+function foalCopy() {
+  const r = window.__foalLast;
+  if (!r) return;
+  const txt = r.flags.map(f => f.row.shown.toUpperCase() + ' ' + f.row.value + ' ' + f.dir +
+    ' (' + foalFmtRange(f.rg, f.row.a.units) + ')').join('\n');
+  navigator.clipboard.writeText(txt).then(() => {
+    const b = event.target; const o = b.textContent;
+    b.textContent = 'Copied'; setTimeout(() => { b.textContent = o; }, 1400);
+  });
+}
+
+function foalReset() {
+  document.getElementById('foal-input').value = '';
+  document.getElementById('foal-result').classList.remove('show');
+}
+
+function foalEsc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+}
+
+// ── browsable reference tables ──
+function foalRenderRef(ageLabel) {
+  document.querySelectorAll('#foal-age-pills .age-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.age === ageLabel);
+  });
+  let html = '';
+  FOAL_PANELS.forEach(p => {
+    const rows = FOAL_ANALYTES.filter(a => a.panel === p.id);
+    if (!rows.length) return;
+    html += '<div class="ref-group-title">' + p.label + ' <span>' + p.table + '</span></div>' +
+            '<table class="ref-table"><tr><th>Analyte</th><th>Low</th><th>High</th><th>Units</th></tr>';
+    rows.forEach(a => {
+      const rg = a.ranges[ageLabel];
+      const blocked = a.noflag.indexOf(ageLabel) !== -1;
+      const cell = (v) => (rg && !blocked) ? '<td class="mono">' + v + '</td>' : '<td class="ref-na">—</td>';
+      html += '<tr><td>' + a.label + (blocked ? ' <span class="ref-na">(suppressed)</span>' : '') + '</td>' +
+              cell(rg ? rg[0] : '') + cell(rg ? rg[1] : '') +
+              '<td class="ref-na">' + a.units + '</td></tr>';
+    });
+    html += '</table>';
+  });
+  document.getElementById('foal-ref-tables').innerHTML = html;
+}
+
+(function foalInit() {
+  const wrap = document.getElementById('foal-age-pills');
+  if (!wrap) return;
+  wrap.innerHTML = FOAL_AGES.map(a =>
+    '<button class="age-pill" data-age="' + a.label + '" onclick="foalRenderRef(\'' + a.label + '\')">' +
+    a.label + '</button>').join('');
+  foalRenderRef('1 day');
+})();
+
+routeFromHash();
+applyThemeLabel();
 </script>
 </body>
 </html>

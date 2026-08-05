@@ -4,20 +4,57 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EquiCalc — Equine Veterinary Calculator Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f1117;
-    --surface: #181c27;
-    --card: #1e2333;
-    --border: #2a3050;
+    color-scheme: light;
+    --bg: #f5f2eb;
+    --surface: #faf8f3;
+    --card: #ffffff;
+    --card-hover: #f2efe7;
+    --border: #d4cfc4;
+    --border-soft: #e8e4da;
+    --text: #1a1714;
+    --muted: #6b6560;
+
+    --accent: #2b5240;
+    --accent-hover: #1e3d2f;
+    --accent-soft: #e8f0ec;
+    --on-accent: #f7f5f0;
+
+    --accent2: #8a5a00;
+    --accent2-soft: #fff8ec;
+    --danger: #9a3520;
+    --danger-soft: #fdf0ec;
+
+    --shadow-sm: 0 1px 3px rgba(26,23,20,.07);
+    --mono: 'DM Mono', ui-monospace, monospace;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  [data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #151210;
+    --surface: #1c1916;
+    --card: #23201c;
+    --card-hover: #2b2723;
+    --border: #35302a;
+    --border-soft: #2a2622;
+    --text: #f0ece6;
+    --muted: #9e9790;
+
     --accent: #7eb8a4;
-    --accent2: #c9a86c;
-    --danger: #e07070;
-    --text: #e8ecf4;
-    --muted: #7a85a3;
-    --mono: 'DM Mono', monospace;
-    --serif: 'Fraunces', serif;
+    --accent-hover: #a0cfc0;
+    --accent-soft: #1f332b;
+    --on-accent: #151210;
+
+    --accent2: #dda800;
+    --accent2-soft: #302511;
+    --danger: #e08163;
+    --danger-soft: #331c14;
+
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.3);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,34 +62,10 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: var(--mono);
+    font-family: var(--sans);
     font-size: 14px;
     min-height: 100vh;
     overflow-x: hidden;
-  }
-
-  /* ── background grid ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(126,184,164,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(126,184,164,0.04) 1px, transparent 1px);
-    background-size: 48px 48px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ── noise overlay ── */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.6;
   }
 
   .wrap {
@@ -72,8 +85,7 @@
     justify-content: space-between;
     padding: 20px 40px;
     border-bottom: 1px solid var(--border);
-    background: rgba(15,17,23,0.85);
-    backdrop-filter: blur(12px);
+    background: var(--surface);
   }
 
   .nav-logo {
@@ -99,7 +111,7 @@
   .nav-logo span { color: var(--accent); }
 
   .nav-badge {
-    font-family: var(--mono);
+    font-family: var(--sans);
     font-size: 10px;
     color: var(--muted);
     border: 1px solid var(--border);
@@ -119,7 +131,7 @@
   }
 
   .hero-eyebrow {
-    font-family: var(--mono);
+    font-family: var(--sans);
     font-size: 10px;
     color: var(--accent);
     letter-spacing: 0.15em;
@@ -164,19 +176,17 @@
     align-items: center;
     gap: 10px;
     background: var(--accent);
-    color: #0f1117;
-    font-family: var(--mono);
-    font-size: 12px;
+    color: var(--on-accent);
+    font-family: var(--sans);
+    font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
     text-decoration: none;
     padding: 14px 28px;
     border-radius: 2px;
     transition: background 0.2s, transform 0.15s;
   }
   .hero-cta:hover {
-    background: #a0cfc0;
+    background: var(--accent-hover);
     transform: translateY(-1px);
   }
   .hero-cta svg {
@@ -194,7 +204,8 @@
   .stat-card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
     padding: 18px 22px;
     margin-bottom: 10px;
     display: flex;
@@ -210,6 +221,7 @@
   .stat-card:nth-child(4) { animation-delay: 0.46s; }
   .stat-card:nth-child(5) { animation-delay: 0.58s; }
   .stat-card:nth-child(6) { animation-delay: 0.70s; }
+  .stat-card:nth-child(7) { animation-delay: 0.82s; }
 
   @keyframes slideIn {
     to { opacity: 1; transform: translateX(0); }
@@ -286,7 +298,8 @@
   .module-card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
     padding: 22px 20px;
     text-decoration: none;
     color: var(--text);
@@ -310,7 +323,7 @@
   .module-card:hover {
     border-color: var(--accent);
     transform: translateY(-2px);
-    background: #222840;
+    background: var(--card-hover);
   }
   .module-card:hover::after {
     transform: scaleX(1);
@@ -344,22 +357,22 @@
   }
 
   .tag {
-    font-size: 9px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.02em;
     color: var(--accent);
-    border: 1px solid rgba(126,184,164,0.25);
-    padding: 2px 6px;
-    border-radius: 2px;
+    background: var(--accent-soft);
+    border: 1px solid transparent;
+    padding: 2px 8px;
+    border-radius: 4px;
   }
-  .tag.gold { color: var(--accent2); border-color: rgba(201,168,108,0.25); }
+  .tag.gold { color: var(--accent2); background: var(--accent2-soft); }
 
   /* ── DISCLAIMER ── */
   .disclaimer {
     margin: 0 40px;
     padding: 20px 24px;
-    background: rgba(224,112,112,0.06);
-    border: 1px solid rgba(224,112,112,0.2);
+    background: var(--danger-soft);
+    border: 1px solid var(--danger);
     border-radius: 4px;
     display: flex;
     gap: 14px;
@@ -382,9 +395,8 @@
     color: var(--danger);
     display: block;
     margin-bottom: 3px;
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 500;
   }
 
   /* ── FOOTER ── */
@@ -417,7 +429,7 @@
   }
   a.stat-card:hover {
     border-color: var(--accent);
-    background: #222840;
+    background: var(--card-hover);
   }
   a.stat-card:hover .stat-val { color: var(--accent); }
   a.stat-card:hover .stat-val.gold { color: var(--accent2); }
@@ -431,6 +443,23 @@
   @keyframes fadeUp {
     to { opacity: 1; transform: translateY(0); }
   }
+
+  /* ── THEME TOGGLE ── */
+  .theme-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 5px 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all .15s;
+  }
+  .theme-btn:hover { color: var(--accent); border-color: var(--accent); }
 
   /* ── RESPONSIVE ── */
   @media (max-width: 700px) {
@@ -447,6 +476,14 @@
     .module-grid { grid-template-columns: 1fr; }
   }
 </style>
+<script>
+(function () {
+  var k = 'equicalc-theme', v = null;
+  try { v = localStorage.getItem(k); } catch (e) {}
+  if (!v) v = 'light';
+  document.documentElement.setAttribute('data-theme', v);
+})();
+</script>
 </head>
 <body>
 <a href="https://desmovet.com" target="_blank" rel="noopener"
@@ -459,11 +496,12 @@
   ← desmoVet
 </a>
 <nav>
-  <a href="#" class="nav-logo"><div class="logo-mark">🐴</div><span style="letter-spacing:-0.5px"><span style="color:#e8ecf4">Equi</span><span style="color:var(--accent)">Calc</span></span></a>
+  <a href="#" class="nav-logo"><div class="logo-mark">🐴</div><span style="letter-spacing:-0.5px"><span style="color:var(--text)">Equi</span><span style="color:var(--accent)">Calc</span></span></a>
   <div class="nav-links" style="display:flex;gap:24px;align-items:center;">
-    <a href="index.html" style="font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;">Home</a>
-    <a href="calculators.html" style="font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;">Calculators</a>
-    <a href="about.html" style="font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;">About</a>
+    <a href="index.html" style="font-size:12.5px;color:var(--muted);text-decoration:none;">Home</a>
+    <a href="calculators.html" style="font-size:12.5px;color:var(--muted);text-decoration:none;">Calculators</a>
+    <a href="about.html" style="font-size:12.5px;color:var(--muted);text-decoration:none;">About</a>
+    <button class="theme-btn" onclick="toggleTheme()" aria-label="Switch between light and dark mode"><span id="theme-icon">☾</span><span id="theme-word">Night</span></button>
   </div>
 </nav>
 
@@ -507,6 +545,11 @@
         <div class="stat-label"><strong>Sedation</strong>Standing sedation, epidurals, and IM doses</div>
         <div class="stat-val gold">→</div>
       </a>
+      <a href="calculators.html#foal" class="stat-card">
+        <div class="stat-dot"></div>
+        <div class="stat-label"><strong>Foal Bloodwork</strong>Age-specific neonatal CBC and chemistry intervals</div>
+        <div class="stat-val">→</div>
+      </a>
     </div>
   </section>
 
@@ -515,7 +558,7 @@
   <section class="modules">
     <div class="section-header">
       <h2 class="section-title">Calculator Modules</h2>
-      <span class="section-count">7 modules</span>
+      <span class="section-count">8 modules</span>
     </div>
 
     <div class="module-grid">
@@ -585,6 +628,21 @@
         </div>
       </a>
 
+      <a href="calculators.html#foal" class="module-card" style="grid-column: span 3;">
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+          <div class="module-icon">🩸</div>
+          <div>
+            <div class="module-name">Foal Bloodwork</div>
+            <div class="module-desc" style="max-width:600px;">Paste a CBC or chemistry panel, set the foal's age, and get back only the values outside the published neonatal interval. Browsable reference tables for all 17 age brackets, from &lt;1 hour to adult.</div>
+          </div>
+          <div class="module-tags" style="margin-top:0; margin-left:auto;">
+            <span class="tag">Neonate</span>
+            <span class="tag">CBC</span>
+            <span class="tag">Chemistry</span>
+          </div>
+        </div>
+      </a>
+
       <a href="calculators.html#reference" class="module-card" style="grid-column: span 3;">
         <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
           <div class="module-icon">📋</div>
@@ -616,5 +674,20 @@
   </footer>
 
 </div>
+<script>
+function applyThemeLabel() {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const i = document.getElementById('theme-icon'), w = document.getElementById('theme-word');
+  if (i) i.textContent = dark ? '☀' : '☾';
+  if (w) w.textContent = dark ? 'Day' : 'Night';
+}
+function toggleTheme() {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('equicalc-theme', next); } catch (e) {}
+  applyThemeLabel();
+}
+applyThemeLabel();
+</script>
 </body>
 </html>
