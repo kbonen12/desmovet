@@ -175,6 +175,12 @@
         <label><input type="checkbox" id="opt-units"> Include units</label>
         <label><input type="checkbox" id="opt-ref"> Include reference intervals</label>
       </div>
+      <p class="hint" style="margin-top:12px">
+        <b>Cumulative report with several draw dates?</b> The first value on each line is
+        the one used — check that your most recent column is the leftmost one.
+        Only the printed reference interval decides high or low; the analyzer's own
+        H/L marks are shown in the detail table but never drive the result.
+      </p>
     </div>
 
     <div class="card">
@@ -280,7 +286,37 @@
     "SPECIFIC GRAVITY": "specific gravity",
     "USG": "USG",
     "WBC": "WBC",
-    "SEG NEUTROPHIL#": "segmented neutrophils"
+    "SEG NEUTROPHIL#": "segmented neutrophils",
+
+    /* Cumulative-report abbreviations (CSU / IDEXX-style chemistry panels) */
+    "T-BIL": "total bilirubin",
+    "TBIL": "total bilirubin",
+    "GLU": "glucose",
+    "CA": "calcium",
+    "PHOS": "phosphorus",
+    "CHOL": "cholesterol",
+    "CREAT": "creatinine",
+    "CREA": "creatinine",
+    "ALB": "albumin",
+    "MG": "magnesium",
+    "FRU": "fructosamine",
+    "A/G": "A/G ratio",
+    "AN GAP": "anion gap",
+    "ANGAP": "anion gap",
+    "GLOB": "globulin",
+    "IRON": "iron",
+    "TRIG": "triglycerides",
+    "COSMO": "calculated osmolality",
+    "S/NA": "sodium",
+    "S/K": "potassium",
+    "S/CL": "chloride",
+    "NA": "sodium",
+    "K": "potassium",
+    "CL": "chloride",
+    "L IND": "lipemia index",
+    "H IND": "hemolysis index",
+    "I IND": "icterus index",
+    "SAA": "SAA"
   };
 
   /* Abbreviations that stay uppercase (or take specific casing). */
@@ -290,7 +326,7 @@
     "ALP": "ALP", "ALT": "ALT", "AST": "AST", "GGT": "GGT", "GLDH": "GLDH",
     "CK": "CK", "CRP": "CRP", "BUN": "BUN", "SDMA": "SDMA", "TLI": "TLI",
     "PLI": "PLI", "NT-PROBNP": "NT-proBNP", "PROBNP": "proBNP", "CTNI": "cTnI",
-    "PT": "PT", "APTT": "aPTT", "PTT": "PTT", "PCV": "PCV", "TS": "TS",
+    "PT": "PT", "APTT": "aPTT", "PTT": "PTT", "PCV": "PCV", "TS": "TS", "TP": "TP",
     "WBC": "WBC", "MCHC%": "MCHC", "PH": "pH", "PCO2": "pCO2", "PO2": "pO2",
     "SO2": "sO2", "TCO2": "tCO2", "NA+": "Na+", "K+": "K+", "CL-": "Cl-",
     "ICA": "iCa", "USG": "USG", "T4": "T4", "TT4": "TT4", "FT4": "fT4",
@@ -376,12 +412,17 @@
     var rangeRe = new RegExp("(" + NUM + ")\\s*-\\s*(" + NUM + ")", "g");
     var m, rLow = null, rHigh = null, rRaw = "", rStart = -1, rEnd = -1;
     while ((m = rangeRe.exec(work)) !== null) {
-      rLow = parseFloat(m[1]);
-      rHigh = parseFloat(m[2]);
+      var lo0 = parseFloat(m[1]), hi0 = parseFloat(m[2]);
+      rangeRe.lastIndex = m.index + m[0].length;
+      /* A real reference interval never runs backwards. Rejecting low > high
+         discards phone numbers (970-297-4441) and zip+4 codes, which are the
+         main way patient demographic lines get misread as results. */
+      if (lo0 > hi0) continue;
+      rLow = lo0;
+      rHigh = hi0;
       rRaw = m[1] + " - " + m[2];
       rStart = m.index;
       rEnd = m.index + m[0].length;
-      rangeRe.lastIndex = rEnd;
     }
 
     var head, tail = "";
@@ -405,13 +446,10 @@
       }
     }
 
-    /* if the head has no number, the value may sit after the interval */
-    var scan = head;
-    var swapped = false;
-    if (!/\d/.test(scan.replace(/[A-Za-z][\w+\-]*\d+/g, "")) && /\d/.test(tail)) {
-      /* head has only name-embedded digits; try tail */
-    }
-    var tokens = scan.split(" ").filter(Boolean);
+    /* On a cumulative report each line carries several draw dates before the
+       interval, newest first. The first number after the name is therefore the
+       most recent result, which is the one to report. */
+    var tokens = head.split(" ").filter(Boolean);
 
     var valIdx = -1, valStr = null, flag = null;
     for (var i = 0; i < tokens.length; i++) {
@@ -420,14 +458,6 @@
       if (PURE_NUM_RE.test(t)) { valIdx = i; valStr = t; break; }
       var nf = t.match(NUM_FLAG_RE);
       if (nf) { valIdx = i; valStr = nf[1]; flag = flagLetter(nf[2]); break; }
-    }
-
-    if (valIdx < 0 && tail) {
-      var ttok = tail.split(" ").filter(Boolean);
-      for (var j = 0; j < ttok.length; j++) {
-        if (PURE_NUM_RE.test(ttok[j])) { valStr = ttok[j]; swapped = true; break; }
-      }
-      if (swapped) { tokens = scan.split(" ").filter(Boolean); valIdx = tokens.length; }
     }
 
     if (valStr === null) return { kind: "unparsed", text: s };
@@ -458,16 +488,20 @@
     var value = parseFloat(valStr);
     var computed = null;
     if (rLow !== null && rHigh !== null) {
-      var lo = Math.min(rLow, rHigh), hi = Math.max(rLow, rHigh);
-      if (value > hi) computed = "H";
-      else if (value < lo) computed = "L";
+      if (value > rHigh) computed = "H";
+      else if (value < rLow) computed = "L";
     } else if (oneSided) {
       if ((oneSided.op === "<" || oneSided.op === "≤") && value > oneSided.val) computed = "H";
       if ((oneSided.op === ">" || oneSided.op === "≥") && value < oneSided.val) computed = "L";
     }
 
     var hasInterval = (rLow !== null && rHigh !== null) || !!oneSided;
-    var finalFlag = flag || computed;
+
+    /* A value is abnormal ONLY if it falls outside the reference interval
+       printed on its own line. The analyzer's own H/L flag is recorded for
+       display but never decides the outcome — labs flag against intervals
+       that aren't always the one shown, which produced confusing results. */
+    var finalFlag = computed;
 
     return {
       kind: "analyte",
@@ -484,7 +518,8 @@
       hasInterval: hasInterval,
       labFlag: flag,
       flag: finalFlag,
-      abnormal: !!finalFlag && (hasInterval || !!flag)
+      abnormal: hasInterval && !!finalFlag,
+      disagrees: hasInterval && ((flag || null) !== (computed || null))
     };
   }
 
@@ -684,12 +719,16 @@ if (typeof document !== "undefined") (function(){
     res.rows.forEach(function(r){
       var status;
       if (r.abnormal) {
-        status = '<span class="pill ' + r.flag.toLowerCase() + '">' + r.flag +
-                 (r.labFlag ? "" : " (calc)") + "</span>";
+        status = '<span class="pill ' + r.flag.toLowerCase() + '">' + r.flag + "</span>";
       } else if (!r.hasInterval) {
         status = '<span class="pill skip">no interval</span>';
       } else {
         status = '<span class="pill ok">in range</span>';
+      }
+      /* Surface where the analyzer's own flag disagrees with the printed
+         interval, so it can be eyeballed rather than silently dropped. */
+      if (r.disagrees && r.labFlag && !r.abnormal) {
+        status += ' <span class="pill skip">lab said ' + r.labFlag + "</span>";
       }
       html += "<tr" + (r.abnormal ? ' class="abn"' : "") + ">" +
         "<td>" + esc(window.BW.capFirst(r.name)) + "</td>" +
