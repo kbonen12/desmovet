@@ -2001,6 +2001,25 @@ function foalFmtRange(rg, units) {
   return rg.lo + '–' + rg.hi + (units ? ' ' + units : '');
 }
 
+// Prose one-liner, matching the Bloodwork Abnormals tool's output style.
+// Labels like "HCT / PCV" collapse to their first form; true abbreviations
+// stay uppercase, worded names go lowercase unless they lead the sentence.
+function foalShortLabel(a) {
+  const l = String(a.label).split('/')[0].trim();
+  return /^[^a-z]+$/.test(l) ? l : l.toLowerCase();
+}
+
+function foalSentence(r) {
+  if (!r.flags.length) return 'No abnormalities against foal reference ranges.';
+  const items = r.flags.map(f => foalShortLabel(f.row.a) + ' ' + f.row.value + ' ' + f.dir);
+  if (!/[A-Z]/.test(items[0].split(' ')[0])) {
+    items[0] = items[0].charAt(0).toUpperCase() + items[0].slice(1);
+  }
+  if (items.length === 1) return items[0] + '.';
+  if (items.length === 2) return items[0] + ' and ' + items[1] + '.';
+  return items.slice(0, -1).join(', ') + ', and ' + items[items.length - 1] + '.';
+}
+
 function foalRun() {
   const box = document.getElementById('foal-result');
   const days = foalDays();
@@ -2020,9 +2039,11 @@ function foalRun() {
   let html = '<div class="foal-summary">' + bracket + ' bracket · ' + r.count + ' analyte' +
              (r.count === 1 ? '' : 's') + ' checked · ' + r.flags.length + ' abnormal</div>';
 
-  if (!r.flags.length) {
-    html += '<div class="foal-clear" style="padding:6px 0 2px;">No abnormalities against foal reference ranges.</div>';
-  } else {
+  html += '<div class="foal-sentence' + (r.flags.length ? '' : ' foal-clear') +
+          '" style="padding:10px 0 6px;font-size:14px;line-height:1.65;">' +
+          foalEsc(foalSentence(r)) + '</div>';
+
+  if (r.flags.length) {
     r.flags.forEach(f => {
       const d = f.dir.toLowerCase();
       html += '<div class="flag-row">' +
@@ -2052,8 +2073,7 @@ function foalRun() {
 function foalCopy() {
   const r = window.__foalLast;
   if (!r) return;
-  const txt = r.flags.map(f => f.row.shown.toUpperCase() + ' ' + f.row.value + ' ' + f.dir +
-    ' (' + foalFmtRange(f.rg, f.row.a.units) + ')').join('\n');
+  const txt = foalSentence(r);
   navigator.clipboard.writeText(txt).then(() => {
     const b = event.target; const o = b.textContent;
     b.textContent = 'Copied'; setTimeout(() => { b.textContent = o; }, 1400);
