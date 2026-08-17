@@ -19,6 +19,8 @@
     --sage:#ffffff;
     --sage-dark:#ffffff;
     --sage-tint:rgba(255,255,255,0.08);
+    --gold:#e6b24f;
+    --gold-bright:#f0c95a;
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -37,6 +39,8 @@
   .navlinks{display:flex;gap:26px;font-size:0.92rem;font-weight:600;}
   .navlinks a{color:var(--sub);}
   .navlinks a:hover{color:var(--sage);}
+  .navlinks a.tutoring{color:var(--gold);}
+  .navlinks a.tutoring:hover{color:var(--gold-bright);}
 
   /* HERO */
   .hero{padding:0 0 50px;text-align:center;}
@@ -52,6 +56,8 @@
   }
   .quicklink:hover{border-color:var(--sage);color:var(--sage);}
   .quicklink .sub{color:var(--sub);font-weight:400;}
+  .quicklink.accent{border-color:var(--gold);}
+  .quicklink.accent:hover{border-color:var(--gold-bright);color:var(--gold-bright);}
 
   /* SECTIONS */
   section{padding:56px 0;border-top:1px solid var(--line);}
@@ -114,6 +120,28 @@
     background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 20px;
   }
 
+  /* TUTORING BANNER */
+  .tutoring-card{
+    background:var(--panel);border:1px solid var(--gold);border-radius:10px;
+    padding:26px;display:flex;justify-content:space-between;align-items:center;
+    gap:26px;flex-wrap:wrap;
+    transition:box-shadow .15s ease, transform .15s ease;
+  }
+  .tutoring-card:hover{box-shadow:0 12px 28px rgba(0,0,0,0.35);transform:translateY(-2px);}
+  .tutoring-copy{flex:1 1 380px;}
+  .tutoring-eyebrow{
+    font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:8px;
+  }
+  .tutoring-title{font-weight:700;font-size:1.18rem;color:var(--ink);margin-bottom:8px;}
+  .tutoring-desc{font-size:0.93rem;color:var(--sub);margin:0;}
+  .tutoring-cta{
+    background:var(--gold);color:#0f1c2b;font-weight:700;
+    padding:13px 24px;border-radius:8px;font-size:0.95rem;white-space:nowrap;
+    transition:background .15s ease;
+  }
+  .tutoring-card:hover .tutoring-cta{background:var(--gold-bright);}
+
   /* DISCLAIMER */
   .disclaimer{
     background:rgba(230,178,79,0.08);border:1px solid rgba(230,178,79,0.3);border-radius:10px;
@@ -126,12 +154,18 @@
   @media (max-width:640px){
     .modules-grid{grid-template-columns:1fr;}
     .story-layout{grid-template-columns:1fr;}
+    .tutoring-card{flex-direction:column;align-items:flex-start;}
+    .tutoring-cta{width:100%;text-align:center;}
+    .navlinks{gap:16px;font-size:0.85rem;}
   }
 
   /* FOOTER */
   footer{border-top:1px solid var(--line);padding:36px 0;text-align:center;color:var(--sub);font-size:0.85rem;}
   footer .brand{color:var(--ink);margin-bottom:8px;display:block;}
   footer .note{margin-bottom:14px;}
+  footer .flinks{display:flex;justify-content:center;flex-wrap:wrap;gap:18px;margin-bottom:14px;}
+  footer .flinks a{text-decoration:underline;text-underline-offset:3px;}
+  footer .flinks a:hover{opacity:0.7;}
   footer .contact{margin-bottom:14px;}
   footer .contact a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;}
   footer .contact a:hover{opacity:0.7;}
@@ -145,6 +179,8 @@
     <div class="navlinks">
       <a href="#name">The Name</a>
       <a href="#tools">Tools</a>
+      <a href="articles/">Articles</a>
+      <a href="tutoring.html" class="tutoring">Tutoring</a>
       <a href="#story">About</a>
     </div>
   </div>
@@ -162,6 +198,8 @@
       <a class="quicklink" href="bloodwork-abnormals.html">🩸 Bloodwork Abnormals <span class="sub">→</span></a>
       <a class="quicklink" href="cardio-tutor.html">❤️ Cardio Tutor <span class="sub">→</span></a>
       <a class="quicklink" href="neuro-tutor.html">🧠 Neuro Tutor <span class="sub">→</span></a>
+      <a class="quicklink" href="articles/">📝 Articles <span class="sub">→</span></a>
+      <a class="quicklink accent" href="tutoring.html">🎓 Peer Tutoring <span class="sub">→</span></a>
     </div>
   </div>
 </header>
@@ -220,6 +258,25 @@
   </div>
 </section>
 
+<section id="tutoring">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Peer Tutoring</h2>
+      <div class="count-badge">1st &amp; 2nd year DVM</div>
+    </div>
+    <a class="tutoring-card" href="tutoring.html">
+      <div class="tutoring-copy">
+        <div class="tutoring-eyebrow">Veterinary students helping veterinary students</div>
+        <div class="tutoring-title">One-on-one and small group tutoring, from students a few years ahead of you.</div>
+        <p class="tutoring-desc">Group sessions from $15 per person, one-on-one at $45/hour.
+          Anatomy, physiology, pharmacology, anesthesia, clinical sciences, and large animal
+          medicine. Every paid session helps fund the free tools above.</p>
+      </div>
+      <span class="tutoring-cta">Learn more →</span>
+    </a>
+  </div>
+</section>
+
 <section id="story">
   <div class="wrap">
     <div class="section-head"><h2>About the Author</h2></div>
@@ -259,6 +316,11 @@
   <div class="wrap">
     <span class="brand">desmoVet</span>
     <div class="note">desmoVet is a product of KB Enterprises LLC.</div>
+    <div class="flinks">
+      <a href="tutoring.html">Peer Tutoring</a>
+      <a href="academic-integrity-policy.html">Academic Integrity Policy</a>
+      <a href="tutoring-terms.html">Tutoring Terms</a>
+    </div>
     <div class="contact">Notice a bug or have a suggestion? <a href="mailto:admin@desmovet.com?subject=desmoVet%20bug%20report">admin@desmovet.com</a></div>
     <div>© <span id="year"></span> KB Enterprises LLC · All rights reserved</div>
   </div>

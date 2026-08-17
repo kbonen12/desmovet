@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peer Tutoring — desmoVet</title>
+<meta name="description" content="One-on-one peer tutoring for 1st and 2nd year veterinary students. Anatomy, physiology, pharmacology, anesthesia, clinical sciences, and large animal medicine.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!--
+  ==========================================================
+  desmoVet — Peer Tutoring
+  Drop at repo root as tutoring.html  →  desmovet.com/tutoring.html
+
+  BEFORE PUBLISHING, replace:
+    [INTAKE FORM URL]   your Tally / Google Form link   (appears 3x)
+    tutoring@desmovet.com     your contact email              (appears 4x)
+
+  ALSO: add a nav link in index.html so this page is reachable —
+    <a href="tutoring.html">Tutoring</a>
+  and optionally a 5th quicklink in the hero.
+
+  Deliberately NOT on this page: the name of any school. Naming your
+  institution on a commercial page implies affiliation you don't have.
+  Students will reach this through class channels regardless.
+  ==========================================================
+-->
+
+<style>
+  :root{
+    --navy:#0f1c2b;
+    --panel:#16273a;
+    --panel-2:#1c3247;
+    --line:#28405a;
+    --ink:#ffffff;
+    --sub:#ffffff;
+    --sage:#ffffff;
+    --gold:#e6b24f;
+    --gold-bright:#f0c95a;
+    --sage-tint:rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--navy);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    line-height:1.6;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+
+  /* NAV */
+  nav{border-bottom:1px solid var(--line);background:rgba(15,28,43,0.92);backdrop-filter:blur(8px);position:sticky;top:0;z-index:50;}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;}
+  .brand{font-weight:700;font-size:1.15rem;color:var(--ink);}
+  .navlinks{display:flex;gap:26px;font-size:0.92rem;font-weight:600;}
+  .navlinks a{color:var(--sub);}
+  .navlinks a:hover{color:var(--gold);}
+  .navlinks a.active{color:var(--gold);}
+
+  /* HERO */
+  .hero{padding:64px 0 56px;border-bottom:1px solid var(--line);}
+  .eyebrow{
+    display:inline-block;font-size:0.75rem;font-weight:700;letter-spacing:0.1em;
+    text-transform:uppercase;color:var(--gold);margin-bottom:16px;
+  }
+  h1{font-size:2.1rem;line-height:1.22;margin:0 0 18px;font-weight:700;color:var(--ink);}
+  .hero .lead{font-size:1.1rem;color:var(--sub);max-width:640px;margin:0 0 30px;opacity:.92;}
+  .btn{
+    display:inline-block;background:var(--gold);color:#0f1c2b;
+    font-weight:700;padding:14px 28px;border-radius:8px;font-size:1rem;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .btn:hover{background:var(--gold-bright);transform:translateY(-1px);}
+  .btn-note{font-size:0.88rem;color:var(--sub);opacity:.75;margin:14px 0 0;}
+
+  /* SECTIONS */
+  section{padding:56px 0;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+  h2{font-size:1.5rem;font-weight:700;margin:0;color:var(--ink);}
+  .count-badge{font-size:0.85rem;color:var(--sub);font-weight:600;opacity:.7;}
+  p.body{color:var(--sub);font-size:0.98rem;max-width:680px;margin:0 0 16px;opacity:.9;}
+
+  /* STEP CARDS — matches .module-card */
+  .steps-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .step-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:22px;display:flex;flex-direction:column;
+  }
+  .step-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .step-num{
+    width:28px;height:28px;border-radius:50%;background:var(--panel-2);
+    border:1px solid var(--line);color:var(--gold);font-weight:700;font-size:0.85rem;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .step-name{font-weight:700;font-size:1.02rem;color:var(--ink);}
+  .step-desc{font-size:0.9rem;color:var(--sub);opacity:.85;}
+
+  /* PRICING */
+  .price-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .price-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:26px;
+  }
+  .price-card.featured{border-color:var(--gold);}
+  .price-label{
+    font-size:0.75rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:12px;
+  }
+  .price{font-size:2.4rem;font-weight:700;color:var(--ink);line-height:1;}
+  .price span{font-size:1rem;font-weight:500;color:var(--sub);opacity:.75;}
+  .price-sub{font-size:0.9rem;color:var(--sub);opacity:.75;margin-top:8px;}
+  ul.ticks{list-style:none;margin:20px 0 0;padding:0;}
+  ul.ticks li{padding-left:26px;position:relative;margin-bottom:11px;font-size:0.94rem;color:var(--sub);opacity:.9;}
+  ul.ticks li::before{
+    content:"";position:absolute;left:2px;top:8px;width:9px;height:5px;
+    border-left:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(-45deg);
+  }
+  .split-note{
+    margin-top:20px;background:var(--sage-tint);border:1px solid var(--line);
+    border-radius:10px;padding:18px 20px;font-size:0.93rem;color:var(--sub);opacity:.95;
+  }
+  .split-note b{color:var(--ink);}
+
+  /* SUBJECT TAGS */
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+  .tag{
+    font-size:0.8rem;font-weight:600;color:var(--ink);
+    background:var(--panel);border:1px solid var(--line);
+    padding:7px 14px;border-radius:20px;
+  }
+  /* MISSION / STORY — matches index.html .story-layout */
+  .story-layout{display:grid;grid-template-columns:110px 1fr;gap:28px;align-items:start;}
+  .avatar{
+    width:92px;height:92px;border-radius:50%;
+    border:1px solid var(--line);overflow:hidden;flex-shrink:0;
+  }
+  .avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+  .story-name{font-weight:700;font-size:1.02rem;color:var(--ink);}
+  .story-title{font-size:0.85rem;color:var(--sub);opacity:.75;margin-bottom:14px;}
+  .story-body p{color:var(--sub);font-size:0.98rem;margin:0 0 14px;opacity:.9;}
+  .mission-quote{
+    font-style:italic;color:var(--ink);font-size:1.02rem;font-weight:600;
+    background:var(--sage-tint);border:1px solid var(--line);
+    border-radius:10px;padding:16px 20px;margin-top:18px;
+  }
+
+  .subject-group{margin-bottom:22px;}
+  .subject-group:last-child{margin-bottom:0;}
+  .subject-label{
+    font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:10px;
+  }
+
+  /* INTEGRITY — matches .disclaimer */
+  .disclaimer{
+    background:rgba(230,178,79,0.08);border:1px solid rgba(230,178,79,0.3);border-radius:10px;
+    padding:20px 22px;display:flex;gap:14px;align-items:flex-start;
+  }
+  .disclaimer .icon{font-size:1.3rem;line-height:1.2;}
+  .disclaimer b{color:var(--gold-bright);}
+  .disclaimer p{margin:6px 0 0;color:#d9c496;font-size:0.9rem;}
+  .disclaimer a{color:var(--gold-bright);text-decoration:underline;}
+
+  /* FAQ */
+  details{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:16px 20px;margin-bottom:10px;
+  }
+  summary{
+    cursor:pointer;font-weight:700;font-size:0.98rem;list-style:none;
+    display:flex;justify-content:space-between;align-items:center;gap:14px;color:var(--ink);
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary::after{content:"+";color:var(--gold);font-size:1.4rem;font-weight:400;line-height:1;}
+  details[open] summary::after{content:"–";}
+  details p{margin:12px 0 0;font-size:0.92rem;color:var(--sub);opacity:.88;}
+  details a{color:var(--gold);text-decoration:underline;}
+
+  /* FINAL CTA */
+  .final{text-align:center;}
+  .final h2{margin-bottom:10px;}
+  .final p{color:var(--sub);opacity:.85;margin:0 0 24px;}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--line);padding:36px 0;text-align:center;color:var(--sub);font-size:0.85rem;opacity:.8;}
+  footer .brand{color:var(--ink);margin-bottom:8px;display:block;}
+  footer .note{margin-bottom:14px;}
+  footer .flinks{display:flex;justify-content:center;flex-wrap:wrap;gap:18px;margin-bottom:16px;}
+  footer .flinks a{text-decoration:underline;}
+
+  @media (max-width:640px){
+    .steps-grid{grid-template-columns:1fr;}
+    .price-grid{grid-template-columns:1fr;}
+    h1{font-size:1.7rem;}
+    .hero{padding:44px 0 40px;}
+    section{padding:44px 0;}
+    .btn{display:block;text-align:center;}
+    .navlinks{gap:16px;font-size:0.85rem;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="index.html" class="brand">desmoVet</a>
+    <div class="navlinks">
+      <a href="index.html#tools">Tools</a>
+      <a href="tutoring.html" class="active">Tutoring</a>
+      <a href="#mission">Mission</a>
+      <a href="index.html#story">About</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="eyebrow">Peer Tutoring · 1st &amp; 2nd Year DVM</span>
+    <h1>The curriculum is new. The material isn't.</h1>
+    <p class="lead">Nobody has taken these courses in their new form — including us, and we'll
+      say so plainly. But acid–base is still acid–base, the brachial plexus hasn't moved, and
+      the students a few years ahead of you have not only learned this material, they've since
+      used it on real patients.</p>
+    <a href="mailto:tutoring@desmovet.com?subject=Tutoring%20request" class="btn">Request a tutor</a>
+    <p class="btn-note">Two-minute form, matched within 24 hours. Group sessions from
+      <strong>$15</strong>, one-on-one at $45/hour — and if the tutor isn't the right fit,
+      we'll rematch you free.</p>
+  </div>
+</header>
+
+<section id="why">
+  <div class="wrap">
+    <div class="section-head"><h2>Why This Exists</h2></div>
+    <p class="body">Two things happened at once. The curriculum was rebuilt, and peer tutoring
+      was cut.</p>
+    <p class="body">That combination matters more than either change alone. In a normal year,
+      the informal support system carries a lot of the weight — the upper-year who hands you
+      their study guide, the warning about which block breaks people, the sense of what's
+      worth memorizing. A curriculum change wipes most of that out. Old exams don't map. Study
+      guides go stale. Faculty are teaching these blocks for the first time too.</p>
+    <p class="body">So this is the year with the least informal guidance available and no
+      formal tutoring to replace it. That's the gap this fills — honestly, and without
+      pretending to certainty nobody has yet.</p>
+  </div>
+</section>
+
+<section id="mission">
+  <div class="wrap">
+    <div class="section-head"><h2>Veterinary Students Helping Veterinary Students</h2></div>
+    <div class="story-layout">
+      <div class="avatar"><img src="kyle-photo.jpg" alt="Kyle B."></div>
+      <div class="story-body">
+        <div class="story-name">Kyle B.</div>
+        <div class="story-title">DVM Student · Founder, desmoVet</div>
+        <p>I sat in weekly group tutoring sessions as a first-year. They're a large part of
+          why that year went as well as it did. Later I became the coordinator of that
+          program, and got to watch the same thing happen for a lot of other students.</p>
+        <p>This year the program was cut. The reasoning was that students should get through
+          it on their own — and some will. But starting veterinary school is one of the
+          hardest transitions there is, and going through it during a full curriculum rebuild
+          is harder still. That's not the year to remove the safety net.</p>
+        <p>So I'm keeping peer tutoring alive independently. Same idea that helped me, run
+          properly, with tutors paid fairly for their time — because asking students to teach
+          for free is how these programs quietly die.</p>
+        <div class="mission-quote">Veterinary students helping veterinary students. That's the
+          whole thing.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>How It Works</h2>
+      <div class="count-badge">4 steps</div>
+    </div>
+    <div class="steps-grid">
+
+      <div class="step-card">
+        <div class="step-top"><span class="step-num">1</span><span class="step-name">Tell us what's not clicking</span></div>
+        <div class="step-desc">A two-minute form. Name the topic, not the block — "acid–base
+          compensation" gets you further than "the new integrated block."</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top"><span class="step-num">2</span><span class="step-name">Get matched within 24 hours</span></div>
+        <div class="step-desc">Paired with a tutor who knows that subject well and has been
+          examined on it. Wrong fit? We'll switch you — no charge, no awkwardness.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top"><span class="step-num">3</span><span class="step-name">Wrong fit? We'll rematch you</span></div>
+        <div class="step-desc">Tutoring is personal and not every pairing works. Tell us and
+          we'll move you to a different tutor — no charge for the switch, no explanation
+          needed.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top"><span class="step-num">4</span><span class="step-name">Meet as often as you need</span></div>
+        <div class="step-desc">One session before an exam, or every week all semester. No
+          subscription, no minimum, nothing to cancel.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>What It Costs</h2>
+      <div class="count-badge">two ways to book</div>
+    </div>
+
+    <div class="price-grid">
+      <div class="price-card featured">
+        <div class="price-label">Group session</div>
+        <div class="price">$15<span> / person</span></div>
+        <div class="price-sub">Four to six students, one hour, one topic.</div>
+        <ul class="ticks">
+          <li>Same tutor, same material, a third of the price</li>
+          <li>Capped at six so you can still ask questions</li>
+          <li>Bring your study group, or we'll place you in one</li>
+          <li>Runs with a minimum of four — seats are prepaid</li>
+        </ul>
+      </div>
+
+      <div class="price-card">
+        <div class="price-label">One-on-one</div>
+        <div class="price">$45<span> / hour</span></div>
+        <div class="price-sub">Entirely your session, entirely your pace.</div>
+        <ul class="ticks">
+          <li>Best when you're stuck on something specific</li>
+          <li>Billed in 30-minute increments after the first hour</li>
+          <li>No subscription, no package required, no minimum</li>
+          <li>No fee to cancel with 24 hours' notice</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="body" style="margin-top:20px"><strong>Start with a group session.</strong> Most
+      first- and second-year sticking points are shared by half the class, and hearing someone
+      else ask the question you were embarrassed to ask is often the whole unlock. Move to
+      one-on-one when you need something specific.</p>
+    <p class="body">A limited number of <strong>reduced-rate places</strong> are available each
+      semester. Just ask — no documentation needed, and your tutor never finds out.</p>
+    <div class="split-note">
+      <b>The split, openly:</b> on a one-on-one session your tutor keeps <b>$36 of every
+      $45</b>. That's 80% — the large tutoring platforms keep 25% for themselves; we keep 20%.
+      Tutors are paid more per hour for group sessions, because teaching six people at once is
+      harder than teaching one. Tutors are veterinary students too, and the work should be
+      worth their time.
+      <br><br>
+      <b>Where the other 20% goes:</b> it covers what it costs to run this — payment
+      processing, scheduling, the site — and what's left is put back into building the free
+      tools on desmoVet. The <a href="cardio-tutor.html">Cardio Tutor</a>, the
+      <a href="neuro-tutor.html">Neuro Tutor</a>, the anesthesia calculator and EquiCalc are
+      free and will stay free. Paid sessions are what pay to expand them.
+      <br><br>
+      Money is tight in vet school and we know it. If the rate is what's stopping you, email
+      <a href="mailto:tutoring@desmovet.com" style="color:var(--gold);text-decoration:underline;">tutoring@desmovet.com</a>
+      — that conversation stays between us and never reaches your tutor.
+    </div>
+  </div>
+</section>
+
+<section id="subjects">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Subjects</h2>
+      <div class="count-badge">1st &amp; 2nd year</div>
+    </div>
+    <p class="body">Because the curriculum has been restructured, these are the underlying
+      subject areas rather than course codes — tell us the topic and we'll match you
+      regardless of which block it now lives in. Don't see yours? Ask anyway; we'll tell you
+      honestly whether we can help.</p>
+
+    <div class="subject-group">
+      <div class="subject-label">Foundational</div>
+      <div class="tags">
+        <span class="tag">Anatomy</span>
+        <span class="tag">Physiology</span>
+        <span class="tag">Biochemistry</span>
+        <span class="tag">Histology</span>
+        <span class="tag">Immunology</span>
+        <span class="tag">Microbiology</span>
+      </div>
+    </div>
+
+    <div class="subject-group">
+      <div class="subject-label">Clinical &amp; Applied</div>
+      <div class="tags">
+        <span class="tag">Pharmacology</span>
+        <span class="tag">Anesthesia</span>
+        <span class="tag">Clinical Sciences</span>
+        <span class="tag">Large Animal Medicine</span>
+        <span class="tag">Clinical Skills</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="integrity">
+  <div class="wrap">
+    <div class="section-head"><h2>Where the Line Is</h2></div>
+    <div class="disclaimer">
+      <div class="icon">⚠️</div>
+      <div>
+        <b>Tutors help you understand material. They never produce work you turn in.</b>
+        <p>No help with graded assignments. No discussion of exam content. No sharing of
+          lecture slides, recordings, or question banks. If you're stuck on a graded problem,
+          your tutor builds a similar one and works through that with you — you learn the
+          method and complete your own assignment.</p>
+        <p>This service is independent and is not affiliated with or endorsed by any
+          veterinary college. Your institution's honor code applies to you in full. Read the
+          <a href="academic-integrity-policy.html">full policy</a> before your first session —
+          it takes three minutes and it protects you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head"><h2>Questions</h2></div>
+
+    <details>
+      <summary>The curriculum just changed. Has my tutor actually taken my course?</summary>
+      <p><b>No — and neither has anyone else.</b> We'd rather say that up front than have you
+        discover it in session one.</p>
+      <p>Here's what that does and doesn't change. It does mean no one can tell you how this
+        specific block is assessed, what the exam format will be, or which lecturer emphasises
+        what. Anyone claiming otherwise this year is guessing.</p>
+      <p>It doesn't change the material. Renal physiology is renal physiology whether it
+        arrives in week 6 or week 20, and the places people get stuck — countercurrent
+        multiplication, acid–base compensation, autonomic pharmacology — are remarkably
+        consistent across curricula and across decades. Your tutor has learned this content,
+        been examined on it, and in most cases has since applied it to actual patients. That
+        last part is what a textbook can't give you.</p>
+      <p>There's also an upside worth naming: because we work with students across both years
+        and every subject, we see the pattern of where the new curriculum is actually causing
+        trouble faster than any individual student can. That gets shared back.</p>
+    </details>
+
+    <details>
+      <summary>Is this allowed?</summary>
+      <p>Yes. Tutoring is a normal part of academic life, and this service is independent of
+        any school — no school space, materials, or branding is used. What isn't allowed is
+        help with graded work or exam content, and tutors are contractually required to refuse
+        it. If you're ever unsure about a specific request, ask before your session rather
+        than after.</p>
+    </details>
+
+    <details>
+      <summary>Who are the tutors?</summary>
+      <p>Veterinary students in the years ahead of you who did well in that subject. For the
+        clinical material — pharmacology, anesthesia, large animal medicine — tutors are
+        typically third- and fourth-years who have since used it in clinics, which changes how
+        well someone can explain why any of it matters.</p>
+      <p>Every tutor completes a teaching assessment before being accepted. Knowing the
+        material and being able to teach it are different skills, and we screen for the second
+        one. Students rate every session, and tutors who fall below standard don't stay.</p>
+    </details>
+
+    <details>
+      <summary>Will anyone find out I'm using this?</summary>
+      <p>Not from us. We don't discuss your performance or your use of this service with
+        classmates, faculty, or administrators, and tutors sign a confidentiality obligation
+        covering the same. Asking for help early is what strong students do.</p>
+    </details>
+
+    <details>
+      <summary>What if I don't click with my tutor?</summary>
+      <p>Tell us and we'll match you with someone else at no charge. Tutoring is personal and
+        not every pairing works — it's not awkward and you don't need to explain. What we can't
+        do is refund a session that's already happened; your tutor did the work and gets paid
+        for it, the same as any other professional service.</p>
+    </details>
+
+    <details>
+      <summary>How do group sessions work?</summary>
+      <p>Four to six students, one hour, one topic, $15 each. You can bring your own study
+        group or we'll place you with others working on the same material. Sessions run with a
+        minimum of four people and seats are prepaid, so we know it's going ahead.</p>
+      <p>If a session doesn't reach four, we'll move you to the next one or refund the seat —
+        you're never charged for a session that didn't run.</p>
+      <p>Most people should start here. It's a third of the price, and the questions other
+        people ask are usually the ones you didn't know to ask.</p>
+    </details>
+
+    <details>
+      <summary>Can you help me pass?</summary>
+      <p>We can help you understand the material faster and study more effectively. Nobody
+        honest will promise you a grade — the exam is still yours to write, and anyone
+        guaranteeing an outcome is selling you something.</p>
+    </details>
+
+    <details>
+      <summary>How far ahead should I book?</summary>
+      <p>Sooner than feels necessary. Demand spikes in the two weeks before every major exam,
+        and that's exactly when availability disappears. One session in week three beats three
+        sessions the night before.</p>
+    </details>
+
+    <details>
+      <summary>How is this different from the Cardio and Neuro Tutors?</summary>
+      <p>Those are free interactive study tools you work through on your own — they're on the
+        <a href="index.html#tools">Tools</a> page and always will be free. This page is
+        one-on-one tutoring with an actual person. The two are connected: desmoVet's share of
+        each paid session goes back into building and expanding those free tools.</p>
+    </details>
+
+    <details>
+      <summary>Is this a business or a student service?</summary>
+      <p>Both, and we'd rather be straightforward about it than pretend otherwise. Tutors are
+        paid because unpaid peer tutoring collapses the moment people get busy — that's
+        roughly what just happened to the program this replaces. desmoVet Peer Tutoring is
+        operated by KB Enterprises LLC, the same entity behind the free tools on this site,
+        and the service's share is spent running it and expanding those tools.</p>
+    </details>
+
+    <details>
+      <summary>I'm an upper-year student. Can I tutor?</summary>
+      <p>Probably — we're recruiting. $36/hour, you set your own availability, no minimum
+        commitment, and matching, scheduling, and payment are handled for you. Email
+        <a href="mailto:tutoring@desmovet.com">tutoring@desmovet.com</a>.</p>
+    </details>
+
+  </div>
+</section>
+
+<section id="start" class="final">
+  <div class="wrap">
+    <h2>Tell Us What You're Stuck On</h2>
+    <p>Two minutes to fill in, matched within 24 hours. Group sessions start at $15.</p>
+    <a href="mailto:tutoring@desmovet.com?subject=Tutoring%20request" class="btn">Request a tutor</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">desmoVet</span>
+    <div class="flinks">
+      <a href="academic-integrity-policy.html">Academic Integrity Policy</a>
+      <a href="tutoring-terms.html">Terms of Service</a>
+      <a href="mailto:tutoring@desmovet.com">Contact</a>
+    </div>
+    <div class="note">desmoVet Peer Tutoring is a service of KB Enterprises LLC. It is not
+      affiliated with, endorsed by, or operated by any veterinary college or university.
+      Students remain responsible for compliance with their own institution's academic
+      integrity policies.</div>
+    <div>© <span id="year"></span> KB Enterprises LLC · All rights reserved</div>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+
+</body>
+</html>

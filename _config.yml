@@ -1,0 +1,31 @@
+# Jekyll configuration for desmovet.com
+#
+# GitHub Pages already runs Jekyll on this repo. This file only tells it where
+# to publish articles and which layout they use.
+#
+# IMPORTANT: every hand-written page here (index.html, cardio-tutor.html,
+# equicalc/, anesthesia/, ...) has no YAML front matter, and Jekyll copies
+# such files through byte-for-byte untouched. Adding this file does not change
+# how any existing page is built or served.
+
+title: desmoVet
+description: The connections at the heart of veterinary medicine.
+url: https://desmovet.com
+
+# Articles publish to desmovet.com/articles/<post-title>/
+permalink: /articles/:title/
+
+# Posts get the article layout automatically, so no post needs to name it.
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+
+# Keep working files out of the published site.
+exclude:
+  - README.md
+  - LICENSE
+  - "*.zip"
+  - .DS_Store
