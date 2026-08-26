@@ -15,17 +15,14 @@
   desmoVet — Peer Tutoring
   Drop at repo root as tutoring.html  →  desmovet.com/tutoring.html
 
-  BEFORE PUBLISHING, replace:
-    [INTAKE FORM URL]   your Tally / Google Form link   (appears 3x)
-    tutoring@desmovet.com     your contact email              (appears 4x)
+  READY TO PUBLISH — no placeholders remain.
 
-  ALSO: add a nav link in index.html so this page is reachable —
-    <a href="tutoring.html">Tutoring</a>
-  and optionally a 5th quicklink in the hero.
+    Intake form:  https://forms.gle/oeEXSZ93jvknW46W8
+    Contact:      admin@desmovet.com
 
   Deliberately NOT on this page: the name of any school. Naming your
-  institution on a commercial page implies affiliation you don't have.
-  Students will reach this through class channels regardless.
+  institution implies an affiliation you don't have. Students reach
+  this through class channels regardless.
   ==========================================================
 -->
 
@@ -148,6 +145,22 @@
     border-radius:10px;padding:16px 20px;margin-top:18px;
   }
 
+  /* ACCESSIBILITY */
+  .access-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:22px 0;}
+  .access-item{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 22px;
+  }
+  .access-title{
+    font-weight:700;font-size:0.98rem;color:var(--gold);margin-bottom:8px;
+  }
+  .access-item p{font-size:0.91rem;color:var(--sub);opacity:.85;margin:0;line-height:1.6;}
+  .callout-access{
+    background:rgba(230,178,79,0.08);border:1px solid rgba(230,178,79,0.3);
+    border-radius:10px;padding:20px 22px;font-size:0.94rem;color:#d9c496;line-height:1.65;
+  }
+  .callout-access b{color:var(--gold-bright);}
+  .callout-access a{color:var(--gold-bright);text-decoration:underline;}
+
   .subject-group{margin-bottom:22px;}
   .subject-group:last-child{margin-bottom:0;}
   .subject-label{
@@ -195,6 +208,7 @@
   @media (max-width:640px){
     .steps-grid{grid-template-columns:1fr;}
     .price-grid{grid-template-columns:1fr;}
+    .access-grid{grid-template-columns:1fr;}
     h1{font-size:1.7rem;}
     .hero{padding:44px 0 40px;}
     section{padding:44px 0;}
@@ -211,6 +225,7 @@
     <div class="navlinks">
       <a href="index.html#tools">Tools</a>
       <a href="tutoring.html" class="active">Tutoring</a>
+      <a href="#access">Access</a>
       <a href="#mission">Mission</a>
       <a href="index.html#story">About</a>
     </div>
@@ -225,10 +240,9 @@
       say so plainly. But acid–base is still acid–base, the brachial plexus hasn't moved, and
       the students a few years ahead of you have not only learned this material, they've since
       used it on real patients.</p>
-    <a href="https://forms.gle/5Ado5HrPsW1HJgdAA" target="_blank" rel="noopener" class="btn">Request a tutor</a>
-    <p class="btn-note">Two-minute form, matched within 24 hours. Group sessions from
-      <strong>$15</strong>, one-on-one at $35/hour — and if the tutor isn't the right fit,
-      we'll rematch you free.</p>
+    <a href="https://forms.gle/oeEXSZ93jvknW46W8" class="btn">Request a tutor</a>
+    <p class="btn-note">Two-minute form, matched within 24 hours. <strong>Matching is free</strong>
+      — desmoVet takes nothing. You'll know your tutor's rate before you agree to anything.</p>
   </div>
 </header>
 
@@ -266,6 +280,10 @@
         <p>So I'm keeping peer tutoring alive independently. Same idea that helped me, run
           properly, with tutors paid fairly for their time — because asking students to teach
           for free is how these programs quietly die.</p>
+        <p>What I'm not doing is taking a cut. desmoVet doesn't charge students, doesn't charge
+          tutors, and never handles the money. This isn't a business built on the back of my own
+          class — it's a replacement for something we lost, run by someone who used it and then
+          ran it.</p>
         <div class="mission-quote">Veterinary students helping veterinary students. That's the
           whole thing.</div>
       </div>
@@ -294,16 +312,15 @@
       </div>
 
       <div class="step-card">
-        <div class="step-top"><span class="step-num">3</span><span class="step-name">Wrong fit? We'll rematch you</span></div>
-        <div class="step-desc">Tutoring is personal and not every pairing works. Tell us and
-          we'll move you to a different tutor — no charge for the switch, no explanation
-          needed.</div>
+        <div class="step-top"><span class="step-num">3</span><span class="step-name">Tutors set their own rate</span></div>
+        <div class="step-desc">We tell you what your tutor charges before you commit, and you pay
+          them directly. desmoVet takes nothing and never handles the money.</div>
       </div>
 
       <div class="step-card">
-        <div class="step-top"><span class="step-num">4</span><span class="step-name">Meet as often as you need</span></div>
-        <div class="step-desc">One session before an exam, or every week all semester. No
-          subscription, no minimum, nothing to cancel.</div>
+        <div class="step-top"><span class="step-num">4</span><span class="step-name">Wrong fit? We'll rematch you</span></div>
+        <div class="step-desc">Tutoring is personal and not every pairing works. Tell us and
+          we'll look for someone else — no charge, no explanation needed.</div>
       </div>
 
     </div>
@@ -314,57 +331,86 @@
   <div class="wrap">
     <div class="section-head">
       <h2>What It Costs</h2>
-      <div class="count-badge">two ways to book</div>
+      <div class="count-badge">matching is free</div>
     </div>
 
-    <div class="price-grid">
-      <div class="price-card featured">
-        <div class="price-label">Group session</div>
-        <div class="price">$15<span> / person</span></div>
-        <div class="price-sub">Four to six students, one hour, one topic.</div>
-        <ul class="ticks">
-          <li>Same tutor, same material, a third of the price</li>
-          <li>Capped at six so you can still ask questions</li>
-          <li>Bring your study group, or we'll place you in one</li>
-          <li>Runs with a minimum of four — seats are prepaid</li>
-        </ul>
-      </div>
-
-      <div class="price-card">
-        <div class="price-label">One-on-one</div>
-        <div class="price">$35<span> / hour</span></div>
-        <div class="price-sub">Entirely your session, entirely your pace.</div>
-        <ul class="ticks">
-          <li>Best when you're stuck on something specific</li>
-          <li>Billed in 30-minute increments after the first hour</li>
-          <li>No subscription, no package required, no minimum</li>
-          <li>No fee to cancel with 24 hours' notice</li>
-        </ul>
-      </div>
+    <div class="price-card featured">
+      <div class="price-label">desmoVet's fee</div>
+      <div class="price">$0</div>
+      <div class="price-sub">There isn't one. This isn't a business.</div>
+      <ul class="ticks">
+        <li>desmoVet takes no commission, no cut, and no fee of any kind</li>
+        <li>Your tutor sets their own rate and keeps <strong>100%</strong> of it</li>
+        <li>You pay your tutor directly — no card details, no account, no subscription</li>
+        <li>You'll be told the rate when we introduce you, before you agree to anything</li>
+      </ul>
     </div>
 
-    <p class="body" style="margin-top:20px"><strong>Start with a group session.</strong> Most
-      first- and second-year sticking points are shared by half the class, and hearing someone
-      else ask the question you were embarrassed to ask is often the whole unlock. Move to
-      one-on-one when you need something specific.</p>
-    <p class="body">A limited number of <strong>reduced-rate places</strong> are available each
-      semester. Just ask — no documentation needed, and your tutor never finds out.</p>
+    <p class="body" style="margin-top:22px"><strong>Why it works this way.</strong> Tutors are
+      veterinary students whose time is worth paying for — asking them to teach for free is how
+      these programmes quietly collapse, which is roughly what just happened to the one this
+      replaces. But nothing about that requires desmoVet to take a cut. So it doesn't.</p>
+
+    <p class="body">Rates vary by tutor, by subject, and by whether it's one-on-one or a small
+      group. Group sessions cost each student considerably less, because the tutor's time is
+      shared. When we match you, we tell you what your tutor charges — if it doesn't work for
+      you, say so and we'll look for someone else, or tell you honestly if we can't.</p>
+
     <div class="split-note">
-      <b>The split, openly:</b> on a one-on-one session your tutor keeps <b>$30 of every
-      $35</b>. That's 80% — the large tutoring platforms keep 25% for themselves; we keep 15%.
-      Tutors are paid more per hour for group sessions, because teaching six people at once is
-      harder than teaching one. Tutors are veterinary students too, and the work should be
-      worth their time.
+      The free tools on desmoVet — the <a href="cardio-tutor.html">Cardio Tutor</a>,
+      <a href="neuro-tutor.html">Neuro Tutor</a>, the anesthesia calculator and EquiCalc — are
+      free, always have been, and have nothing to do with any of this.
+    </div>
+  </div>
+</section>
+
+<section id="access">
+  <div class="wrap">
+    <div class="section-head"><h2>Vet School Is Expensive Enough</h2></div>
+
+    <p class="body">Veterinary students who graduated in 2025 carrying debt owed an average of
+      <strong>$212,499</strong>, and 40% of the class owed more than $200,000. Nobody in this
+      profession needs reminding that the cost is the problem. Adding another bill on top of it
+      is not something we do lightly.</p>
+
+    <p class="body">Tutors charge because their time is genuinely worth paying for, and unpaid
+      peer tutoring collapses the moment people get busy — which is roughly what happened to the
+      program this replaces. But we'd rather someone get help than get billed. So we work at
+      accessibility deliberately, not as an afterthought:</p>
+
+    <div class="access-grid">
+      <div class="access-item">
+        <div class="access-title">We take nothing</div>
+        <p>Every dollar you pay goes to your tutor. There's no platform fee inflating the price,
+          which is the single biggest thing keeping it lower than a commercial service.</p>
+      </div>
+      <div class="access-item">
+        <div class="access-title">The form asks about cost, privately</div>
+        <p>One question on the intake form asks whether cost affects who we match you with,
+          including a "free or heavily reduced only" option. It's easier to tick a box than to
+          tell a classmate you can't afford them.</p>
+      </div>
+      <div class="access-item">
+        <div class="access-title">Some tutors offer free slots</div>
+        <p>We ask every tutor whether they'll take reduced or no-cost students, and we track who
+          says yes. If cost is your constraint, those are the people we send you to first.</p>
+      </div>
+      <div class="access-item">
+        <div class="access-title">Groups cost a fraction</div>
+        <p>Small group sessions split one tutor's time across several students, so each person
+          pays far less. Bring classmates who are stuck on the same thing and it gets cheaper
+          for everyone.</p>
+      </div>
+    </div>
+
+    <div class="callout-access">
+      <b>If money is what's stopping you, just say so.</b> Email
+      <a href="mailto:admin@desmovet.com">admin@desmovet.com</a> or tick the box on the
+      form. You'll never be asked for documentation, never asked to justify it, and it will
+      never be shared with anyone beyond what's needed to find you the right tutor.
       <br><br>
-      <b>Where the other 20% goes:</b> it covers what it costs to run this — payment
-      processing, scheduling, the site — and what's left is put back into building the free
-      tools on desmoVet. The <a href="cardio-tutor.html">Cardio Tutor</a>, the
-      <a href="neuro-tutor.html">Neuro Tutor</a>, the anesthesia calculator and EquiCalc are
-      free and will stay free. Paid sessions are what pay to expand them.
-      <br><br>
-      Money is tight in vet school and we know it. If the rate is what's stopping you, email
-      <a href="mailto:tutoring@desmovet.com" style="color:var(--gold);text-decoration:underline;">tutoring@desmovet.com</a>
-      — that conversation stays between us and never reaches your tutor.
+      We can't promise a free match every time — that depends on which tutors have capacity. We
+      can promise we'll try, and that nobody will make it awkward.
     </div>
   </div>
 </section>
@@ -476,21 +522,32 @@
 
     <details>
       <summary>What if I don't click with my tutor?</summary>
-      <p>Tell us and we'll match you with someone else at no charge. Tutoring is personal and
-        not every pairing works — it's not awkward and you don't need to explain. What we can't
-        do is refund a session that's already happened; your tutor did the work and gets paid
-        for it, the same as any other professional service.</p>
+      <p>Tell us and we'll look for someone else. Tutoring is personal and not every pairing
+        works — it's not awkward and you don't need to explain. Since desmoVet doesn't handle
+        payment, anything already agreed between you and that tutor stays between you; refunds
+        and cancellations are their policy, not ours.</p>
+    </details>
+
+    <details>
+      <summary>What does it cost?</summary>
+      <p><strong>desmoVet charges nothing.</strong> Matching is free and there's no commission —
+        your tutor keeps everything you pay them.</p>
+      <p>Each tutor sets their own rate, so it varies by person, subject, and format. We'll tell
+        you what your tutor charges when we introduce you, before you commit to anything. If it
+        doesn't work for you, say so and we'll look for someone else.</p>
+      <p>Group sessions cost each student considerably less, since the tutor's time is shared
+        across several people. If you have classmates stuck on the same thing, say so on the
+        form — it's the cheapest way to do this.</p>
     </details>
 
     <details>
       <summary>How do group sessions work?</summary>
-      <p>Four to six students, one hour, one topic, $15 each. You can bring your own study
-        group or we'll place you with others working on the same material. Sessions run with a
-        minimum of four people and seats are prepaid, so we know it's going ahead.</p>
-      <p>If a session doesn't reach four, we'll move you to the next one or refund the seat —
-        you're never charged for a session that didn't run.</p>
-      <p>Most people should start here. It's a third of the price, and the questions other
-        people ask are usually the ones you didn't know to ask.</p>
+      <p>A small group works through one topic with one tutor, and the cost per student is much
+        lower than one-on-one. You can bring your own study group or we'll try to place you with
+        others working on the same material.</p>
+      <p>Size, rate, and how payment is split are set by the tutor — we'll tell you before you
+        commit. Most people should start here: it's cheaper, and the questions other people ask
+        are usually the ones you didn't know to ask.</p>
     </details>
 
     <details>
@@ -510,25 +567,28 @@
     <details>
       <summary>How is this different from the Cardio and Neuro Tutors?</summary>
       <p>Those are free interactive study tools you work through on your own — they're on the
-        <a href="index.html#tools">Tools</a> page and always will be free. This page is
-        one-on-one tutoring with an actual person. The two are connected: desmoVet's share of
-        each paid session goes back into building and expanding those free tools.</p>
+        <a href="index.html#tools">Tools</a> page and always will be free. This page is tutoring
+        with an actual person. They're separate things: the tools cost nothing to use and aren't
+        funded by tutoring in any way.</p>
     </details>
 
     <details>
-      <summary>Is this a business or a student service?</summary>
-      <p>Both, and we'd rather be straightforward about it than pretend otherwise. Tutors are
-        paid because unpaid peer tutoring collapses the moment people get busy — that's
-        roughly what just happened to the program this replaces. desmoVet Peer Tutoring is
-        operated by KB Enterprises LLC, the same entity behind the free tools on this site,
-        and the service's share is spent running it and expanding those tools.</p>
+      <summary>Is this a business?</summary>
+      <p>No. desmoVet takes no commission and no fee, from students or tutors, and never handles
+        the money — you pay your tutor directly. What desmoVet does is find you a tutor, check
+        they can actually teach, and set the standards they agree to work to.</p>
+      <p>Tutors charge because their time is worth paying for. Unpaid peer tutoring collapses the
+        moment people get busy, which is roughly what happened to the program this replaces.
+        But nothing about that requires desmoVet to take a cut, so it doesn't.</p>
     </details>
 
     <details>
       <summary>I'm an upper-year student. Can I tutor?</summary>
-      <p>Probably — we're recruiting. $30/hour, you set your own availability, no minimum
-        commitment, and matching, scheduling, and payment are handled for you. Email
-        <a href="mailto:tutoring@desmovet.com">tutoring@desmovet.com</a>.</p>
+      <p>Probably — we're recruiting. <strong>You set your own rate and keep all of it</strong>,
+        you set your own availability, and there's no minimum commitment. We handle finding you
+        students and matching them to what you're good at; you and the student sort out times and
+        payment between yourselves. Email
+        <a href="mailto:admin@desmovet.com">admin@desmovet.com</a>.</p>
     </details>
 
   </div>
@@ -537,8 +597,9 @@
 <section id="start" class="final">
   <div class="wrap">
     <h2>Tell Us What You're Stuck On</h2>
-    <p>Two minutes to fill in, matched within 24 hours. Group sessions start at $15.</p>
-    <a href="https://forms.gle/5Ado5HrPsW1HJgdAA" target="_blank" rel="noopener" class="btn">Request a tutor</a>
+    <p>Two minutes to fill in, matched within 24 hours. Free to use — you'll know your tutor's
+      rate before you commit to anything.</p>
+    <a href="https://forms.gle/oeEXSZ93jvknW46W8" class="btn">Request a tutor</a>
   </div>
 </section>
 
@@ -548,7 +609,7 @@
     <div class="flinks">
       <a href="academic-integrity-policy.html">Academic Integrity Policy</a>
       <a href="tutoring-terms.html">Terms of Service</a>
-      <a href="mailto:tutoring@desmovet.com">Contact</a>
+      <a href="mailto:admin@desmovet.com">Contact</a>
     </div>
     <div class="note">desmoVet Peer Tutoring is a service of KB Enterprises LLC. It is not
       affiliated with, endorsed by, or operated by any veterinary college or university.
