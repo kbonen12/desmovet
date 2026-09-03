@@ -347,6 +347,15 @@
   var WBC_LINES = ["NEUTROPHIL", "LYMPHOCYTE", "MONOCYTE", "EOSINOPHIL",
                    "BASOPHIL", "BAND", "SEG", "LYMPH", "NEUT", "MONO", "EOS", "BASO"];
 
+  /* True when the name matches the analyte vocabulary. Used to tell a real
+     result that has no printed interval (osmolality) apart from a demographic
+     line that happens to contain a number ("Harriet" Obrien 1116215). */
+  function isKnownAnalyte(raw){
+    var n = raw.replace(/[:：]\s*$/, "").replace(/\s+/g, " ").trim().toUpperCase();
+    var bare = n.replace(/[#%]\s*$/, "").trim();
+    return !!(NAME_MAP[n] || NAME_MAP[bare] || CASE_MAP[n] || CASE_MAP[bare]);
+  }
+
   function normKey(s){
     return s.replace(/\s+/g, " ").trim().toUpperCase();
   }
@@ -395,6 +404,9 @@
   var PURE_NUM_RE = new RegExp("^" + NUM + "$");
   var NUM_FLAG_RE = new RegExp("^(" + NUM + ")(\\*?[HL]\\*?)$", "i");
   var FLAG_RE = /^\*{0,2}(H|L|HH|LL|HI|LO|HIGH|LOW|↑|↓)\*{0,2}$/i;
+  /* Below/above detection limit, e.g. "CRP <5". Without this the "<5" tokens
+     get swallowed into the analyte name and a later column is read as the value. */
+  var CENSORED_RE = new RegExp("^([<>\u2264\u2265])\\s*(" + NUM + ")$");
 
   function flagLetter(tok){
     var t = tok.replace(/\*/g, "").toUpperCase();
@@ -462,11 +474,13 @@
        most recent result, which is the one to report. */
     var tokens = head.split(" ").filter(Boolean);
 
-    var valIdx = -1, valStr = null, flag = null;
+    var valIdx = -1, valStr = null, flag = null, censored = null;
     for (var i = 0; i < tokens.length; i++) {
       if (i === 0) continue; /* first token is always part of the name */
       var t = tokens[i];
       if (PURE_NUM_RE.test(t)) { valIdx = i; valStr = t; break; }
+      var cz = t.match(CENSORED_RE);
+      if (cz) { valIdx = i; valStr = t; censored = cz[1]; break; }
       var nf = t.match(NUM_FLAG_RE);
       if (nf) { valIdx = i; valStr = nf[1]; flag = flagLetter(nf[2]); break; }
     }
@@ -496,10 +510,18 @@
       }
     }
 
-    var value = parseFloat(valStr);
+    /* valStr keeps the "<" for display; strip it before comparing, or
+       parseFloat returns NaN and every comparison silently fails. */
+    var value = parseFloat(censored ? valStr.replace(/^[<>\u2264\u2265]\s*/, "") : valStr);
     var computed = null;
     if (rLow !== null && rHigh !== null) {
-      if (value > rHigh) computed = "H";
+      if (censored === "<" || censored === "\u2264") {
+        /* "<5" can never be high, and is only certainly low when 5 already
+           sits at or below the lower bound. */
+        if (value <= rLow) computed = "L";
+      } else if (censored === ">" || censored === "\u2265") {
+        if (value >= rHigh) computed = "H";
+      } else if (value > rHigh) computed = "H";
       else if (value < rLow) computed = "L";
     } else if (oneSided) {
       if ((oneSided.op === "<" || oneSided.op === "≤") && value > oneSided.val) computed = "H";
@@ -519,6 +541,8 @@
       raw: s,
       rawName: name,
       name: formatName(name),
+      known: isKnownAnalyte(name),
+      censored: censored,
       valueStr: valStr,
       value: value,
       units: units.join(" "),
@@ -580,7 +604,10 @@
      bare number means "in range or nothing to check it against". No %/# dedupe
      here — this list is meant to be complete. */
   function allText(rows, opts){
-    return rows.map(function(r){
+    /* Include a row if it is a recognised analyte, or if it carried a printed
+       reference interval — that is what marks it as a result line rather than a
+       patient name, address or administrative field. */
+    return rows.filter(function(r){ return r.known || r.hasInterval; }).map(function(r){
       var s = r.name + " " + r.valueStr;
       if (opts && opts.units && r.units) s += " " + r.units;
       if (r.abnormal) s += " " + r.flag;
