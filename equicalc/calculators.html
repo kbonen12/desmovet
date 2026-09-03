@@ -1165,16 +1165,15 @@
   <!-- ════════════ FOAL BLOODWORK ════════════ -->
   <div class="panel" id="panel-foal">
     <div class="panel-title">Foal Bloodwork Checker</div>
-    <div class="panel-desc">Age-specific neonatal reference intervals for the equine neonate. Paste a CBC or chemistry panel, set the foal's age, and get back only the values that fall outside the published foal range.</div>
+    <div class="panel-desc">Checks a neonatal CBC against published, age-specific reference intervals for the equine neonate. Only values with a genuine reference interval behind them are flagged.</div>
 
     <div class="warn-banner">
       <span>⚠</span>
-      <span>Foal reference intervals change rapidly over the first weeks of life and differ substantially from adult equine ranges. Do not interpret neonatal bloodwork against an adult or in-house analyser range. Intervals below are from published neonatology texts (see Sources) and are not a substitute for your own laboratory's validated intervals.</span>
+      <span>Foal values change rapidly over the first weeks of life and differ substantially from adult equine ranges — do not interpret neonatal bloodwork against an adult or in-house analyser range. The intervals here come from one Thoroughbred population and are not a substitute for your own laboratory's validated intervals.</span>
     </div>
 
     <div class="calc-grid">
 
-      <!-- ── checker ── -->
       <div class="card full-width">
         <div class="card-title">Check a Panel <span class="badge">Age-specific</span></div>
 
@@ -1182,7 +1181,7 @@
           <div class="field">
             <label>Foal Age</label>
             <div class="input-row">
-              <input type="number" id="foal-age" placeholder="3" min="0" step="0.5" oninput="foalSyncAge()" />
+              <input type="number" id="foal-age" placeholder="1" min="0" step="0.5" oninput="foalSyncAge()" />
               <select id="foal-age-unit" class="unit-select" onchange="foalSyncAge()">
                 <option value="0.0416667">Hours</option>
                 <option value="1" selected>Days</option>
@@ -1190,7 +1189,7 @@
                 <option value="30">Months</option>
               </select>
             </div>
-            <div class="foal-summary" id="foal-bracket" style="margin:8px 0 0; border:none; padding:0;">Enter an age to select a reference bracket</div>
+            <div class="foal-summary" id="foal-bracket" style="margin:8px 0 0; border:none; padding:0;">Enter an age to select a reference bin</div>
           </div>
 
           <div class="field">
@@ -1207,50 +1206,67 @@
 
         <div class="field">
           <label>Paste Lab Results</label>
-          <textarea class="foal-ta" id="foal-input" spellcheck="false" placeholder="HGB          9.5   g/dL   (11.0-16.6)&#10;HCT          30    %&#10;PLATELETS    82  L&#10;NUCLEATED CELLS  4.0&#10;NEUTROPHIL#  2.10&#10;AST          770   IU/L&#10;GGT          150&#10;GLU          180&#10;CREAT        1.0&#10;&#10;Units, analyser H/L flags and the lab's own printed reference intervals are ignored."></textarea>
+          <textarea class="foal-ta" id="foal-input" spellcheck="false" placeholder="HGB              9.5   g/dL&#10;HCT             30    %&#10;MCHC            31.7  g/dL&#10;PLATELETS       82&#10;WBC              4.0&#10;NEUTROPHIL#      2.10&#10;LYMPHOCYTE#      1.60&#10;PLASMA PROTEIN   5.0&#10;FIBRINOGEN     400&#10;&#10;Units, analyser H/L flags and the lab's own printed reference intervals are ignored."></textarea>
         </div>
 
         <div class="btn-row">
-          <button class="btn" onclick="foalRun()">Check Against Foal Ranges</button>
+          <button class="btn" onclick="foalRun()">Check Against Foal Intervals</button>
           <button class="btn ghost" style="width:auto; padding-left:22px; padding-right:22px;" onclick="foalReset()">Clear</button>
         </div>
 
         <div class="result-box" id="foal-result"></div>
 
-        <div class="note-box">Analytes with no published foal equivalent — RDW, MPV, differential percentages, SAA, A/G ratio, osmolality and sample-quality indices — are listed as <b>not evaluated</b> rather than silently dropped. Magnesium is suppressed at ages where the mean ± 2SD conversion produces a negative lower bound.</div>
+        <div class="note-box">Chemistry is not flagged here. Every published foal chemistry dataset I could find reports means ± SD or ± SEM rather than reference intervals, and those cannot serve as decision thresholds without misrepresenting them. See <b>Expected Neonatal Deviations</b> below for what chemistry does reliably tell you at this age. Anything without a citable interval is listed as <b>not evaluated</b> rather than silently dropped.</div>
       </div>
 
-      <!-- ── reference tables ── -->
       <div class="card full-width">
-        <div class="card-title">Reference Intervals by Age <span class="badge warn">Browse</span></div>
-        <div class="panel-desc" style="margin-bottom:14px;">Select an age bracket to see every published interval for that age. A dash means the source table has no value at that age; the checker falls back to the nearest bracket for that analyte individually.</div>
+        <div class="card-title">Reference Intervals <span class="badge warn">Browse</span></div>
+        <div class="panel-desc" style="margin-bottom:14px;">Three sampling windows, as published. Ages between or beyond these windows have no interval and are not extrapolated.</div>
         <div class="age-pill-row" id="foal-age-pills"></div>
         <div id="foal-ref-tables"></div>
       </div>
 
-      <!-- ── sources ── -->
+      <div class="card full-width">
+        <div class="card-title">Expected Neonatal Deviations <span class="badge warn">Not a threshold</span></div>
+        <div class="panel-desc" style="margin-bottom:6px;">Analytes that normally sit outside <em>adult</em> equine reference ranges in a healthy neonate. This answers "should I be worried that this is flagged on the adult panel?" — it does not tell you whether a given value is abnormal for the foal.</div>
+        <div id="foal-deviations"></div>
+        <div class="note-box" style="margin-top:16px;">
+          Direction only. Duncan et al. compared least-square means from healthy stock-type foals against one
+          laboratory's adult equine intervals, at 0, 6, 12, 24, 48 and 72 hours. Means ± SEM are not reference
+          intervals, so nothing here is used to flag a value — an individual healthy foal may sit on either side of any
+          of these. Treat it as a map of where neonatal physiology predictably departs from adult, not as a decision rule.
+        </div>
+        <div class="src-box" style="margin-top:14px; font-size:11px;">
+          Duncan NB, Johnson PJ, Crosby MJ, Meyer AM. <b>Serum chemistry and hematology changes in neonatal stock-type
+          foals during the first 72 hours of life.</b> J Equine Vet Sci. 2020;84:102855. Adult comparison intervals are
+          those reported in the paper's Table 3.
+        </div>
+      </div>
+
       <div class="card full-width">
         <div class="card-title">Sources</div>
         <div class="src-box">
           <ol>
             <li>
-              Koterba AM, Drummond WH, Kosch PC, eds. <b>Equine Clinical Neonatology.</b>
-              Philadelphia: Lea &amp; Febiger; 1990. ISBN <code>978-0-8121-1184-2</code>.<br>
-              Chemistry intervals — Tables 27-2 (enzyme activities), 27-3 (electrolytes and minerals),
-              27-4 (small organic molecules) and 27-5 (serum proteins).
-            </li>
-            <li>
-              Paradis MR. <b>Equine Neonatal Medicine: A Case-Based Approach.</b>
-              Philadelphia: Saunders Elsevier; 2006. ISBN <code>978-1-4160-2353-1</code>.<br>
-              Haematology intervals — Tables 24-1 (erythrocyte parameters), 24-2 (leukocyte counts)
-              and 24-3 (haematologic values).
+              <b>Hematological profile of healthy Thoroughbred foals from birth to one month of age in Trinidad, West Indies.</b>
+              Am J Vet Res. 2024;85(2):ajvr.23.09.0206.
+              <a href="https://avmajournals.avma.org/view/journals/ajvr/85/2/ajvr.23.09.0206.xml" style="color:var(--accent)">View</a><br>
+              Reference intervals established under ASVCP guidelines, with a 90% confidence interval reported for each
+              limit. 89 foals sampled, 67 classified healthy and used for interval generation. Published under a
+              <b>CC BY-NC 4.0</b> licence.
             </li>
           </ol>
           <div class="note-box" style="margin-top:14px;">
-            Electrolyte, mineral and anion gap intervals in Koterba Table 27-3 are published as mean ± SD rather than as
-            ranges. They are presented here as mean ± 2SD. On small, skewed neonatal samples this arithmetic can push a
-            lower bound below zero, so treat flags near the low boundary of any derived interval as a prompt to check the
-            value rather than as a result in itself.
+            Values were published in SI units and converted here to the conventional US units a North American analyser
+            prints — haemoglobin and MCHC g/L → g/dL, haematocrit L/L → %, plasma protein g/L → g/dL, fibrinogen g/L →
+            mg/dL. Cell counts are numerically identical between 10⁹/L and 10³/µL. No other transformation was applied.
+          </div>
+          <div class="note-box" style="margin-top:10px; background:var(--accent-soft); border-left-color:var(--accent); color:var(--muted);">
+            <b style="color:var(--text)">Why this tool covers less than it used to.</b> Earlier versions checked 39 analytes
+            across 17 age brackets using figures traced to Harvey (1984) and Bauer (1984). Those papers report mean ± SD and
+            observed minimum–maximum values from 22 and 26 foals respectively — neither is a reference interval, and using
+            them as thresholds overstated what the data supports. One consequence: a day-old foal with a platelet count of
+            80 × 10³/µL was previously flagged low, but sits well inside the published interval of 43–423.
           </div>
         </div>
       </div>
@@ -1821,100 +1837,51 @@ function calcDob() {
   showResult('dob-result');
 }
 
-const FOAL_AGES = [
-  {label:"<1 hour",days:0},
-  {label:"<12 hours",days:0.5},
-  {label:"1 day",days:1},
-  {label:"3 days",days:3},
-  {label:"5 days",days:5},
-  {label:"1 week",days:7},
-  {label:"2 weeks",days:14},
-  {label:"3 weeks",days:21},
-  {label:"1 month",days:30},
-  {label:"2 months",days:60},
-  {label:"3 months",days:90},
-  {label:"4 months",days:120},
-  {label:"5 months",days:150},
-  {label:"6 months",days:180},
-  {label:"9 months",days:270},
-  {label:"12 months",days:365},
-  {label:"Adult",days:730},
-];
+const FOAL_DEVIATIONS = [{"a":"Glucose","d":"above","w":"from 6 h onward","ri":"77–107","u":"mg/dL","g":"chem"},{"a":"Phosphorus","d":"above","w":"all sampling times","ri":"1.8–4.0","u":"mg/dL","g":"chem"},{"a":"Creatinine","d":"above","w":"before 24 h","ri":"0.9–1.7","u":"mg/dL","g":"chem"},{"a":"Triglycerides","d":"above","w":"from 24 h onward","ri":"14–62","u":"mg/dL","g":"chem"},{"a":"Potassium","d":"above","w":"at 0 h","ri":"2.7–4.3","u":"mEq/L","g":"chem"},{"a":"Magnesium","d":"above","w":"at 12 h","ri":"1.5–2.3","u":"mg/dL","g":"chem"},{"a":"Total bilirubin","d":"above","w":"at 24 h","ri":"0.6–2.8","u":"mg/dL","g":"chem"},{"a":"GGT","d":"above","w":"at 6, 12 and 72 h","ri":"10–30","u":"U/L","g":"chem"},{"a":"Urea nitrogen (BUN)","d":"below","w":"at 48 and 72 h","ri":"11–24","u":"mg/dL","g":"chem"},{"a":"Total protein","d":"below","w":"all sampling times","ri":"5.7–7.5","u":"g/dL","g":"chem"},{"a":"Globulin","d":"below","w":"at 0 and 6 h","ri":"2.4–4.1","u":"g/dL","g":"chem"},{"a":"Calcium","d":"below","w":"at 24 h","ri":"11.2–12.8","u":"mg/dL","g":"chem"},{"a":"AST","d":"below","w":"all sampling times","ri":"203–415","u":"U/L","g":"chem"},{"a":"Red blood cells","d":"above","w":"at 0 h","ri":"6.41–10.12","u":"10⁶/µL","g":"heme"},{"a":"Hematocrit","d":"above","w":"at 0 h","ri":"30.6–42.1","u":"%","g":"heme"},{"a":"Platelets","d":"above","w":"at 0, 6, 12 and 48 h","ri":"97–254","u":"10³/µL","g":"heme"},{"a":"MCH","d":"below","w":"all sampling times","ri":"15.0–19.4","u":"pg","g":"heme"},{"a":"MCV","d":"below","w":"from 12 to 72 h","ri":"38.7–52.3","u":"fL","g":"heme"}];
 
-const FOAL_PANELS = [{"id":"cbc-rbc","label":"CBC · Erythrocyte Parameters","table":"Paradis Table 24-1"},{"id":"cbc-wbc","label":"CBC · Leukocyte Counts","table":"Paradis Table 24-2"},{"id":"cbc-heme","label":"CBC · Hematologic Values","table":"Paradis Table 24-3"},{"id":"chem-enz","label":"Chemistry · Enzyme Activities","table":"Koterba Table 27-2"},{"id":"chem-lyte","label":"Chemistry · Electrolytes & Minerals","table":"Koterba Table 27-3 (derived)"},{"id":"chem-org","label":"Chemistry · Small Organic Molecules","table":"Koterba Table 27-4"},{"id":"chem-prot","label":"Chemistry · Serum Proteins","table":"Koterba Table 27-5"}];
+const FOAL_BINS = [{"label":"0–2 days","min":0,"max":2,"avg":0.83},{"label":"5–10 days","min":5,"max":10,"avg":7.54},{"label":"20–32 days","min":20,"max":32,"avg":26}];
+
+const FOAL_SOURCES = {"ajvr2024":{"short":"AJVR 2024","cite":"Hematological profile of healthy Thoroughbred foals from birth to one month of age in Trinidad, West Indies. Am J Vet Res. 2024;85(2):ajvr.23.09.0206.","stat":"Reference interval (ASVCP guidelines, with 90% CI on each limit)","pop":"Thoroughbred, Trinidad; 67 of 89 foals classed healthy","licence":"CC BY-NC 4.0","url":"https://avmajournals.avma.org/view/journals/ajvr/85/2/ajvr.23.09.0206.xml"}};
 
 const FOAL_ANALYTES = [
-  {"key":"hgb","label":"HGB","units":"g/dL","panel":"cbc-rbc","aliases":["haemoglobin","hemoglobin","hgb","hb"],"derived":false,"ranges":{"<1 hour":[13.4,19.9],"<12 hours":[12.6,17.4],"1 day":[12.0,16.6],"3 days":[11.5,16.7],"5 days":[11.0,16.6],"1 week":[10.7,15.8],"2 weeks":[10.1,15.3],"3 weeks":[10.5,14.8],"1 month":[10.9,15.3],"2 months":[11.6,16.0],"3 months":[11.7,15.3],"4 months":[11.6,17.2],"5 months":[10.5,15.2],"6 months":[10.8,15.4],"9 months":[10.9,15.9],"12 months":[11.0,15.4],"Adult":[11.0,18.0]},"noflag":[]},
-  {"key":"hct","label":"HCT / PCV","units":"%","panel":"cbc-rbc","aliases":["packed cell volume","haematocrit","hematocrit","hct","pcv"],"derived":false,"ranges":{"<1 hour":[40.0,52.0],"<12 hours":[37.0,49.0],"1 day":[32.0,46.0],"3 days":[30.0,46.0],"5 days":[30.0,44.0],"1 week":[28.0,43.0],"2 weeks":[28.0,41.0],"3 weeks":[29.0,40.0],"1 month":[29.0,41.0],"2 months":[31.0,44.0],"3 months":[32.0,42.0],"4 months":[32.0,43.0],"5 months":[29.0,41.0],"6 months":[29.0,41.0],"9 months":[31.0,44.0],"12 months":[31.0,42.0],"Adult":[31.0,47.0]},"noflag":[]},
-  {"key":"rbc","label":"RBC","units":"10⁶/µL","panel":"cbc-rbc","aliases":["red blood cells","red cell count","erythrocytes","rbc"],"derived":false,"ranges":{"<1 hour":[9.3,12.9],"<12 hours":[9.0,12.0],"1 day":[8.2,11.0],"3 days":[7.8,11.4],"5 days":[7.2,11.6],"1 week":[7.4,10.6],"2 weeks":[7.2,10.8],"3 weeks":[7.8,10.6],"1 month":[7.9,11.1],"2 months":[9.1,13.2],"3 months":[9.2,12.0],"4 months":[8.9,12.7],"5 months":[8.8,11.4],"6 months":[7.9,11.6],"9 months":[8.0,11.2],"12 months":[7.7,10.9],"Adult":[5.9,9.9]},"noflag":[]},
-  {"key":"mcv","label":"MCV","units":"fL","panel":"cbc-rbc","aliases":["mcv"],"derived":false,"ranges":{"<1 hour":[37.0,45.0],"<12 hours":[36.0,45.0],"1 day":[36.0,46.0],"3 days":[35.0,44.0],"5 days":[35.0,45.0],"1 week":[35.0,44.0],"2 weeks":[35.0,41.0],"3 weeks":[34.0,41.0],"1 month":[33.0,40.0],"2 months":[32.0,38.0],"3 months":[31.0,38.0],"4 months":[31.0,37.0],"5 months":[32.0,38.0],"6 months":[32.0,39.0],"9 months":[36.0,43.0],"12 months":[35.0,44.0],"Adult":[41.0,51.0]},"noflag":[]},
-  {"key":"mchc","label":"MCHC","units":"g/dL","panel":"cbc-rbc","aliases":["chcm","mchc"],"derived":false,"ranges":{"<1 hour":[33.0,39.0],"<12 hours":[32.0,40.0],"1 day":[32.0,40.0],"3 days":[34.0,40.0],"5 days":[34.0,40.0],"1 week":[35.0,40.0],"2 weeks":[34.0,40.0],"3 weeks":[34.0,40.0],"1 month":[34.0,40.0],"2 months":[33.0,40.0],"3 months":[34.0,40.0],"4 months":[34.0,41.0],"5 months":[33.0,40.0],"6 months":[32.0,40.0],"9 months":[34.0,40.0],"12 months":[33.0,41.0],"Adult":[33.0,41.0]},"noflag":[]},
-  {"key":"wbc","label":"WBC / NCC","units":"10³/µL","panel":"cbc-wbc","aliases":["total nucleated cells","nucleated cell count","white blood cells","total leukocytes","nucleated cells","leukocytes","tncc","ncc","wbc"],"derived":false,"ranges":{"<12 hours":[6.9,14.4],"1 day":[4.9,11.7],"3 days":[5.1,10.1],"1 week":[6.3,13.6],"2 weeks":[5.2,11.9],"3 weeks":[5.4,12.4],"1 month":[5.3,12.2],"2 months":[5.4,13.5],"3 months":[6.7,16.8],"4 months":[6.2,14.2],"5 months":[6.4,14.6],"6 months":[7.8,11.6],"9 months":[6.3,11.1],"12 months":[6.5,11.8],"Adult":[5.4,14.3]},"noflag":[]},
-  {"key":"neut","label":"Neutrophils","units":"10³/µL","panel":"cbc-wbc","aliases":["segmented neutrophils","neutrophils#","neutrophil#","neutrophils","neutrophil","neut#","neut","seg#","segs","pmn"],"derived":false,"ranges":{"<12 hours":[5.55,12.38],"1 day":[3.36,9.57],"3 days":[3.21,8.58],"1 week":[4.35,10.55],"2 weeks":[3.99,9.08],"3 weeks":[3.16,8.94],"1 month":[2.76,9.27],"2 months":[2.7,9.46],"3 months":[3.92,10.35],"4 months":[3.01,7.48],"5 months":[1.7,8.4],"6 months":[2.89,5.56],"9 months":[2.6,5.38],"12 months":[2.66,5.9],"Adult":[2.26,8.58]},"noflag":[]},
-  {"key":"lymph","label":"Lymphocytes","units":"10³/µL","panel":"cbc-wbc","aliases":["lymphocytes#","lymphocyte#","lymphocytes","lymphocyte","lymph#","lymphs","lymph"],"derived":false,"ranges":{"<12 hours":[0.46,2.54],"1 day":[0.67,2.12],"3 days":[0.73,2.17],"1 week":[1.43,2.28],"2 weeks":[1.32,3.12],"3 weeks":[1.47,3.26],"1 month":[1.73,4.85],"2 months":[2.37,4.72],"3 months":[2.88,7.15],"4 months":[2.8,7.32],"5 months":[2.37,7.88],"6 months":[3.2,6.01],"9 months":[2.98,6.59],"12 months":[2.01,6.53],"Adult":[1.5,7.7]},"noflag":[]},
-  {"key":"mono","label":"Monocytes","units":"10³/µL","panel":"cbc-wbc","aliases":["monocytes#","monocyte#","monocytes","monocyte","mono#","monos","mono"],"derived":false,"ranges":{"<12 hours":[0.04,0.43],"1 day":[0.07,0.39],"3 days":[0.08,0.58],"1 week":[0.03,0.54],"2 weeks":[0.07,0.58],"3 weeks":[0.06,0.69],"1 month":[0.05,0.63],"2 months":[0.05,0.61],"3 months":[0.12,0.76],"4 months":[0.08,0.66],"5 months":[0.09,0.51],"6 months":[0.04,0.45],"9 months":[0.05,0.42],"12 months":[0.04,0.44],"Adult":[0.0,1.0]},"noflag":[]},
-  {"key":"eos","label":"Eosinophils","units":"10³/µL","panel":"cbc-wbc","aliases":["eosinophils#","eosinophil#","eosinophils","eosinophil","eos#","eos"],"derived":false,"ranges":{"<12 hours":[0.0,0.0],"1 day":[0.0,0.02],"3 days":[0.0,0.22],"1 week":[0.0,0.09],"2 weeks":[0.0,0.1],"3 weeks":[0.0,0.16],"1 month":[0.0,0.12],"2 months":[0.0,0.28],"3 months":[0.0,0.55],"4 months":[0.0,0.99],"5 months":[0.0,0.58],"6 months":[0.0,0.55],"9 months":[0.0,0.7],"12 months":[0.0,0.78],"Adult":[0.0,1.0]},"noflag":[]},
-  {"key":"baso","label":"Basophils","units":"10³/µL","panel":"cbc-wbc","aliases":["basophils#","basophil#","basophils","basophil","baso#","baso"],"derived":false,"ranges":{"<12 hours":[0.0,0.02],"1 day":[0.0,0.03],"3 days":[0.0,0.12],"1 week":[0.0,0.18],"2 weeks":[0.0,0.1],"3 weeks":[0.0,0.09],"1 month":[0.0,0.08],"2 months":[0.0,0.1],"3 months":[0.0,0.07],"4 months":[0.0,0.07],"5 months":[0.0,0.06],"6 months":[0.0,0.06],"9 months":[0.0,0.07],"12 months":[0.0,0.09],"Adult":[0.0,0.4]},"noflag":[]},
-  {"key":"plt","label":"Platelets","units":"10³/µL","panel":"cbc-heme","aliases":["thrombocytes","platelets","plt count","platelet","plt"],"derived":false,"ranges":{"<12 hours":[105.0,446.0],"1 day":[129.0,409.0],"3 days":[105.0,353.0],"1 week":[111.0,387.0],"2 weeks":[133.0,457.0],"3 weeks":[134.0,442.0],"1 month":[136.0,468.0],"2 months":[152.0,456.0],"3 months":[200.0,376.0],"4 months":[140.0,388.0],"5 months":[132.0,376.0],"6 months":[128.0,368.0],"9 months":[105.0,337.0],"12 months":[120.0,316.0],"Adult":[100.0,350.0]},"noflag":[]},
-  {"key":"fib","label":"Fibrinogen","units":"mg/dL","panel":"cbc-heme","aliases":["fibrinogen","fibr","fib"],"derived":false,"ranges":{"<1 hour":[100.0,500.0],"<12 hours":[100.0,350.0],"1 day":[100.0,400.0],"3 days":[150.0,500.0],"5 days":[100.0,500.0],"1 week":[150.0,450.0],"2 weeks":[150.0,600.0],"3 weeks":[150.0,600.0],"1 month":[200.0,700.0],"2 months":[150.0,650.0],"3 months":[100.0,800.0],"4 months":[250.0,800.0],"5 months":[300.0,800.0],"6 months":[200.0,550.0],"9 months":[200.0,550.0],"12 months":[200.0,550.0],"Adult":[100.0,600.0]},"noflag":[]},
-  {"key":"pp","label":"Plasma protein (CBC)","units":"g/dL","panel":"cbc-heme","aliases":["refractometer protein","total plasma protein","plasma protein","tpp","pp"],"derived":false,"ranges":{"<1 hour":[4.4,5.9],"<12 hours":[5.1,7.6],"1 day":[5.2,8.0],"3 days":[5.3,7.9],"5 days":[5.4,7.6],"1 week":[5.2,7.5],"2 weeks":[5.2,7.2],"3 weeks":[5.2,6.8],"1 month":[5.1,7.1],"2 months":[5.2,6.8],"3 months":[5.5,7.1],"4 months":[5.9,7.5],"5 months":[6.1,7.3],"6 months":[5.9,7.1],"9 months":[5.6,6.8],"12 months":[5.4,7.0],"Adult":[6.2,8.0]},"noflag":[]},
-  {"key":"alp","label":"ALP","units":"IU/L","panel":"chem-enz","aliases":["alkaline phosphatase","alkp","alp","sap"],"derived":false,"ranges":{"<12 hours":[152.0,2835.0],"1 day":[861.0,2671.0],"3 days":[283.0,1462.0],"5 days":[156.0,1294.0],"1 week":[137.0,1169.0],"2 weeks":[182.0,859.0],"3 weeks":[146.0,752.0],"1 month":[210.0,866.0],"2 months":[201.0,741.0],"3 months":[206.0,458.0],"4 months":[124.0,222.0],"5 months":[105.0,239.0],"6 months":[155.0,226.0],"9 months":[158.0,232.0],"Adult":[64.0,214.0]},"noflag":[]},
-  {"key":"ggt","label":"GGT","units":"U/L","panel":"chem-enz","aliases":["gamma-glutamyl transferase","gamma gt","ggtp","ggt"],"derived":false,"ranges":{"<12 hours":[13.0,39.0],"1 day":[18.0,43.0],"3 days":[9.0,40.0],"5 days":[8.0,89.0],"1 week":[14.0,164.0],"2 weeks":[16.0,169.0],"3 weeks":[16.0,132.0],"1 month":[17.0,99.0],"2 months":[8.0,38.0],"3 months":[0.0,27.0],"4 months":[0.0,27.0],"5 months":[0.0,30.0],"6 months":[0.0,26.0],"9 months":[0.0,26.0],"Adult":[5.0,28.0]},"noflag":[]},
-  {"key":"sdh","label":"SDH","units":"IU/L","panel":"chem-enz","aliases":["sorbitol dehydrogenase","iddh","sdh"],"derived":false,"ranges":{"<12 hours":[0.2,4.8],"1 day":[0.6,4.6],"3 days":[0.6,3.7],"5 days":[0.8,5.3],"1 week":[0.8,8.2],"2 weeks":[0.6,4.3],"3 weeks":[1.0,8.4],"1 month":[1.2,5.9],"2 months":[1.1,4.6],"3 months":[1.1,3.9],"4 months":[1.5,4.4],"5 months":[1.3,4.8],"6 months":[0.3,3.3],"9 months":[0.3,3.3],"Adult":[0.5,3.0]},"noflag":[]},
-  {"key":"ast","label":"AST","units":"IU/L","panel":"chem-enz","aliases":["aspartate aminotransferase","sgot","ast"],"derived":false,"ranges":{"<12 hours":[97.0,315.0],"1 day":[146.0,340.0],"3 days":[80.0,580.0],"1 week":[237.0,620.0],"2 weeks":[240.0,540.0],"3 weeks":[226.0,540.0],"1 month":[252.0,440.0],"2 months":[282.0,484.0],"3 months":[282.0,480.0],"4 months":[280.0,520.0],"5 months":[225.0,420.0],"6 months":[300.0,620.0],"9 months":[246.0,728.0],"12 months":[283.0,720.0],"Adult":[149.0,267.0]},"noflag":[]},
-  {"key":"alt","label":"ALT","units":"IU/L","panel":"chem-enz","aliases":["alanine aminotransferase","sgpt","alt"],"derived":false,"ranges":{"<12 hours":[0.0,47.0],"1 day":[0.0,49.0],"3 days":[0.0,52.0],"1 week":[4.0,50.0],"2 weeks":[1.0,9.0],"3 weeks":[0.0,45.0],"1 month":[5.0,47.0],"2 months":[7.0,57.0],"3 months":[8.0,65.0],"4 months":[8.0,65.0],"5 months":[0.0,65.0],"6 months":[7.0,20.0],"9 months":[4.0,27.0],"12 months":[5.0,20.0],"Adult":[4.0,10.0]},"noflag":[]},
-  {"key":"ck","label":"CK","units":"IU/L","panel":"chem-enz","aliases":["creatine kinase","cpk","ck"],"derived":false,"ranges":{"<12 hours":[65.0,380.0],"1 day":[40.0,909.0],"3 days":[21.0,97.0],"5 days":[29.0,208.0],"1 week":[52.0,143.0],"2 weeks":[46.0,208.0],"3 weeks":[44.0,210.0],"1 month":[81.0,585.0],"2 months":[50.0,170.0],"3 months":[57.0,204.0],"4 months":[60.0,266.0],"5 months":[60.0,125.0],"6 months":[97.0,396.0],"9 months":[97.0,396.0],"Adult":[69.0,272.0]},"noflag":[]},
-  {"key":"na","label":"Sodium","units":"mEq/L","panel":"chem-lyte","aliases":["serum sodium","sodium","s/na","na+","na"],"derived":true,"ranges":{"<12 hours":[133.0,163.0],"1 day":[123.0,159.0],"3 days":[123.0,161.0],"1 week":[130.0,154.0],"3 weeks":[136.0,152.0],"1 month":[136.0,152.0],"2 months":[136.0,160.0],"3 months":[140.0,156.0],"4 months":[135.0,159.0],"5 months":[133.0,157.0],"6 months":[133.0,153.0],"9 months":[138.0,148.0],"12 months":[134.0,158.0],"Adult":[131.0,147.0]},"noflag":[]},
-  {"key":"k","label":"Potassium","units":"mEq/L","panel":"chem-lyte","aliases":["serum potassium","potassium","s/k","k+","k"],"derived":true,"ranges":{"<12 hours":[2.4,6.4],"1 day":[2.6,6.6],"3 days":[2.0,7.6],"1 week":[2.8,6.8],"3 weeks":[2.6,6.6],"1 month":[2.6,6.6],"2 months":[2.8,6.8],"3 months":[2.2,7.0],"4 months":[2.8,6.8],"5 months":[1.7,7.3],"6 months":[1.4,7.0],"9 months":[1.7,5.7],"12 months":[0.6,7.0],"Adult":[2.2,6.2]},"noflag":[]},
-  {"key":"cl","label":"Chloride","units":"mEq/L","panel":"chem-lyte","aliases":["blood chloride","serum chloride","chloride","s/cl","cl-","cl"],"derived":true,"ranges":{"<12 hours":[81.0,129.0],"1 day":[78.0,126.0],"3 days":[79.0,123.0],"1 week":[86.0,118.0],"3 weeks":[82.0,126.0],"1 month":[91.0,117.0],"2 months":[93.0,117.0],"3 months":[98.0,114.0],"4 months":[94.0,116.0],"5 months":[93.0,121.0],"6 months":[91.0,119.0],"9 months":[90.0,114.0],"12 months":[94.0,114.0],"Adult":[89.0,113.0]},"noflag":[]},
-  {"key":"hco3","label":"CO2 / Bicarbonate","units":"mEq/L","panel":"chem-lyte","aliases":["bicarb(hco3-)","bicarbonate","total co2","bicarb","hco3-","hco3","tco2","co2"],"derived":true,"ranges":{"<12 hours":[15.0,35.0],"1 day":[15.0,39.0],"3 days":[4.0,52.0],"1 week":[20.0,36.0],"3 weeks":[15.0,39.0],"1 month":[13.0,41.0],"2 months":[17.0,37.0],"3 months":[21.0,33.0],"4 months":[19.0,35.0],"5 months":[17.0,37.0],"6 months":[18.0,34.0],"9 months":[20.0,36.0],"12 months":[25.0,33.0],"Adult":[18.0,34.0]},"noflag":[]},
-  {"key":"phos","label":"Phosphorus","units":"mg/dL","panel":"chem-lyte","aliases":["inorganic phosphorus","phosphorus","phosphate","hpo4","phos","p"],"derived":true,"ranges":{"<12 hours":[1.5,7.9],"1 day":[2.0,9.2],"3 days":[1.2,11.6],"1 week":[3.4,11.4],"3 weeks":[6.0,9.2],"1 month":[4.9,9.2],"2 months":[4.6,10.2],"3 months":[5.3,9.3],"4 months":[3.1,10.3],"5 months":[3.1,9.5],"6 months":[3.4,9.0],"9 months":[3.2,8.8],"12 months":[4.4,7.6],"Adult":[1.7,7.3]},"noflag":[]},
-  {"key":"ca","label":"Calcium","units":"mg/dL","panel":"chem-lyte","aliases":["serum calcium","total calcium","calcium","ca2+","ca"],"derived":true,"ranges":{"<12 hours":[8.8,16.8],"1 day":[7.7,15.7],"3 days":[3.3,20.9],"1 week":[10.1,14.9],"3 weeks":[10.3,14.7],"1 month":[10.1,14.5],"2 months":[10.3,14.3],"3 months":[11.1,13.5],"4 months":[9.9,14.7],"5 months":[9.0,14.6],"6 months":[8.6,15.0],"9 months":[9.6,14.4],"12 months":[9.9,15.5],"Adult":[9.6,14.4]},"noflag":[]},
-  {"key":"mg","label":"Magnesium","units":"mg/dL","panel":"chem-lyte","aliases":["magnesium","mg2+","mg"],"derived":true,"ranges":{"<12 hours":[-0.1,3.1],"1 day":[-1.2,5.1],"3 days":[-2.7,6.9],"5 days":[0.2,4.2],"3 weeks":[-3.7,8.3],"2 months":[0.4,3.6],"3 months":[1.0,3.4],"4 months":[1.0,3.8],"5 months":[1.2,3.6],"6 months":[1.0,3.8],"9 months":[1.5,3.1],"Adult":[1.0,3.4]},"noflag":["<12 hours","1 day","3 days","3 weeks"]},
-  {"key":"ag","label":"Anion gap","units":"mEq/L","panel":"chem-lyte","aliases":["anion gap","an gap","angap","ag"],"derived":true,"ranges":{"<12 hours":[-3.0,45.0],"1 day":[0.0,32.0],"3 days":[15.0,31.0],"1 week":[1.0,33.0],"3 weeks":[2.0,34.0],"1 month":[2.0,34.0],"2 months":[1.0,41.0],"3 months":[4.0,36.0],"4 months":[1.0,41.0],"5 months":[0.0,32.0],"6 months":[0.0,33.0],"9 months":[0.0,32.0],"12 months":[5.0,29.0],"Adult":[2.0,34.0]},"noflag":[]},
-  {"key":"glu","label":"Glucose","units":"mg/dL","panel":"chem-org","aliases":["blood glucose","glucose","glu","bg"],"derived":false,"ranges":{"<12 hours":[108.0,190.0],"1 day":[121.0,233.0],"3 days":[101.0,226.0],"1 week":[121.0,192.0],"2 weeks":[137.0,205.0],"3 weeks":[130.0,240.0],"1 month":[130.0,216.0],"2 months":[119.0,204.0],"3 months":[88.0,179.0],"4 months":[113.0,196.0],"5 months":[95.0,210.0],"6 months":[110.0,210.0],"9 months":[104.0,207.0],"12 months":[105.0,165.0],"Adult":[57.0,96.0]},"noflag":[]},
-  {"key":"bun","label":"BUN","units":"mg/dL","panel":"chem-org","aliases":["blood urea nitrogen","urea nitrogen","urea","bun"],"derived":false,"ranges":{"<12 hours":[12.0,27.0],"1 day":[9.0,40.0],"3 days":[2.0,29.0],"1 week":[4.0,20.0],"2 weeks":[6.0,13.0],"3 weeks":[6.0,14.0],"1 month":[6.0,21.0],"2 months":[6.0,11.0],"3 months":[7.0,20.0],"4 months":[9.0,25.0],"5 months":[11.0,33.0],"6 months":[15.0,30.0],"9 months":[16.0,26.0],"12 months":[15.0,24.0],"Adult":[12.0,24.0]},"noflag":[]},
-  {"key":"creat","label":"Creatinine","units":"mg/dL","panel":"chem-org","aliases":["creatinine","creat","crea","cre"],"derived":false,"ranges":{"<12 hours":[1.7,4.2],"1 day":[1.2,4.3],"3 days":[0.4,2.1],"1 week":[1.0,1.7],"2 weeks":[0.9,1.8],"3 weeks":[0.6,2.0],"1 month":[1.1,1.8],"2 months":[1.1,2.1],"3 months":[0.7,2.2],"4 months":[1.3,2.1],"5 months":[1.2,2.1],"6 months":[1.2,2.1],"9 months":[1.1,2.2],"12 months":[1.3,2.1],"Adult":[0.9,2.0]},"noflag":[]},
-  {"key":"tbil","label":"Total bilirubin","units":"mg/dL","panel":"chem-org","aliases":["total bilirubin","t-bilirubin","total bili","bilirubin","t bili","t-bil","tbil"],"derived":false,"ranges":{"<12 hours":[0.9,2.8],"1 day":[1.3,4.5],"3 days":[0.5,3.9],"5 days":[1.2,3.6],"1 week":[0.8,3.0],"2 weeks":[0.7,2.2],"3 weeks":[0.5,1.6],"1 month":[0.5,1.7],"2 months":[0.5,2.0],"3 months":[0.4,2.0],"4 months":[0.3,1.0],"5 months":[0.3,1.8],"6 months":[0.3,1.3],"9 months":[0.3,1.1],"12 months":[0.4,1.4],"Adult":[0.5,1.8]},"noflag":[]},
-  {"key":"dbil","label":"Conjugated bilirubin","units":"mg/dL","panel":"chem-org","aliases":["bilirubin conjugated","conjugated bilirubin","direct bilirubin","conj bilirubin","d-bil","dbil"],"derived":false,"ranges":{"<12 hours":[0.3,0.6],"1 day":[0.3,0.7],"3 days":[0.2,0.8],"5 days":[0.1,0.7],"1 week":[0.3,0.7],"2 weeks":[0.3,0.6],"3 weeks":[0.2,0.5],"1 month":[0.1,0.6],"2 months":[0.2,0.5],"3 months":[0.1,0.7],"4 months":[0.1,0.6],"5 months":[0.1,0.7],"6 months":[0.1,0.7],"9 months":[0.1,0.7],"12 months":[0.1,1.0],"Adult":[0.2,0.7]},"noflag":[]},
-  {"key":"ibil","label":"Unconjugated bilirubin","units":"mg/dL","panel":"chem-org","aliases":["bilirubin unconjugated","unconjugated bilirubin","indirect bilirubin","i-bil","ibil"],"derived":false,"ranges":{"<12 hours":[0.8,2.5],"1 day":[1.0,3.8],"3 days":[0.2,3.3],"5 days":[0.8,2.8],"1 week":[0.5,2.3],"2 weeks":[0.5,1.6],"3 weeks":[0.2,1.1],"1 month":[0.4,1.2],"2 months":[0.3,1.5],"3 months":[0.4,1.4],"4 months":[0.2,0.4],"5 months":[0.1,1.1],"6 months":[0.1,0.6],"9 months":[0.2,0.6],"12 months":[0.2,0.6],"Adult":[0.3,1.0]},"noflag":[]},
-  {"key":"chol","label":"Cholesterol","units":"mg/dL","panel":"chem-org","aliases":["cholesterol","chol"],"derived":false,"ranges":{"<12 hours":[111.0,432.0],"1 day":[110.0,562.0],"3 days":[142.0,350.0],"5 days":[127.0,361.0],"1 week":[139.0,445.0],"2 weeks":[164.0,287.0],"3 weeks":[74.0,276.0],"1 month":[83.0,233.0],"2 months":[98.0,242.0],"3 months":[110.0,226.0],"4 months":[91.0,207.0],"5 months":[51.0,137.0],"6 months":[83.0,173.0],"9 months":[11.0,187.0],"Adult":[58.0,109.0]},"noflag":[]},
-  {"key":"trig","label":"Triglycerides","units":"mg/dL","panel":"chem-org","aliases":["triglycerides","triglyceride","trig","tg"],"derived":false,"ranges":{"<12 hours":[24.0,88.0],"1 day":[30.0,193.0],"3 days":[63.0,342.0],"5 days":[52.0,340.0],"1 week":[30.0,239.0],"2 weeks":[39.0,200.0],"3 weeks":[34.0,124.0],"1 month":[45.0,155.0],"2 months":[10.0,148.0],"3 months":[28.0,151.0],"4 months":[14.0,148.0],"5 months":[14.0,57.0],"6 months":[35.0,76.0],"9 months":[38.0,86.0],"Adult":[6.0,44.0]},"noflag":[]},
-  {"key":"tp","label":"Total protein (chem)","units":"g/dL","panel":"chem-prot","aliases":["serum total protein","total protein","t protein","tprot","tp"],"derived":false,"ranges":{"<12 hours":[4.0,7.9],"1 day":[4.3,8.1],"3 days":[4.4,7.6],"1 week":[4.4,6.8],"2 weeks":[4.8,6.7],"3 weeks":[4.7,6.5],"1 month":[5.0,6.7],"2 months":[5.2,6.5],"3 months":[5.5,7.0],"4 months":[5.7,7.3],"5 months":[6.0,6.9],"6 months":[6.0,6.9],"9 months":[5.6,6.7],"12 months":[5.8,6.6],"Adult":[5.5,7.9]},"noflag":[]},
-  {"key":"alb","label":"Albumin","units":"g/dL","panel":"chem-prot","aliases":["albumin","alb"],"derived":false,"ranges":{"<12 hours":[2.7,3.9],"1 day":[2.5,3.6],"3 days":[2.8,3.7],"1 week":[2.7,3.4],"2 weeks":[2.6,3.3],"3 weeks":[2.6,3.2],"1 month":[2.7,3.4],"2 months":[2.7,3.5],"3 months":[2.8,3.5],"4 months":[2.8,3.7],"5 months":[2.9,3.4],"6 months":[3.0,3.5],"9 months":[3.0,3.6],"12 months":[3.1,3.8],"Adult":[2.8,4.8]},"noflag":[]},
-  {"key":"glob","label":"Globulin","units":"g/dL","panel":"chem-prot","aliases":["total globulin","globulin","glob","glb"],"derived":false,"ranges":{"<12 hours":[1.1,4.8],"1 day":[1.5,4.6],"3 days":[1.6,4.5],"1 week":[1.6,3.9],"2 weeks":[2.0,3.5],"3 weeks":[1.7,3.6],"1 month":[1.8,3.7],"2 months":[1.9,3.8],"3 months":[2.6,4.1],"4 months":[2.7,3.9],"5 months":[2.7,4.0],"6 months":[2.8,3.7],"9 months":[2.2,3.1],"12 months":[2.2,3.5],"Adult":[1.9,3.8]},"noflag":[]},
+  {"key":"hgb","label":"Hemoglobin","units":"g/dL","siUnits":"g/L","group":"abs","aliases":["haemoglobin","hemoglobin","hgb","hb"],"bins":[{"lo":9.5,"hi":16.6,"n":66,"ciLo":[8.6,9.7],"ciHi":[16.4,17.2],"siLo":95,"siHi":166},{"lo":7.8,"hi":15,"n":66,"ciLo":[6.2,8.9],"ciHi":[14.8,15.7],"siLo":78,"siHi":150},{"lo":8.5,"hi":14.2,"n":56,"ciLo":[8.1,8.6],"ciHi":[14.1,15.1],"siLo":85,"siHi":142}],"src":"ajvr2024"},
+  {"key":"hct","label":"Hematocrit","units":"%","siUnits":"L/L","group":"abs","aliases":["packed cell volume","haematocrit","hematocrit","hct","pcv"],"bins":[{"lo":32,"hi":48,"n":67,"ciLo":[26,34],"ciHi":[45,52],"siLo":0.32,"siHi":0.48},{"lo":22,"hi":41,"n":66,"ciLo":[20,26],"ciHi":[40,42],"siLo":0.22,"siHi":0.41},{"lo":22,"hi":40,"n":56,"ciLo":[19,22],"ciHi":[40,43],"siLo":0.22,"siHi":0.4}],"src":"ajvr2024"},
+  {"key":"mchc","label":"MCHC","units":"g/dL","siUnits":"g/L","group":"abs","aliases":["chcm","mchc"],"bins":[{"lo":28.9,"hi":37.8,"n":65,"ciLo":[23.9,28.9],"ciHi":[37.6,38.5],"siLo":289,"siHi":378},{"lo":33.1,"hi":39,"n":66,"ciLo":[31.6,33.1],"ciHi":[38.4,40],"siLo":331,"siHi":390},{"lo":28.4,"hi":39.6,"n":56,"ciLo":[22.6,31.9],"ciHi":[39.5,40.4],"siLo":284,"siHi":396}],"src":"ajvr2024"},
+  {"key":"plt","label":"Platelets","units":"10³/µL","siUnits":"10^9/L","group":"abs","aliases":["thrombocytes","platelets","plt count","platelet","plt"],"bins":[{"lo":43,"hi":423,"n":59,"ciLo":[22,45],"ciHi":[409,458],"siLo":43,"siHi":423},{"lo":72,"hi":457,"n":55,"ciLo":[10,103],"ciHi":[431,518],"siLo":72,"siHi":457},{"lo":106,"hi":718,"n":48,"ciLo":[85,109],"ciHi":[666,974],"siLo":106,"siHi":718}],"src":"ajvr2024"},
+  {"key":"pp","label":"Plasma protein","units":"g/dL","siUnits":"g/L","group":"abs","aliases":["refractometer protein","total plasma protein","plasma protein","tpp","pp"],"bins":[{"lo":5.7,"hi":7.6,"n":23,"ciLo":[5.4,5.7],"ciHi":[7.6,8],"siLo":57,"siHi":76},{"lo":5.4,"hi":7.5,"n":22,"ciLo":[5,5.4],"ciHi":[7.5,7.9],"siLo":54,"siHi":75},{"lo":5.4,"hi":7.4,"n":15,"ciLo":[4.9,5.4],"ciHi":[7.4,8],"siLo":54,"siHi":74}],"src":"ajvr2024"},
+  {"key":"fib","label":"Fibrinogen","units":"mg/dL","siUnits":"g/L","group":"abs","aliases":["fibrinogen","fibr","fib"],"bins":[{"lo":100,"hi":800,"n":21,"ciLo":null,"ciHi":[800,1000],"siLo":1,"siHi":8},{"lo":100,"hi":700,"n":16,"ciLo":null,"ciHi":[700,1000],"siLo":1,"siHi":7},{"lo":100,"hi":1000,"n":15,"ciLo":null,"ciHi":[1000,1300],"siLo":1,"siHi":10}],"src":"ajvr2024"},
+  {"key":"wbc","label":"WBC / NCC","units":"10³/µL","siUnits":"10^9/L","group":"abs","aliases":["total nucleated cells","nucleated cell count","white blood cells","total leukocytes","nucleated cells","leukocytes","wbc count","tncc","ncc","wbc"],"bins":[{"lo":6.4,"hi":21.4,"n":67,"ciLo":[5.3,7.1],"ciHi":[19.3,24.7],"siLo":6.4,"siHi":21.4},{"lo":6.3,"hi":22.4,"n":66,"ciLo":[5.5,6.9],"ciHi":[21.6,24.9],"siLo":6.3,"siHi":22.4},{"lo":5.3,"hi":21.9,"n":55,"ciLo":[3.8,6],"ciHi":[21.2,25.5],"siLo":5.3,"siHi":21.9}],"src":"ajvr2024"},
+  {"key":"neut","label":"Segmented neutrophils","units":"10³/µL","siUnits":"10^9/L","group":"abs","aliases":["segmented neutrophils","neutrophils#","neutrophil#","neutrophils","neutrophil","segmented","neut#","neut","seg#","segs","pmn"],"bins":[{"lo":3.88,"hi":17.69,"n":67,"ciLo":[2.88,4.81],"ciHi":[16.59,19.63],"siLo":3.88,"siHi":17.69},{"lo":3.35,"hi":18.29,"n":66,"ciLo":[2.22,4.65],"ciHi":[16.15,21.64],"siLo":3.35,"siHi":18.29},{"lo":2.23,"hi":17.13,"n":55,"ciLo":[1.17,2.68],"ciHi":[16.86,19.44],"siLo":2.23,"siHi":17.13}],"src":"ajvr2024"},
+  {"key":"band","label":"Band neutrophils","units":"10³/µL","siUnits":"10^9/L","group":"abs","aliases":["band neutrophils","band#","bands","band"],"bins":[{"lo":0,"hi":0.46,"n":67,"ciLo":[0,0],"ciHi":[0.39,0.82],"siLo":0.0,"siHi":0.46},{"lo":0,"hi":0.3,"n":67,"ciLo":[0,0],"ciHi":[0.14,0.53],"siLo":0.0,"siHi":0.3},{"lo":0,"hi":0,"n":58,"ciLo":[0,0],"ciHi":[0,0],"siLo":0.0,"siHi":0.0}],"src":"ajvr2024"},
+  {"key":"lymph","label":"Lymphocytes","units":"10³/µL","siUnits":"10^9/L","group":"abs","aliases":["lymphocytes#","lymphocyte#","lymphocytes","lymphocyte","lymph#","lymphs","lymph"],"bins":[{"lo":0.92,"hi":4.64,"n":67,"ciLo":[0.66,1.04],"ciHi":[4.24,5.44],"siLo":0.92,"siHi":4.64},{"lo":1.04,"hi":5.04,"n":66,"ciLo":[0.81,1.28],"ciHi":[3.92,5.8],"siLo":1.04,"siHi":5.04},{"lo":1.15,"hi":5.84,"n":55,"ciLo":[0.47,1.56],"ciHi":[5.12,7.23],"siLo":1.15,"siHi":5.84}],"src":"ajvr2024"},
+  {"key":"eos","label":"Eosinophils","units":"10³/µL","siUnits":"10^9/L","group":"abs","aliases":["eosinophils#","eosinophil#","eosinophils","eosinophil","eos#","eos"],"bins":[{"lo":0,"hi":0.1,"n":67,"ciLo":[0,0],"ciHi":[0.1,0.17],"siLo":0.0,"siHi":0.1},{"lo":0,"hi":0.24,"n":66,"ciLo":[0,0],"ciHi":[0.2,0.28],"siLo":0.0,"siHi":0.24},{"lo":0,"hi":0.73,"n":58,"ciLo":[0,0],"ciHi":[0.61,1.1],"siLo":0.0,"siHi":0.73}],"src":"ajvr2024"},
+  {"key":"mono","label":"Monocytes","units":"10³/µL","siUnits":"10^9/L","group":"abs","aliases":["monocytes#","monocyte#","monocytes","monocyte","mono#","monos","mono"],"bins":[{"lo":0,"hi":1.27,"n":67,"ciLo":[0,0],"ciHi":[1.24,1.91],"siLo":0.0,"siHi":1.27},{"lo":0,"hi":1.14,"n":66,"ciLo":[0,0],"ciHi":[0.7,1.39],"siLo":0.0,"siHi":1.14},{"lo":0,"hi":1.35,"n":58,"ciLo":[0,0],"ciHi":[1.26,1.72],"siLo":0.0,"siHi":1.35}],"src":"ajvr2024"},
+  {"key":"baso","label":"Basophils","units":"10³/µL","siUnits":"10^9/L","group":"abs","aliases":["basophils#","basophil#","basophils","basophil","baso#","baso"],"bins":[{"lo":0,"hi":0.21,"n":67,"ciLo":[0,0],"ciHi":[0.14,0.39],"siLo":0.0,"siHi":0.21},{"lo":0,"hi":0.43,"n":66,"ciLo":[0,0],"ciHi":[0.43,0.66],"siLo":0.0,"siHi":0.43},{"lo":0,"hi":0.2,"n":60,"ciLo":[0,0],"ciHi":[0.2,0.27],"siLo":0.0,"siHi":0.2}],"src":"ajvr2024"},
+  {"key":"neutpct","label":"Segmented neutrophils %","units":"%","siUnits":"%","group":"pct","aliases":["segmented neutrophils %","neutrophils%","neutrophil%","neut%","seg%"],"bins":[{"lo":52,"hi":91,"n":67,"ciLo":null,"ciHi":null,"siLo":52,"siHi":91},{"lo":45,"hi":89,"n":67,"ciLo":null,"ciHi":null,"siLo":45,"siHi":89},{"lo":36,"hi":84,"n":61,"ciLo":null,"ciHi":null,"siLo":36,"siHi":84}],"src":"ajvr2024"},
+  {"key":"bandpct","label":"Band neutrophils %","units":"%","siUnits":"%","group":"pct","aliases":["band neutrophils %","bands%","band%"],"bins":[{"lo":0,"hi":3.2,"n":67,"ciLo":null,"ciHi":null,"siLo":0,"siHi":3.2},{"lo":0,"hi":2.3,"n":67,"ciLo":null,"ciHi":null,"siLo":0.0,"siHi":2.3},{"lo":0,"hi":0.5,"n":59,"ciLo":null,"ciHi":null,"siLo":0.0,"siHi":0.5}],"src":"ajvr2024"},
+  {"key":"lymphpct","label":"Lymphocytes %","units":"%","siUnits":"%","group":"pct","aliases":["lymphocytes %","lymphocyte%","lymph%"],"bins":[{"lo":8,"hi":44,"n":67,"ciLo":null,"ciHi":null,"siLo":8,"siHi":44},{"lo":6,"hi":45,"n":67,"ciLo":null,"ciHi":null,"siLo":6,"siHi":45},{"lo":10,"hi":59,"n":61,"ciLo":null,"ciHi":null,"siLo":10,"siHi":59}],"src":"ajvr2024"},
+  {"key":"eospct","label":"Eosinophils %","units":"%","siUnits":"%","group":"pct","aliases":["eosinophils %","eosinophil%","eos%"],"bins":[{"lo":0,"hi":1,"n":67,"ciLo":null,"ciHi":null,"siLo":0,"siHi":1},{"lo":0,"hi":2,"n":66,"ciLo":null,"ciHi":null,"siLo":0,"siHi":2.0},{"lo":0,"hi":5.5,"n":60,"ciLo":null,"ciHi":null,"siLo":0,"siHi":5.5}],"src":"ajvr2024"},
+  {"key":"monopct","label":"Monocytes %","units":"%","siUnits":"%","group":"pct","aliases":["monocytes %","monocyte%","mono%"],"bins":[{"lo":0,"hi":8,"n":67,"ciLo":null,"ciHi":null,"siLo":0,"siHi":8},{"lo":0,"hi":14,"n":66,"ciLo":null,"ciHi":null,"siLo":0,"siHi":14},{"lo":0,"hi":10,"n":61,"ciLo":null,"ciHi":null,"siLo":0,"siHi":10}],"src":"ajvr2024"},
+  {"key":"basopct","label":"Basophils %","units":"%","siUnits":"%","group":"pct","aliases":["basophils %","basophil%","baso%"],"bins":[{"lo":0,"hi":2,"n":67,"ciLo":null,"ciHi":null,"siLo":0,"siHi":2},{"lo":0,"hi":3,"n":66,"ciLo":null,"ciHi":null,"siLo":0,"siHi":3},{"lo":0,"hi":1,"n":60,"ciLo":null,"ciHi":null,"siLo":0,"siHi":1}],"src":"ajvr2024"},
 ];
-// ── age bracket selection ───────────────────────────────────────────
-function foalAgeIndex(days) {
+// ── age bin: the foal's age must fall INSIDE a published bin. No extrapolation. ──
+function foalBinIndex(days) {
+  for (let i = 0; i < FOAL_BINS.length; i++) {
+    if (days >= FOAL_BINS[i].min && days <= FOAL_BINS[i].max) return i;
+  }
+  return -1;
+}
+
+function foalNearestBinLabel(days) {
   let best = 0, bestD = Infinity;
-  for (let i = 0; i < FOAL_AGES.length; i++) {
-    const d = Math.abs(FOAL_AGES[i].days - days);
-    if (d < bestD - 1e-9) { bestD = d; best = i; }   // ties keep the younger (earlier) bracket
-  }
-  return best;
+  FOAL_BINS.forEach((b, i) => {
+    const d = days < b.min ? b.min - days : (days > b.max ? days - b.max : 0);
+    if (d < bestD) { bestD = d; best = i; }
+  });
+  return FOAL_BINS[best].label;
 }
 
-// nearest bracket that actually has data for this analyte
-function foalRange(a, days) {
-  const idx = foalAgeIndex(days);
-  // A range that exists but is flagged unusable at this age (derived Mg with a
-  // negative low bound) is a hard exclusion — do NOT borrow a neighbouring age.
-  if (a.noflag.indexOf(FOAL_AGES[idx].label) !== -1) return null;
-  const order = [idx];
-  for (let step = 1; step < FOAL_AGES.length; step++) {
-    if (idx - step >= 0) order.push(idx - step);
-    if (idx + step < FOAL_AGES.length) order.push(idx + step);
-  }
-  for (const i of order) {
-    const lab = FOAL_AGES[i].label;
-    if (a.noflag.indexOf(lab) !== -1) continue;
-    const r = a.ranges[lab];
-    if (r) return { lo: r[0], hi: r[1], age: lab, fallback: i !== idx };
-  }
-  return null;
-}
-
-// ── parsing pasted lab text ─────────────────────────────────────────
+// ── parsing (unchanged approach: anchor aliases at line start) ──
 const FOAL_ALIAS = (function () {
   const list = [];
   FOAL_ANALYTES.forEach(a => a.aliases.forEach(al => list.push({ alias: al, a: a })));
@@ -1924,12 +1891,12 @@ const FOAL_ALIAS = (function () {
 
 function foalStripNoise(s) {
   return s
-    .replace(/\([^)]*\)/g, ' ')                       // (11.0-16.6)
-    .replace(/\[[^\]]*\]/g, ' ')                      // [11.0-16.6]
-    .replace(/\b\d+(?:\.\d+)?\s*[-–—]\s*\d+(?:\.\d+)?/g, ' ')  // bare 11.0-16.6 intervals
-    .replace(/x?\s*10\s*[\^]?\s*[\d³⁶⁹]+\s*\/?\s*[µu]?l?/gi, ' ') // 10^3/uL, x10⁶/µL
+    .replace(/\([^)]*\)/g, ' ')
+    .replace(/\[[^\]]*\]/g, ' ')
+    .replace(/\b\d+(?:\.\d+)?\s*[-–—]\s*\d+(?:\.\d+)?/g, ' ')
+    .replace(/x?\s*10\s*[\^]?\s*[\d³⁶⁹]+\s*\/?\s*[µu]?l?/gi, ' ')
     .replace(/\b(?:ref|reference|range|normal|rr)\b\s*[:=]?/gi, ' ')
-    .replace(/\b[hl]\b/gi, ' ');                      // analyzer H / L flags
+    .replace(/\b[hl]\b/gi, ' ');
 }
 
 function foalParse(text, useLast) {
@@ -1942,41 +1909,50 @@ function foalParse(text, useLast) {
     let hit = null;
     for (const e of FOAL_ALIAS) {
       if (lower.startsWith(e.alias)) {
-        const next = lower.charAt(e.alias.length);
-        if (next === '' || !/[a-z]/.test(next)) { hit = e; break; }
+        const nx = lower.charAt(e.alias.length);
+        if (nx === '' || !/[a-z]/.test(nx)) { hit = e; break; }
       }
     }
     if (!hit) { skipped.push(line); return; }
     const rest = foalStripNoise(norm.slice(hit.alias.length));
     const nums = (rest.match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
     if (!nums.length) { skipped.push(line); return; }
-    rows.push({
-      a: hit.a,
-      shown: norm.slice(0, hit.alias.length).trim(),
-      value: useLast ? nums[nums.length - 1] : nums[0],
-      raw: line
-    });
+    rows.push({ a: hit.a, shown: norm.slice(0, hit.alias.length).trim(),
+                value: useLast ? nums[nums.length - 1] : nums[0], raw: line });
   });
   return { rows, skipped };
 }
 
-// ── the check ───────────────────────────────────────────────────────
+// percentage differential is redundant when the absolute count is present
+const FOAL_PCT_OF = { neutpct:'neut', bandpct:'band', lymphpct:'lymph',
+                      eospct:'eos', monopct:'mono', basopct:'baso' };
+
 function foalCheck(text, days, useLast) {
+  const bi = foalBinIndex(days);
   const { rows, skipped } = foalParse(text, useLast);
-  const flags = [], normal = [], noRange = [];
-  const seen = {};
+  if (bi === -1) {
+    return { outOfRange: true, nearest: foalNearestBinLabel(days),
+             flags: [], normal: [], skipped: skipped,
+             unevaluated: rows.map(r => r.a.label), count: rows.length };
+  }
+  const seen = {}, keep = [];
   rows.forEach(r => {
-    if (seen[r.a.key]) return;                        // first match per analyte wins
+    if (seen[r.a.key]) return;
     seen[r.a.key] = true;
-    const rg = foalRange(r.a, days);
-    if (!rg) { noRange.push(r); return; }
-    let dir = null;
-    if (r.value > rg.hi) dir = 'H';
-    else if (r.value < rg.lo) dir = 'L';
-    const rec = { row: r, rg: rg, dir: dir };
-    if (dir) flags.push(rec); else normal.push(rec);
+    keep.push(r);
   });
-  return { flags, normal, noRange, skipped, count: rows.length };
+  const flags = [], normal = [];
+  keep.forEach(r => {
+    const parent = FOAL_PCT_OF[r.a.key];
+    if (parent && seen[parent]) return;          // absolute count wins
+    const b = r.a.bins[bi];
+    let dir = null;
+    if (r.value > b.hi) dir = 'H';
+    else if (r.value < b.lo) dir = 'L';
+    (dir ? flags : normal).push({ row: r, b: b, dir: dir });
+  });
+  return { outOfRange: false, bin: FOAL_BINS[bi], flags: flags, normal: normal,
+           skipped: skipped, unevaluated: [], count: keep.length };
 }
 
 // ─────────────────────────────────────────────
@@ -1989,93 +1965,83 @@ function foalDays() {
 }
 
 function foalSyncAge() {
-  const d = foalDays();
-  const el = document.getElementById('foal-bracket');
-  if (d === null) { el.textContent = 'Enter an age to select a reference bracket'; return; }
-  const lab = FOAL_AGES[foalAgeIndex(d)].label;
-  el.innerHTML = 'Reference bracket: <span class="foal-clear">' + lab + '</span>';
-  foalRenderRef(lab);
-}
-
-function foalFmtRange(rg, units) {
-  return rg.lo + '–' + rg.hi + (units ? ' ' + units : '');
-}
-
-// Prose one-liner, matching the Bloodwork Abnormals tool's output style.
-// Labels like "HCT / PCV" collapse to their first form; true abbreviations
-// stay uppercase, worded names go lowercase unless they lead the sentence.
-function foalShortLabel(a) {
-  const l = String(a.label).split('/')[0].trim();
-  return /^[^a-z]+$/.test(l) ? l : l.toLowerCase();
-}
-
-function foalSentence(r) {
-  if (!r.flags.length) return 'No abnormalities against foal reference ranges.';
-  const items = r.flags.map(f => foalShortLabel(f.row.a) + ' ' + f.row.value + ' ' + f.dir);
-  if (!/[A-Z]/.test(items[0].split(' ')[0])) {
-    items[0] = items[0].charAt(0).toUpperCase() + items[0].slice(1);
+  const d = foalDays(), el = document.getElementById('foal-bracket');
+  if (d === null) { el.textContent = 'Enter an age to select a reference bin'; return; }
+  const bi = foalBinIndex(d);
+  if (bi === -1) {
+    el.innerHTML = '<span style="color:var(--accent2)">No published interval covers ' +
+      foalFmtAge(d) + '</span> — nearest bin is ' + foalNearestBinLabel(d);
+  } else {
+    el.innerHTML = 'Reference bin: <span class="foal-clear">' + FOAL_BINS[bi].label + '</span>';
+    foalRenderRef(bi);
   }
-  if (items.length === 1) return items[0] + '.';
-  if (items.length === 2) return items[0] + ' and ' + items[1] + '.';
-  return items.slice(0, -1).join(', ') + ', and ' + items[items.length - 1] + '.';
+}
+
+function foalFmtAge(d) {
+  if (d < 1) return Math.round(d * 24) + ' h';
+  if (d < 60) return (Math.round(d * 10) / 10) + ' d';
+  return (Math.round(d / 30 * 10) / 10) + ' months';
+}
+
+function foalEsc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
 }
 
 function foalRun() {
   const box = document.getElementById('foal-result');
-  const days = foalDays();
-  const text = document.getElementById('foal-input').value;
-
-  if (days === null) {
-    box.innerHTML = '<div class="foal-summary" style="border:none;margin:0;padding:0;color:var(--danger)">Enter the foal\'s age first — every interval on this page is age-specific.</div>';
-    box.classList.add('show'); return;
-  }
-  if (!text.trim()) {
-    box.innerHTML = '<div class="foal-summary" style="border:none;margin:0;padding:0;color:var(--danger)">Paste some lab values to check.</div>';
-    box.classList.add('show'); return;
-  }
+  const days = foalDays(), text = document.getElementById('foal-input').value;
+  const msg = (m) => { box.innerHTML = '<div class="foal-summary" style="border:none;margin:0;padding:0;color:var(--danger)">' + m + '</div>'; box.classList.add('show'); };
+  if (days === null) return msg("Enter the foal's age first — every interval here is age-specific.");
+  if (!text.trim()) return msg('Paste some lab values to check.');
 
   const r = foalCheck(text, days, document.getElementById('foal-col-last').checked);
-  const bracket = FOAL_AGES[foalAgeIndex(days)].label;
-  let html = '<div class="foal-summary">' + bracket + ' bracket · ' + r.count + ' analyte' +
-             (r.count === 1 ? '' : 's') + ' checked · ' + r.flags.length + ' abnormal</div>';
+  let html = '';
 
-  html += '<div class="foal-sentence' + (r.flags.length ? '' : ' foal-clear') +
-          '" style="padding:10px 0 6px;font-size:14px;line-height:1.65;">' +
-          foalEsc(foalSentence(r)) + '</div>';
+  if (r.outOfRange) {
+    html = '<div class="foal-summary" style="color:var(--accent2)">Nothing checked — no published interval covers ' +
+      foalEsc(foalFmtAge(days)) + '</div>' +
+      '<div style="font-size:13px;line-height:1.7;color:var(--muted)">The source study sampled three windows only: ' +
+      FOAL_BINS.map(b => b.label).join(', ') + '. Values outside those windows are not extrapolated, ' +
+      'because a reference interval borrowed from a different age is not a reference interval.' +
+      (r.count ? ' <b>' + r.count + '</b> analyte' + (r.count === 1 ? '' : 's') + ' recognised but left unevaluated.' : '') +
+      '</div>';
+    box.innerHTML = html; box.classList.add('show'); window.__foalLast = r; return;
+  }
 
-  if (r.flags.length) {
+  html += '<div class="foal-summary">' + r.bin.label + ' · ' + r.count + ' analyte' +
+          (r.count === 1 ? '' : 's') + ' checked · ' + r.flags.length + ' outside interval</div>';
+
+  if (!r.flags.length) {
+    html += '<div class="foal-clear" style="padding:6px 0 2px;">All checked values fall inside the published reference interval.</div>';
+  } else {
     r.flags.forEach(f => {
       const d = f.dir.toLowerCase();
       html += '<div class="flag-row">' +
         '<span class="flag-name">' + foalEsc(f.row.shown) + '</span>' +
         '<span class="flag-val ' + d + '">' + f.row.value + '</span>' +
         '<span class="flag-dir ' + d + '">' + f.dir + '</span>' +
-        '<span class="flag-ref">' + foalFmtRange(f.rg, f.row.a.units) +
-          (f.rg.fallback ? '<br><em>no ' + bracket + ' value — using ' + f.rg.age + '</em>' : '') +
-          (f.row.a.derived ? '<br><em>derived interval</em>' : '') +
-        '</span></div>';
+        '<span class="flag-ref">' + f.b.lo + '–' + f.b.hi + ' ' + f.row.a.units + '</span></div>';
     });
     html += '<button class="btn ghost" style="margin-top:14px" onclick="foalCopy()">Copy as text</button>';
   }
 
-  const un = r.noRange.map(x => x.a.label + ' (no usable interval at this age)')
-             .concat(r.skipped.map(s => s));
-  if (un.length) {
-    html += '<details class="foal-det"><summary>Not evaluated · ' + un.length + '</summary><ul>' +
-            un.map(s => '<li>' + foalEsc(s) + '</li>').join('') + '</ul></details>';
+  if (r.skipped.length) {
+    html += '<details class="foal-det"><summary>Not evaluated · ' + r.skipped.length + '</summary><ul>' +
+            r.skipped.map(s => '<li>' + foalEsc(s) + '</li>').join('') +
+            '</ul><div style="font-size:12px;color:var(--muted);margin:8px 0 0 18px;">' +
+            'No citable foal reference interval is bundled for these. They were not checked against anything.' +
+            '</div></details>';
   }
-
-  box.innerHTML = html;
-  box.classList.add('show');
-  window.__foalLast = r;
+  box.innerHTML = html; box.classList.add('show'); window.__foalLast = r;
 }
 
 function foalCopy() {
-  const r = window.__foalLast;
-  if (!r) return;
-  const txt = foalSentence(r);
+  const r = window.__foalLast; if (!r || !r.flags) return;
+  const txt = r.flags.map(f => f.row.shown.toUpperCase() + ' ' + f.row.value + ' ' + f.dir +
+    ' (' + f.b.lo + '–' + f.b.hi + ' ' + f.row.a.units + ')').join('\n') +
+    '\n\nReference intervals: ' + FOAL_SOURCES.ajvr2024.short + ', ' + r.bin.label + ' bin.';
   navigator.clipboard.writeText(txt).then(() => {
-    const b = event.target; const o = b.textContent;
+    const b = event.target, o = b.textContent;
     b.textContent = 'Copied'; setTimeout(() => { b.textContent = o; }, 1400);
   });
 }
@@ -2085,41 +2051,52 @@ function foalReset() {
   document.getElementById('foal-result').classList.remove('show');
 }
 
-function foalEsc(s) {
-  return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+function foalRenderRef(activeBin) {
+  document.querySelectorAll('#foal-age-pills .age-pill').forEach((p, i) =>
+    p.classList.toggle('active', i === activeBin));
+  const cell = (a, i) => {
+    const b = a.bins[i];
+    return '<td class="mono">' + b.lo + '–' + b.hi + '</td>';
+  };
+  const section = (title, group) => {
+    const rows = FOAL_ANALYTES.filter(a => a.group === group);
+    return '<div class="ref-group-title">' + title + ' <span>AJVR 2024 · reference interval</span></div>' +
+      '<table class="ref-table"><tr><th>Analyte</th>' +
+      FOAL_BINS.map(b => '<th>' + b.label + '</th>').join('') + '<th>Units</th></tr>' +
+      rows.map(a => '<tr><td>' + a.label + '</td>' +
+        FOAL_BINS.map((b, i) => cell(a, i)).join('') +
+        '<td class="ref-na">' + a.units + '</td></tr>').join('') + '</table>';
+  };
+  document.getElementById('foal-ref-tables').innerHTML =
+    section('Absolute counts and concentrations', 'abs') +
+    section('Differential percentages', 'pct');
 }
 
-// ── browsable reference tables ──
-function foalRenderRef(ageLabel) {
-  document.querySelectorAll('#foal-age-pills .age-pill').forEach(p => {
-    p.classList.toggle('active', p.dataset.age === ageLabel);
-  });
-  let html = '';
-  FOAL_PANELS.forEach(p => {
-    const rows = FOAL_ANALYTES.filter(a => a.panel === p.id);
-    if (!rows.length) return;
-    html += '<div class="ref-group-title">' + p.label + ' <span>' + p.table + '</span></div>' +
-            '<table class="ref-table"><tr><th>Analyte</th><th>Low</th><th>High</th><th>Units</th></tr>';
-    rows.forEach(a => {
-      const rg = a.ranges[ageLabel];
-      const blocked = a.noflag.indexOf(ageLabel) !== -1;
-      const cell = (v) => (rg && !blocked) ? '<td class="mono">' + v + '</td>' : '<td class="ref-na">—</td>';
-      html += '<tr><td>' + a.label + (blocked ? ' <span class="ref-na">(suppressed)</span>' : '') + '</td>' +
-              cell(rg ? rg[0] : '') + cell(rg ? rg[1] : '') +
-              '<td class="ref-na">' + a.units + '</td></tr>';
-    });
-    html += '</table>';
-  });
-  document.getElementById('foal-ref-tables').innerHTML = html;
+function foalRenderDeviations() {
+  const el = document.getElementById('foal-deviations');
+  if (!el) return;
+  const sect = (title, group) => {
+    const rows = FOAL_DEVIATIONS.filter(r => r.g === group);
+    return '<div class="ref-group-title">' + title + ' <span>Duncan 2020 · direction only</span></div>' +
+      '<table class="ref-table"><tr><th>Analyte</th><th>Reads</th><th>When</th><th>Adult interval</th></tr>' +
+      rows.map(r => {
+        const hi = r.d === 'above';
+        return '<tr><td>' + r.a + '</td>' +
+          '<td><span class="flag-dir ' + (hi ? 'h' : 'l') + '">' + (hi ? 'Above' : 'Below') + '</span></td>' +
+          '<td class="ref-na">' + r.w + '</td>' +
+          '<td class="mono">' + r.ri + ' <span class="ref-na" style="font-size:10px">' + r.u + '</span></td></tr>';
+      }).join('') + '</table>';
+  };
+  el.innerHTML = sect('Serum chemistry', 'chem') + sect('Haematology', 'heme');
 }
 
 (function foalInit() {
   const wrap = document.getElementById('foal-age-pills');
   if (!wrap) return;
-  wrap.innerHTML = FOAL_AGES.map(a =>
-    '<button class="age-pill" data-age="' + a.label + '" onclick="foalRenderRef(\'' + a.label + '\')">' +
-    a.label + '</button>').join('');
-  foalRenderRef('1 day');
+  wrap.innerHTML = FOAL_BINS.map((b, i) =>
+    '<button class="age-pill" onclick="foalRenderRef(' + i + ')">' + b.label + '</button>').join('');
+  foalRenderRef(0);
+  foalRenderDeviations();
 })();
 
 routeFromHash();

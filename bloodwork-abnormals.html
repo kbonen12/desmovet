@@ -191,6 +191,17 @@
       <div class="output" id="output"><span class="placeholder">Formatted output will appear here.</span></div>
       <div class="summary-line" id="summary"></div>
 
+      <div class="card-head" style="margin-top:22px">
+        <h2>All values</h2>
+        <button id="btn-copy-all">Copy</button>
+      </div>
+      <div class="output" id="output-all"><span class="placeholder">Every analyte read, in the order pasted.</span></div>
+      <p class="hint" style="margin-top:8px">
+        Same sentence, but nothing omitted. H or L appears only where the value fell outside
+        the interval printed on its line — a bare number means in range, or that there was no
+        interval to check it against.
+      </p>
+
       <details id="detail-wrap">
         <summary>Show every line the parser read</summary>
         <div style="overflow-x:auto">
@@ -564,8 +575,21 @@
     return s;
   }
 
-  function joinItems(items){
-    if (items.length === 0) return "No abnormalities.";
+  /* Every analyte that carried a value, in the order pasted. H/L appears only
+     where a reference interval was present and the value fell outside it, so a
+     bare number means "in range or nothing to check it against". No %/# dedupe
+     here — this list is meant to be complete. */
+  function allText(rows, opts){
+    return rows.map(function(r){
+      var s = r.name + " " + r.valueStr;
+      if (opts && opts.units && r.units) s += " " + r.units;
+      if (r.abnormal) s += " " + r.flag;
+      return s;
+    });
+  }
+
+  function joinItems(items, emptyMsg){
+    if (items.length === 0) return emptyMsg || "No abnormalities.";
     items = items.slice();
     items[0] = capFirst(items[0]);
     if (items.length === 1) return items[0] + ".";
@@ -590,7 +614,9 @@
     var kept = dedupeWbc(rows);
     var abn = kept.filter(function(r){ return r.abnormal; });
     var items = abn.map(function(r){ return itemText(r, opts); });
-    return { rows: rows, kept: kept, abnormal: abn, unparsed: unparsed, sentence: joinItems(items) };
+    return { rows: rows, kept: kept, abnormal: abn, unparsed: unparsed,
+             sentence: joinItems(items),
+             allSentence: joinItems(allText(rows, opts), "No values read.") };
   }
 
   function process(text, opts){
@@ -603,6 +629,7 @@
     return {
       panels: usable,
       sentences: usable.map(function(r){ return r.sentence; }),
+      allSentences: usable.map(function(r){ return r.allSentence; }),
       rows: results.reduce(function(a, r){ return a.concat(r.rows); }, []),
       unparsed: results.reduce(function(a, r){ return a.concat(r.unparsed); }, [])
     };
@@ -614,6 +641,7 @@
     capFirst: capFirst,
     process: process,
     processBlock: processBlock,
+    allText: allText,
     refText: refText,
     joinItems: joinItems
   };
@@ -666,9 +694,10 @@ if (typeof document !== "undefined") (function(){
 
   var $ = function(id){ return document.getElementById(id); };
   var input = $("input"), output = $("output"), summary = $("summary");
+  var outputAll = $("output-all");
   var detailBody = $("detail").querySelector("tbody");
   var toast = $("toast");
-  var last = "";
+  var last = "", lastAll = "";
 
   function opts(){
     return {
@@ -694,13 +723,21 @@ if (typeof document !== "undefined") (function(){
     var text = input.value;
     if (!text.trim()) {
       output.innerHTML = '<span class="placeholder">Formatted output will appear here.</span>';
+      outputAll.innerHTML = '<span class="placeholder">Every analyte read, in the order pasted.</span>';
       summary.textContent = "";
+      lastAll = "";
       detailBody.innerHTML = "";
       last = "";
       return;
     }
     var res = window.BW.process(text, opts());
     last = res.sentences.join("\n");
+    lastAll = res.allSentences.join("\n");
+
+    outputAll.innerHTML = res.allSentences.map(function(s){
+      var cls = s === "No values read." ? ' class="none"' : "";
+      return "<p" + cls + ">" + esc(s) + "</p>";
+    }).join("");
 
     output.innerHTML = res.sentences.map(function(s){
       var cls = s === "No abnormalities." ? ' class="none"' : "";
@@ -751,19 +788,22 @@ if (typeof document !== "undefined") (function(){
   $("btn-format").addEventListener("click", render);
   $("btn-clear").addEventListener("click", function(){ input.value = ""; render(); input.focus(); });
   $("btn-example").addEventListener("click", function(){ input.value = EXAMPLE; render(); });
-  $("btn-copy").addEventListener("click", function(){
-    if (!last) { showToast("Nothing to copy"); return; }
+  function copyText(txt){
+    if (!txt) { showToast("Nothing to copy"); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(last).then(function(){ showToast("Copied"); },
+      navigator.clipboard.writeText(txt).then(function(){ showToast("Copied"); },
                                               function(){ showToast("Copy failed"); });
     } else {
       var ta = document.createElement("textarea");
-      ta.value = last; document.body.appendChild(ta); ta.select();
+      ta.value = txt; document.body.appendChild(ta); ta.select();
       try { document.execCommand("copy"); showToast("Copied"); }
       catch (e) { showToast("Copy failed"); }
       document.body.removeChild(ta);
     }
-  });
+  }
+
+  $("btn-copy").addEventListener("click", function(){ copyText(last); });
+  $("btn-copy-all").addEventListener("click", function(){ copyText(lastAll); });
 
   document.getElementById("year").textContent = new Date().getFullYear();
 })();
