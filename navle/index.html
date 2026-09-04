@@ -1,0 +1,2425 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NAVLE Study Hub — desmoVet</title>
+<meta name="description" content="A species-organized NAVLE review hub: high-yield infectious disease, differential clusters, oncology pharmacology, exotics and avian medicine, with a multiple-choice and typed-answer practice bank.">
+<style>
+/* ==========================================================================
+   NAVLE Study Hub — visual system
+
+   Editorial, not app-chrome. Display type is a serif; sections are set as a
+   numbered list separated by hairlines rather than a stack of identical grey
+   cards. Colour carries meaning in exactly two ways:
+     · a per-chapter species accent — rules, numerals, tints, never body text
+     · a per-content-type accent for pearls / discriminators / warnings, which
+       render inline and open because they are the highest-value lines on the
+       page and should never be hidden behind a toggle.
+   ========================================================================== */
+
+:root{
+  color-scheme: light;
+  --surface-0:#f6f3ed;  /* page */
+  --surface-1:#fffdf9;  /* raised */
+  --surface-2:#ece7dd;  /* wells, hover */
+  --surface-3:#e1dacb;
+  --border:#e0d9ca; --border-strong:#c6bda8; --hairline:#e8e2d5;
+  --text-primary:#191712; --text-secondary:#544f45; --text-muted:#8b8375;
+  --accent:#2a78d6; --accent-soft:#e9f0fa;
+
+  --pearl:#8a6d00; --pearl-bg:#fdf3d9; --pearl-br:#e0c877;
+  --danger:#a33028; --danger-bg:#fbeae8; --danger-br:#e6b1ab;
+  --discrim:#1c6b58; --discrim-bg:#e2f1ec; --discrim-br:#9dd1c2;
+  --series-1:#2a78d6;
+
+  --radius:14px; --radius-sm:10px;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,ui-serif,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --shadow:0 1px 2px rgba(40,32,20,.04), 0 6px 20px rgba(40,32,20,.05);
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --surface-0:#14130e; --surface-1:#1c1a14; --surface-2:#262218; --surface-3:#312c20;
+  --border:#35301f; --border-strong:#4d4633; --hairline:#2b2619;
+  --text-primary:#f8f5ed; --text-secondary:#c9c3b3; --text-muted:#978f7e;
+  --accent:#5b9cea; --accent-soft:#172639;
+
+  --pearl:#e4c86e; --pearl-bg:#2a2311; --pearl-br:#5c4f23;
+  --danger:#f2928c; --danger-bg:#2e1816; --danger-br:#5f2f2b;
+  --discrim:#68cbae; --discrim-bg:#122622; --discrim-br:#2c5549;
+  --series-1:#5b9cea;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 22px rgba(0,0,0,.28);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--sans); background:var(--surface-0); color:var(--text-primary);
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent)}
+::selection{background:var(--accent-soft)}
+
+/* ---------- Layout ---------- */
+.app{display:grid;grid-template-columns:262px 1fr;min-height:100vh}
+.sidebar{background:var(--surface-1);border-right:1px solid var(--border);
+  position:sticky;top:0;height:100vh;overflow-y:auto;padding:0 0 40px}
+.main{min-width:0;padding:0 0 90px}
+.wrap{max-width:1140px;margin:0 auto;padding:0 36px}
+.chapterwrap{display:grid;grid-template-columns:minmax(0,1fr) 206px;gap:44px;align-items:start}
+.chapterbody{min-width:0}
+
+/* ---------- Brand ---------- */
+.brand{padding:19px 20px 15px;border-bottom:1px solid var(--border)}
+.brand-top{display:flex;align-items:center;gap:10px}
+.mark{width:30px;height:30px;border-radius:9px;flex:none;display:grid;place-items:center;
+  background:linear-gradient(150deg,var(--accent),#1d5ba8);
+  color:#fff;font-weight:700;font-size:12px;letter-spacing:-.03em;
+  box-shadow:0 1px 3px rgba(30,60,110,.35)}
+.brand-name{font-family:var(--serif);font-weight:600;font-size:17px;letter-spacing:-.01em}
+.brand-sub{font-size:11px;color:var(--text-muted);margin-top:5px;letter-spacing:.02em}
+
+/* ---------- Search ---------- */
+.searchbox{padding:14px 15px 6px;position:relative}
+.searchbox input{width:100%;padding:8px 10px 8px 31px;font:inherit;font-size:13.5px;
+  border:1px solid var(--border-strong);border-radius:9px;
+  background:var(--surface-0);color:var(--text-primary)}
+.searchbox input:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+.searchbox svg{position:absolute;left:24px;top:22px;width:14px;height:14px;stroke:var(--text-muted);fill:none;stroke-width:2}
+
+/* ---------- Nav ---------- */
+nav{padding:6px 9px}
+.navgroup{margin:15px 0 4px;padding:0 11px;font-size:10px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.navlink{display:flex;align-items:center;gap:9px;padding:6px 10px;border-radius:8px;
+  cursor:pointer;font-size:13.5px;color:var(--text-secondary);
+  border:1px solid transparent;position:relative}
+.navlink:hover{background:var(--surface-2);color:var(--text-primary)}
+.navlink.active{background:var(--surface-2);color:var(--text-primary);font-weight:600}
+.navlink.active:before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;
+  border-radius:2px;background:var(--mod-accent,var(--accent))}
+.navlink .lbl{flex:1;min-width:0}
+.navlink .pct{font-size:10.5px;color:var(--text-muted);font-variant-numeric:tabular-nums;flex:none}
+.dot{width:7px;height:7px;border-radius:50%;flex:none;background:var(--mod-accent,var(--border-strong))}
+
+/* ---------- Header ---------- */
+.topbar{position:sticky;top:0;z-index:30;
+  background:color-mix(in srgb,var(--surface-0) 84%,transparent);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.topbar-inner{max-width:1140px;margin:0 auto;padding:9px 36px;display:flex;align-items:center;gap:9px}
+.menu-btn{display:none}
+.spacer{flex:1}
+.btn{font:inherit;font-size:13px;padding:5px 12px;border-radius:8px;cursor:pointer;
+  border:1px solid var(--border-strong);background:var(--surface-1);color:var(--text-secondary)}
+.btn:hover{color:var(--text-primary);border-color:var(--text-muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.08);color:#fff}
+.btn.tiny{font-size:12px;padding:3px 9px}
+.btn.big{font-size:14.5px;padding:9px 20px;border-radius:10px;font-weight:600}
+
+/* ==========================================================================
+   Page head — an accent-tinted plate rather than a plain block of text
+   ========================================================================== */
+.plate{
+  margin:26px 0 0;padding:30px 34px 28px;border-radius:var(--radius);
+  background:var(--mod-tint,var(--surface-1));
+  border:1px solid var(--mod-br,var(--border));position:relative;overflow:hidden;
+}
+.plate:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--mod-accent,var(--accent))}
+.eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--text-muted)}
+.eyebrow b{color:var(--text-secondary);font-weight:700}
+h1{font-family:var(--serif);font-size:42px;line-height:1.06;letter-spacing:-.021em;
+  margin:11px 0 0;font-weight:600}
+.tagline{color:var(--text-secondary);font-size:16.5px;margin-top:11px;max-width:60ch;line-height:1.5}
+.platestats{display:flex;gap:0;flex-wrap:wrap;margin-top:20px;
+  border-top:1px solid var(--mod-br,var(--border));padding-top:15px}
+.pstat{padding-right:26px;margin-right:26px;border-right:1px solid var(--mod-br,var(--border))}
+.pstat:last-child{border-right:0;margin-right:0;padding-right:0}
+.pstat b{display:block;font-family:var(--serif);font-size:22px;font-weight:600;line-height:1.1;
+  letter-spacing:-.01em}
+.pstat span{display:block;font-size:11px;color:var(--text-muted);letter-spacing:.05em;
+  text-transform:uppercase;font-weight:600;margin-top:3px}
+
+/* ==========================================================================
+   Chapter body — numbered sections on hairlines, no card stack
+   ========================================================================== */
+.sections{margin-top:14px}
+.sec{border-bottom:1px solid var(--hairline)}
+.sechead{display:grid;grid-template-columns:34px minmax(0,1fr) auto 16px;gap:14px;align-items:baseline;
+  padding:15px 4px;cursor:pointer;user-select:none;background:none;border:0;
+  width:100%;text-align:left;font:inherit;color:inherit}
+.sechead:hover .sectitle{color:var(--mod-accent,var(--accent))}
+.secnum{font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.02em;
+  color:var(--mod-accent,var(--text-muted));opacity:.75;font-variant-numeric:tabular-nums}
+.sechead > .lines{min-width:0}
+.sectitle{display:block;font-family:var(--serif);font-size:19px;font-weight:600;
+  letter-spacing:-.012em;line-height:1.25;transition:color .12s;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.secprev{display:block;font-size:12.8px;color:var(--text-muted);margin-top:3px;line-height:1.45;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sec.open .secprev{display:none}
+.seccount{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.04em;
+  white-space:nowrap;text-transform:uppercase;align-self:center}
+.chev{width:16px;height:16px;color:var(--text-muted);transition:transform .18s ease;align-self:center}
+.sec.open .chev{transform:rotate(90deg);color:var(--mod-accent,var(--accent))}
+.secbody{padding:2px 4px 24px 48px;display:none}
+.sec.open .secbody{display:block}
+/* Start-here chapters and other always-open contexts */
+.sec.static{border-bottom:1px solid var(--hairline)}
+.sec.static .secbody{display:block;padding-top:6px}
+.sec.static .statichead{display:grid;grid-template-columns:34px 1fr auto;gap:14px;
+  align-items:baseline;padding:20px 4px 4px}
+.sec.static .secprev{display:none}
+
+/* Callouts sit inline and open — the highest-value lines are never hidden */
+.inlinecall{margin:22px 0 22px 48px}
+.chapterbody > .sections > .inlinecall{margin-left:48px}
+
+/* ---------- Jump rail ---------- */
+.rail{position:sticky;top:78px;padding-top:34px;max-height:calc(100vh - 100px);
+  overflow-y:auto;scrollbar-width:thin}
+.railtitle{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--text-muted);padding:0 0 10px 12px}
+.railitem{display:block;width:100%;text-align:left;font:inherit;font-size:12.4px;line-height:1.38;
+  padding:5px 10px 5px 12px;border:0;border-left:2px solid var(--hairline);background:none;
+  color:var(--text-muted);cursor:pointer}
+.railitem:hover{color:var(--text-primary);border-left-color:var(--border-strong)}
+.railitem.cur{color:var(--text-primary);border-left-color:var(--mod-accent,var(--accent));font-weight:600}
+.railitem.iscall{color:var(--mod-accent,var(--accent));opacity:.85}
+.railtools{display:flex;gap:6px;padding:14px 0 0 12px;flex-wrap:wrap}
+
+/* ---------- Table ---------- */
+.tablewrap{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:var(--surface-1)}
+.tablescroll{overflow-x:auto}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:13.4px}
+th{text-align:left;font-weight:700;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-muted);padding:10px 14px;background:var(--surface-2);
+  border-bottom:1px solid var(--border);white-space:nowrap;vertical-align:bottom}
+td{padding:11px 14px;border-bottom:1px solid var(--hairline);vertical-align:top;
+  color:var(--text-secondary);line-height:1.52}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--surface-2)}
+td:first-child{color:var(--text-primary);font-weight:580}
+table.wide{min-width:1000px}
+table.wide td:first-child{min-width:180px}
+.agent{display:block;font-weight:400;font-size:12.3px;color:var(--text-muted);margin-top:2px;font-style:italic}
+mark{background:var(--pearl-bg);color:var(--text-primary);border-radius:3px;padding:0 3px;
+  box-shadow:0 0 0 1px var(--pearl-br)}
+.tnote{font-size:12.2px;color:var(--text-muted);padding:9px 14px;border-bottom:1px solid var(--border);
+  background:var(--surface-1)}
+.yes{color:var(--discrim);font-weight:700}
+.yes-c{color:var(--pearl);font-weight:700}
+.no{color:var(--text-muted)}
+.flag{display:inline-block;font-size:9px;font-weight:800;padding:1px 5px;border-radius:4px;
+  vertical-align:1px;margin-left:4px;letter-spacing:.06em}
+.flag.r{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-br)}
+.flag.z{background:var(--pearl-bg);color:var(--pearl);border:1px solid var(--pearl-br)}
+
+/* ---------- Callout ---------- */
+.callout{border:1px solid;border-left-width:3px;border-radius:var(--radius-sm);
+  padding:15px 18px 16px;position:relative}
+.callout + .callout{margin-top:11px}
+.callout .ct{font-weight:700;font-size:11px;letter-spacing:.09em;margin-bottom:8px;
+  display:flex;gap:8px;align-items:center;text-transform:uppercase}
+.callout .ct .glyph{font-size:11px}
+.callout .cname{font-family:var(--serif);font-size:17px;font-weight:600;letter-spacing:-.01em;
+  margin:0 0 8px;line-height:1.3;color:var(--text-primary);text-transform:none}
+.callout p{margin:0;font-size:14px;line-height:1.62;color:var(--text-secondary)}
+.callout ul{margin:4px 0 0;padding-left:19px;font-size:14px;line-height:1.62;color:var(--text-secondary)}
+.callout li{margin:5px 0}
+.c-pearl{background:var(--pearl-bg);border-color:var(--pearl-br)} .c-pearl .ct{color:var(--pearl)}
+.c-danger{background:var(--danger-bg);border-color:var(--danger-br)} .c-danger .ct{color:var(--danger)}
+.c-warn{background:var(--pearl-bg);border-color:var(--pearl-br)} .c-warn .ct{color:var(--pearl)}
+.c-discrim{background:var(--discrim-bg);border-color:var(--discrim-br)} .c-discrim .ct{color:var(--discrim)}
+
+/* ---------- List ---------- */
+.plainlist{border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-1);
+  padding:4px 0;margin:0;list-style:none}
+.plainlist li{padding:9px 18px 9px 34px;position:relative;font-size:13.7px;color:var(--text-secondary);line-height:1.55}
+.plainlist li+li{border-top:1px solid var(--hairline)}
+.plainlist li:before{content:"";position:absolute;left:18px;top:16px;width:5px;height:5px;
+  border-radius:50%;background:var(--mod-accent,var(--border-strong));opacity:.55}
+
+/* ---------- Rapid fire ---------- */
+.rf{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:var(--surface-1)}
+.rf-row{display:grid;grid-template-columns:1fr auto 1.05fr;gap:12px;align-items:center;padding:10px 16px;font-size:13.5px}
+.rf-row+.rf-row{border-top:1px solid var(--hairline)}
+.rf-row:hover{background:var(--surface-2)}
+.rf-cue{color:var(--text-secondary)}
+.rf-arrow{color:var(--mod-accent,var(--text-muted));font-size:12px;opacity:.7}
+.rf-ans{color:var(--text-primary);font-weight:570}
+
+/* ---------- 2x2 contingency matrix ----------
+ * A status-coloured grid, not a categorical one: correct cells wear the "good"
+ * token, error cells the "bad" one. That pair sits at deutan dE 8.2 — legal only
+ * with secondary encoding — so every cell is directly labelled AND the two error
+ * cells carry a diagonal texture. Colour is never the only signal, and all text
+ * stays in text tokens rather than the cell hue.
+ *
+ * Every child is placed by grid-area rather than auto-flow, so hiding or
+ * restacking a piece at a breakpoint cannot shift the rest of the grid.
+ */
+.mx{
+  display:grid;gap:6px;align-items:stretch;margin:4px 0 2px;font-size:13.5px;
+  grid-template-columns:auto auto minmax(0,1fr) minmax(0,1fr) auto;
+  grid-template-areas:
+    ".  .  ch ch ."
+    ".  .  c1 c2 ."
+    "rh rp tp fp pv"
+    "rh rn fn tn nv"
+    ".  .  sn sp .";
+}
+.mx-colhead{grid-area:ch;text-align:center;font-size:11px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);padding-bottom:2px}
+.mx-c1{grid-area:c1} .mx-c2{grid-area:c2}
+.mx-collabel{text-align:center;font-weight:650;font-size:13.5px;padding-bottom:4px;color:var(--text-primary)}
+.mx-rowhead{grid-area:rh;display:grid;place-items:center;writing-mode:vertical-rl;
+  transform:rotate(180deg);font-size:11px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text-muted);padding-right:4px}
+.mx-rp{grid-area:rp} .mx-rn{grid-area:rn}
+.mx-rowlabel{display:grid;place-items:center;font-weight:650;padding-right:10px;
+  color:var(--text-primary);white-space:nowrap}
+.mx-tp{grid-area:tp} .mx-fp{grid-area:fp} .mx-fn{grid-area:fn} .mx-tn{grid-area:tn}
+.mx-cell{border:1px solid;border-radius:var(--radius-sm);padding:20px 14px;text-align:center;
+  position:relative;overflow:hidden;min-height:104px;display:flex;flex-direction:column;
+  justify-content:center;gap:5px}
+.mx-cell .cl{font-size:13.5px;color:var(--text-secondary);line-height:1.35}
+.mx-cell .ck{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--text-primary);
+  letter-spacing:-.01em}
+.mx-cell.good{background:var(--discrim-bg);border-color:var(--discrim-br)}
+.mx-cell.bad{background:var(--danger-bg);border-color:var(--danger-br)}
+/* texture carries the good/error split for red-green colour vision deficiency */
+.mx-cell.bad:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:repeating-linear-gradient(45deg,transparent 0 7px,var(--danger-br) 7px 8px)}
+.mx-pv{grid-area:pv} .mx-nv{grid-area:nv} .mx-sn{grid-area:sn} .mx-sp{grid-area:sp}
+.mx-side{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px;align-items:center}
+.mx-under{display:grid;gap:3px;justify-items:center;align-content:start}
+.mx-marg{border:1px dashed var(--border-strong);border-radius:var(--radius-sm);
+  background:var(--surface-2);display:grid;place-items:center;padding:10px 12px;
+  font-size:12.5px;font-weight:650;color:var(--text-secondary);text-align:center;line-height:1.3;
+  width:100%}
+.mx-marg small{display:block;font-weight:400;color:var(--text-muted);font-size:11px;margin-top:3px;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.mx-arrow{color:var(--text-muted);font-size:13px}
+/* Letter mode swaps TP/FP/FN/TN for the A/B/C/D the exam usually prints. Both
+ * label sets are in the DOM; the toggle only flips a class, so nothing is
+ * re-rendered and no state has to be tracked. */
+/* Three ways to read the same grid: the abbreviations, the A/B/C/D an exam item
+ * prints, and the formula that builds each cell straight from the givens. All
+ * three label sets live in the DOM; the toggle only flips a class. */
+.k-letter,.k-expr,.f-letter,.f-build,.n-build{display:none}
+.letters .k-abbr,.letters .f-abbr{display:none}
+.letters .k-letter,.letters .f-letter{display:inline}
+.build .k-abbr,.build .f-abbr,.build .n-name{display:none}
+.build .k-expr,.build .f-build,.build .n-build{display:inline}
+.mx.build .ck{font-size:15.5px;line-height:1.35;font-weight:600}
+.mx.build .mx-marg{font-size:12px}
+.mxbar{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.mxbar .lab{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--text-muted)}
+.seg{display:inline-flex;border:1px solid var(--border-strong);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:12.5px;padding:5px 13px;border:0;cursor:pointer;
+  background:var(--surface-1);color:var(--text-secondary)}
+.seg button+button{border-left:1px solid var(--border-strong)}
+.seg button.on{background:var(--mod-accent,var(--accent));color:#fff;font-weight:600}
+
+/* ---------- Fill-in worksheet (back-calculation questions) ----------
+ * Back-calculation runs down the columns: population splits into diseased and
+ * healthy first, and only then does sensitivity act on one column and
+ * specificity on the other. The sheet is staged in that order so the structure
+ * of the work is visible, and it ships a small calculator because the arithmetic
+ * is multiplication by a percentage, not something the grid can do for you.
+ *
+ * Every check compares your numbers against YOUR numbers — the only external
+ * anchor is the stated population size. Nothing here reveals a cell value.
+ */
+.givens{display:flex;gap:0;flex-wrap:wrap;margin:0 0 14px;border:1px solid var(--border);
+  border-radius:var(--radius-sm);background:var(--surface-0);padding:12px 4px}
+.given{padding:0 18px;border-right:1px solid var(--border);text-align:center;flex:1;min-width:84px}
+.given:last-child{border-right:0}
+.given b{display:block;font-family:var(--serif);font-size:21px;font-weight:600;line-height:1.1;
+  font-variant-numeric:tabular-nums}
+.given span{display:block;font-size:10.5px;color:var(--text-muted);letter-spacing:.06em;
+  text-transform:uppercase;font-weight:600;margin-top:3px}
+
+.steplab{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--mod-accent,var(--accent));margin:16px 0 8px;display:flex;gap:9px;align-items:baseline}
+.steplab em{font-style:normal;font-weight:400;letter-spacing:0;text-transform:none;
+  font-size:12px;color:var(--text-muted)}
+
+.split{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.wfield{display:grid;gap:4px}
+.wfield label{font-size:11px;font-weight:650;color:var(--text-secondary)}
+.wfield input,.wcell input{font:inherit;font-family:var(--serif);font-size:19px;font-weight:600;
+  text-align:center;padding:6px 8px;border-radius:8px;border:1px solid var(--border-strong);
+  background:var(--surface-1);color:var(--text-primary);font-variant-numeric:tabular-nums;width:110px}
+.wfield input:focus,.wcell input:focus,.calcstrip input:focus{outline:2px solid var(--accent);
+  outline-offset:-1px;border-color:transparent}
+.wcell{border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface-0);
+  padding:10px 8px;display:flex;flex-direction:column;gap:5px;align-items:center;min-height:74px;
+  justify-content:center}
+.wcell .pk{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--text-muted)}
+.wcell input{width:100%;max-width:98px}
+
+.checks{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chk{font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);
+  background:var(--surface-0);color:var(--text-muted);font-variant-numeric:tabular-nums}
+.chk.ok{border-color:var(--discrim-br);background:var(--discrim-bg);color:var(--discrim);font-weight:600}
+.chk.no{border-color:var(--danger-br);background:var(--danger-bg);color:var(--danger);font-weight:600}
+
+/* a plain four-function calculator — no percent key, no special semantics */
+.calcstrip{border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-0);
+  padding:12px 14px;margin-top:4px}
+.calcdisp{background:var(--surface-1);border:1px solid var(--border);border-radius:8px;
+  padding:9px 14px;text-align:right;max-width:296px;font-family:var(--serif);font-size:26px;font-weight:600;
+  font-variant-numeric:tabular-nums;color:var(--text-primary);overflow:hidden;
+  white-space:nowrap;text-overflow:ellipsis;min-height:46px;line-height:1.1}
+.calcsub{text-align:right;font-size:11.5px;color:var(--text-muted);min-height:15px;
+  font-variant-numeric:tabular-nums;padding:3px 4px 0;max-width:296px}
+.keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px;max-width:296px}
+.key{font:inherit;font-size:16px;font-weight:600;padding:9px 0;border-radius:8px;cursor:pointer;
+  border:1px solid var(--border-strong);background:var(--surface-1);color:var(--text-primary)}
+.key:hover{border-color:var(--accent)}
+.key:active{background:var(--accent-soft)}
+.key.op{color:var(--text-secondary);background:var(--surface-2);font-size:17px}
+.key.eq{background:var(--accent);border-color:var(--accent);color:#fff}
+.key.eq:hover{filter:brightness(1.08)}
+.key.fn{font-size:13px;color:var(--text-muted)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.chips .cl{font-size:11px;color:var(--text-muted);margin-right:2px}
+.chip{font:inherit;font-size:12.5px;padding:4px 11px;border-radius:20px;cursor:pointer;
+  border:1px solid var(--border-strong);background:var(--surface-1);color:var(--text-secondary);
+  font-variant-numeric:tabular-nums}
+.chip:hover{border-color:var(--accent);color:var(--text-primary)}
+
+/* a column total turns green once the two cells above it add up to it */
+.ptot.ok{color:var(--discrim);font-weight:700}
+.ptot.no{color:var(--danger);font-weight:700}
+
+@media (max-width:760px){
+  .keypad{max-width:none}
+  .wfield input{width:96px}
+}
+
+/* ---------- Solve pad (calculation questions) ----------
+ * Gives you the counts and does the arithmetic. It never names or computes
+ * sensitivity, specificity, PPV or NPV — choosing the cells is the whole skill,
+ * so that part stays with you.
+ */
+.pad{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-1);
+  padding:18px 20px 20px;margin-top:18px}
+.padhead{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.padhead .t{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--text-muted)}
+.padhead .hint{font-size:12px;color:var(--text-muted);flex:1;min-width:180px}
+/* Both pads share this 4x4. Areas are explicit so hiding the totals column on a
+ * phone cannot reflow the cells — the same trap the 2x2 matrix hit. */
+.pg{display:grid;gap:5px;align-items:stretch;font-size:13px;
+  grid-template-columns:auto minmax(0,1fr) minmax(0,1fr) auto;
+  grid-template-areas:
+    "h0 h1 h2 h3"
+    "rp tp fp r1"
+    "rn fn tn r2"
+    "ct c1 c2 ca";}
+.pg .a-h0{grid-area:h0} .pg .a-h1{grid-area:h1} .pg .a-h2{grid-area:h2} .pg .a-h3{grid-area:h3}
+.pg .a-rp{grid-area:rp} .pg .a-tp{grid-area:tp} .pg .a-fp{grid-area:fp} .pg .a-r1{grid-area:r1}
+.pg .a-rn{grid-area:rn} .pg .a-fn{grid-area:fn} .pg .a-tn{grid-area:tn} .pg .a-r2{grid-area:r2}
+.pg .a-ct{grid-area:ct} .pg .a-c1{grid-area:c1} .pg .a-c2{grid-area:c2} .pg .a-ca{grid-area:ca}
+.pg .ph{text-align:center;font-weight:650;font-size:12.5px;color:var(--text-primary);
+  padding-bottom:3px;align-self:end}
+.pg .rl{display:grid;place-items:center;font-weight:650;padding-right:9px;white-space:nowrap;
+  color:var(--text-primary)}
+.pcell{border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface-0);
+  padding:14px 8px;cursor:pointer;font:inherit;text-align:center;color:inherit;
+  display:flex;flex-direction:column;gap:3px;justify-content:center;min-height:74px;
+  transition:border-color .12s, background .12s}
+.pcell:hover{border-color:var(--mod-accent,var(--accent))}
+.pcell .pn{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--text-primary);
+  font-variant-numeric:tabular-nums}
+.pcell .pk{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--text-muted)}
+.pcell.inN{border-color:var(--accent);background:var(--accent-soft);border-width:2px}
+.pcell.inD{border-color:var(--pearl);background:var(--pearl-bg);border-width:2px}
+.pcell.inB{background:linear-gradient(160deg,var(--accent-soft),var(--pearl-bg));
+  border-color:var(--accent);border-width:2px}
+.pcell .tagrow{display:flex;gap:4px;justify-content:center;min-height:13px}
+.pcell .tag{font-size:9px;font-weight:800;letter-spacing:.06em;padding:1px 5px;border-radius:3px}
+.pcell .tag.n{background:var(--accent);color:#fff}
+.pcell .tag.d{background:var(--pearl);color:#fff}
+.ptot{display:grid;place-items:center;font-size:12px;color:var(--text-muted);
+  font-variant-numeric:tabular-nums;padding:0 4px;white-space:nowrap}
+/* an author display rule outranks the UA [hidden] rule — restore it explicitly */
+.ptot[hidden]{display:none}
+.padslots{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;margin-top:16px;
+  padding-top:14px;border-top:1px solid var(--hairline)}
+.frac{display:inline-grid;justify-items:center;font-variant-numeric:tabular-nums}
+.frac .num{font-family:var(--serif);font-size:20px;font-weight:600;padding:0 10px}
+.frac .bar{height:1.5px;background:var(--text-secondary);width:100%;min-width:80px}
+.frac .den{font-family:var(--serif);font-size:20px;font-weight:600;padding:0 10px}
+.fracwrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.fraceq{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--text-primary)}
+.padacts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.slotpick{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--text-muted)}
+@media (max-width:760px){
+  .pad{padding:14px 12px 16px}
+  .pg{font-size:12px;
+    grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);
+    grid-template-areas:
+      "h0 h1 h2"
+      "rp tp fp"
+      "rn fn tn"
+      "ct c1 c2";}
+  /* row totals are derived; the column totals are what the checks hang on */
+  .pg .a-h3,.pg .a-r1,.pg .a-r2,.pg .a-ca{display:none}
+  .padslots{grid-template-columns:1fr}
+  .padacts{justify-content:flex-start}
+}
+
+@media (max-width:760px){
+  /* Drop the vertical axis label and move the row margins under the grid, where
+   * there is width for them. Explicit areas make this a template swap only. */
+  .mx{
+    font-size:12.5px;
+    grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);
+    grid-template-areas:
+      ".  ch ch"
+      ".  c1 c2"
+      "rp tp fp"
+      "rn fn tn"
+      ".  sn sp"
+      "pv pv pv"
+      "nv nv nv";
+  }
+  .mx-rowhead{display:none}
+  .mx-cell{padding:14px 8px;min-height:92px}
+  .mx-cell .ck{font-size:20px}
+  .mx-cell .cl{font-size:12.5px}
+  .mx-rowlabel{padding-right:7px}
+  .mx-side{grid-template-columns:auto minmax(0,1fr);margin-top:2px}
+  .mx-side .mx-arrow{transform:rotate(90deg)}
+}
+
+/* ---------- Cloze (values you type from memory) ---------- */
+.cz-row{padding:11px 16px;font-size:13.6px;line-height:1.55}
+.cz-row+.cz-row{border-top:1px solid var(--hairline)}
+.cz-row:hover{background:var(--surface-2)}
+.cz-q{color:var(--text-secondary)}
+.cz-a{color:var(--text-primary);font-weight:700;background:var(--pearl-bg);
+  border-bottom:1.5px solid var(--pearl-br);padding:0 5px;border-radius:3px}
+.cz-why{font-size:12.4px;color:var(--text-muted);margin-top:4px;line-height:1.5}
+
+/* ---------- Typed answer ---------- */
+.typebox{display:flex;gap:10px;margin-top:20px;align-items:stretch;flex-wrap:wrap}
+.typebox input{flex:1;min-width:200px;font:inherit;font-size:19px;font-family:var(--serif);
+  padding:13px 16px;border-radius:10px;border:1px solid var(--border-strong);
+  background:var(--surface-1);color:var(--text-primary)}
+.typebox input:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+.typebox input.right{border-color:var(--discrim);background:var(--discrim-bg)}
+.typebox input.wrong{border-color:var(--danger);background:var(--danger-bg)}
+.verdict{display:flex;align-items:center;gap:14px;margin-top:16px;flex-wrap:wrap;font-size:14px}
+.verdict .vmark{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  padding:5px 11px;border-radius:6px;white-space:nowrap;flex:none}
+.verdict .vmark.ok{background:var(--discrim-bg);color:var(--discrim);border:1px solid var(--discrim-br)}
+.verdict .vmark.no{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-br)}
+.verdict .truth{color:var(--text-secondary)}
+.verdict .truth b{font-family:var(--serif);font-size:18px;color:var(--text-primary)}
+.typehint{font-size:12px;color:var(--text-muted);margin-top:9px}
+
+/* ---------- Chart ---------- */
+.chart{border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-1);padding:18px 20px}
+.chart .cnote{font-size:13.2px;color:var(--text-secondary);margin:0 0 14px;max-width:70ch}
+.bar-row{display:grid;grid-template-columns:200px 1fr 46px;gap:10px;align-items:center;padding:2px 0}
+.bar-label{font-size:12.5px;color:var(--text-secondary);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{height:15px;background:var(--surface-2);border-radius:4px;position:relative}
+.bar-fill{height:15px;background:var(--series-1);border-radius:0 4px 4px 0;min-width:2px;
+  transition:width .5s cubic-bezier(.2,.7,.3,1)}
+.bar-val{font-size:12.3px;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+.cfoot{font-size:11.8px;color:var(--text-muted);margin:12px 0 0;font-style:italic}
+
+/* ==========================================================================
+   Home dashboard
+   ========================================================================== */
+.hero{padding:44px 0 30px;border-bottom:1px solid var(--border)}
+.hero h1{font-size:52px;max-width:16ch}
+.hero .tagline{font-size:17.5px;max-width:56ch}
+.herostats{display:flex;gap:0;flex-wrap:wrap;margin-top:26px}
+.herostats .pstat{border-right:1px solid var(--border)}
+.herostats .pstat:last-child{border-right:0}
+
+.homegrid{display:grid;grid-template-columns:1.35fr 1fr;gap:20px;margin-top:26px;align-items:start}
+.panel{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-1);
+  padding:22px 24px 24px}
+.panel h2{font-family:var(--serif);font-size:23px;font-weight:600;letter-spacing:-.015em;margin:0}
+.panel .sub{font-size:13.5px;color:var(--text-muted);margin-top:6px;line-height:1.5}
+.panel.cta{background:linear-gradient(160deg,var(--accent-soft),var(--surface-1) 72%);
+  border-color:color-mix(in srgb,var(--accent) 24%,var(--border))}
+.ctarow{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;align-items:center}
+.bankline{display:flex;gap:22px;margin-top:16px;flex-wrap:wrap}
+.bankline div{font-size:12.5px;color:var(--text-muted)}
+.bankline b{display:block;font-family:var(--serif);font-size:24px;color:var(--text-primary);
+  font-weight:600;line-height:1.1}
+
+.weakrow{display:grid;grid-template-columns:1fr 88px 44px;gap:12px;align-items:center;
+  padding:9px 0;border-bottom:1px solid var(--hairline);font-size:13.4px}
+.weakrow:last-child{border-bottom:0}
+.weakname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.weakname:hover{color:var(--accent)}
+.meter{height:7px;border-radius:4px;background:var(--surface-2);overflow:hidden}
+.meter > div{height:7px;border-radius:4px;background:var(--series-1)}
+.meter.low > div{background:var(--danger)}
+.meter.mid > div{background:var(--pearl)}
+.meter.high > div{background:var(--discrim)}
+.weakpct{font-size:12.5px;color:var(--text-muted);font-variant-numeric:tabular-nums;text-align:right}
+
+.sectionhead{display:flex;align-items:baseline;gap:14px;margin:44px 0 4px}
+.sectionhead h2{font-family:var(--serif);font-size:26px;font-weight:600;letter-spacing:-.018em;margin:0}
+.sectionhead .rule{flex:1;height:1px;background:var(--border)}
+.sectionhead .note{font-size:12.5px;color:var(--text-muted)}
+
+.tilegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:12px;margin-top:16px}
+.tile{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-1);
+  padding:0 0 15px;cursor:pointer;text-align:left;font:inherit;color:inherit;
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:border-color .15s, box-shadow .15s, transform .15s}
+.tile:hover{border-color:var(--mod-accent,var(--border-strong));box-shadow:var(--shadow);transform:translateY(-2px)}
+.tile .band{height:5px;background:var(--mod-accent,var(--border-strong))}
+.tile .tbody{padding:14px 17px 0}
+.tile .ttop{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.tile .tmono{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;flex:none;
+  background:var(--mod-tint,var(--surface-2));border:1px solid var(--mod-br,var(--border));
+  font-size:10px;font-weight:800;letter-spacing:-.02em}
+.tile .tw{font-size:11px;color:var(--text-muted);font-variant-numeric:tabular-nums;margin-left:auto}
+.tile .ttitle{font-family:var(--serif);font-size:17px;font-weight:600;letter-spacing:-.012em;line-height:1.25}
+.tile .ttag{font-size:12.5px;color:var(--text-muted);line-height:1.45;margin-top:7px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile .tmeta{font-size:11px;color:var(--text-muted);margin-top:11px;letter-spacing:.03em;
+  display:flex;gap:9px;flex-wrap:wrap}
+.tile .tmeta span{white-space:nowrap}
+
+/* ==========================================================================
+   Practice
+   ========================================================================== */
+.practicewrap{max-width:740px;margin:0 auto;padding-top:24px}
+.setup{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface-1);
+  padding:24px 26px 26px}
+.field{margin-bottom:20px}
+.field:last-child{margin-bottom:0}
+.flabel{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:9px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{font:inherit;font-size:13.5px;padding:9px 15px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--border-strong);background:var(--surface-1);color:var(--text-secondary);
+  text-align:left;line-height:1.3}
+.opt:hover{border-color:var(--text-muted);color:var(--text-primary)}
+.opt.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.opt small{display:block;font-size:11px;opacity:.72;font-weight:400;margin-top:2px}
+.opt.on small{opacity:.85}
+select.opt{min-width:230px;padding-right:32px}
+.startrow{margin-top:26px;padding-top:20px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.startrow .n{font-size:13px;color:var(--text-muted)}
+
+.qhead{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.qtype{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 9px;border-radius:5px;background:var(--surface-2);color:var(--text-muted)}
+.qsrc{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted)}
+.qstem{font-size:15.5px;line-height:1.64;color:var(--text-secondary);
+  border-left:3px solid var(--mod-accent,var(--accent));background:var(--surface-1);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:16px 20px}
+.qprompt{font-family:var(--serif);font-size:23px;line-height:1.32;letter-spacing:-.016em;
+  font-weight:600;padding:20px 2px 4px}
+.qprompt.solo{font-size:27px;padding-top:6px}
+.choices{display:flex;flex-direction:column;gap:9px;margin-top:16px}
+.choice{text-align:left;font:inherit;font-size:14.5px;padding:13px 16px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--border-strong);background:var(--surface-1);color:var(--text-primary);
+  line-height:1.45;display:flex;gap:12px;align-items:flex-start}
+.choice .key{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--text-muted);
+  padding-top:2px;flex:none;width:14px}
+.choice:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+.choice:disabled{cursor:default}
+.choice.right{border-color:var(--discrim);background:var(--discrim-bg);font-weight:600}
+.choice.right .key{color:var(--discrim)}
+.choice.wrong{border-color:var(--danger);background:var(--danger-bg)}
+.choice.wrong .key{color:var(--danger)}
+.explain{border:1px solid var(--discrim-br);background:var(--discrim-bg);border-radius:10px;
+  padding:14px 17px;margin-top:16px;font-size:14px;line-height:1.64;color:var(--text-secondary)}
+.explain .et{font-weight:700;font-size:10.5px;color:var(--discrim);margin-bottom:6px;
+  text-transform:uppercase;letter-spacing:.08em}
+.explain a{font-weight:600}
+.studybar{display:flex;align-items:center;gap:12px;margin-top:20px}
+.progress{flex:1;height:5px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+.progress > div{height:5px;background:var(--accent);border-radius:3px;transition:width .3s}
+.counter{font-size:12.5px;color:var(--text-muted);font-variant-numeric:tabular-nums}
+.score{font-size:13px;color:var(--text-secondary);text-align:center;margin-top:18px}
+.bigscore{text-align:center;padding:34px 0 6px}
+.bigscore .n{font-family:var(--serif);font-size:64px;font-weight:600;line-height:1;letter-spacing:-.03em}
+.bigscore .of{font-size:14px;color:var(--text-muted);margin-top:10px}
+
+/* ---------- Search results ---------- */
+.result{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--hairline);
+  background:none;padding:14px 4px;cursor:pointer;font:inherit}
+.result:hover{background:var(--surface-1)}
+.result .rmod{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+.result .rtxt{font-size:13.6px;color:var(--text-secondary);margin-top:5px;line-height:1.55}
+.empty{color:var(--text-muted);font-size:14px;padding:30px 0}
+
+/* ---------- Coverage ---------- */
+.covgrid{display:grid;gap:0;margin-top:16px}
+.covrow{display:grid;grid-template-columns:168px 1fr;gap:18px;align-items:center;
+  border-bottom:1px solid var(--hairline);padding:14px 4px}
+.covname{font-size:14px;font-weight:600}
+.covname small{display:block;color:var(--text-muted);font-weight:400;font-size:11.5px;margin-top:2px}
+.covbars{display:grid;gap:6px}
+.covline{display:grid;grid-template-columns:78px 1fr 58px;gap:10px;align-items:center;font-size:11.5px;color:var(--text-muted)}
+
+/* ---------- Document library ---------- */
+.doccard{display:grid;grid-template-columns:44px 1fr auto;gap:18px;align-items:start;
+  border-bottom:1px solid var(--hairline);padding:18px 4px}
+.doccard:hover{background:var(--surface-1)}
+.docicon{width:44px;height:56px;border-radius:6px;border:1px solid var(--border-strong);
+  background:var(--surface-2);display:grid;place-items:center;font-size:9px;font-weight:800;
+  color:var(--danger);letter-spacing:.06em}
+.doctitle{font-family:var(--serif);font-size:18px;font-weight:600;letter-spacing:-.012em}
+.docmeta{font-size:11.5px;color:var(--text-muted);margin-top:4px}
+.docdesc{font-size:13.3px;color:var(--text-secondary);margin-top:8px;line-height:1.55;max-width:74ch}
+.docacts{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.docacts .btn{white-space:nowrap;text-align:center;text-decoration:none;display:block}
+.viewer{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  background:var(--surface-2);height:calc(100vh - 280px);min-height:460px}
+.viewer object,.viewer iframe{width:100%;height:100%;border:0;display:block;background:var(--surface-2)}
+.viewbar{display:flex;gap:8px;align-items:center;margin:20px 0 14px;flex-wrap:wrap}
+.fallback{padding:34px 24px;text-align:center;color:var(--text-secondary);font-size:14px;line-height:1.6}
+
+.scrim{position:fixed;inset:0;background:rgba(20,16,10,.4);z-index:50;display:none}
+.footer{border-top:1px solid var(--border);margin-top:60px;padding-top:22px;
+  font-size:12.5px;color:var(--text-muted);line-height:1.6}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1080px){
+  .chapterwrap{grid-template-columns:1fr}
+  .rail{display:none}
+  .homegrid{grid-template-columns:1fr}
+}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:fixed;left:0;top:0;width:270px;z-index:60;transform:translateX(-100%);
+    transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.2)}
+  .sidebar.open{transform:none}
+  .menu-btn{display:inline-block}
+  .wrap,.topbar-inner{padding-left:18px;padding-right:18px}
+  .scrim.on{display:block}
+  .bar-row{grid-template-columns:110px 1fr 42px}
+  .rf-row{grid-template-columns:1fr;gap:3px}
+  .rf-arrow{display:none}
+  .covrow{grid-template-columns:1fr}
+  h1{font-size:30px}
+  .hero h1{font-size:34px}
+  .hero{padding-top:28px}
+  .plate{padding:22px 20px 22px}
+  .pstat{padding-right:18px;margin-right:18px;margin-bottom:10px}
+  .platestats,.herostats{margin-top:14px}
+  .sectitle{font-size:17px}
+  .secbody{padding-left:0}
+  .inlinecall,.chapterbody > .sections > .inlinecall{margin-left:0}
+  .qprompt{font-size:20px}
+  .qprompt.solo{font-size:22px}
+  .doccard{grid-template-columns:1fr}
+  .docacts{flex-direction:row}
+  .sechead{grid-template-columns:26px minmax(0,1fr) 16px;gap:10px}
+  .seccount{display:none}
+}
+@media print{
+  .sidebar,.topbar,.scrim,.rail,.chev,.seccount{display:none}
+  .app,.chapterwrap{display:block}
+  body{background:#fff}
+  .tablescroll{overflow:visible}
+  table.wide{min-width:0}
+  .secbody{display:block !important;padding-left:0}
+  .sec{break-inside:avoid}
+  .plate{border:0;background:none;padding-left:0}
+  .inlinecall{margin-left:0}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-top">
+        <div class="mark">dV</div>
+        <div class="brand-name">NAVLE Study Hub</div>
+      </div>
+      <div class="brand-sub">desmoVet · veterinary resource hub</div>
+    </div>
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search" type="search" placeholder="Search all content…" autocomplete="off" spellcheck="false">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <main class="main">
+    <div class="topbar"><div class="topbar-inner">
+      <button class="btn menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+      <div class="spacer"></div>
+      <button class="btn" id="homeBtn">Home</button>
+      <button class="btn primary" id="practiceBtn">Practice</button>
+      <button class="btn" id="themeBtn" aria-label="Toggle theme">◐</button>
+    </div></div>
+    <div class="wrap" id="content"></div>
+  </main>
+</div>
+
+<script>window.NAVLE_MODULES = []; window.NAVLE_QUESTIONS = []; window.NAVLE_DOCS = [];</script>
+<script src="data/01-orientation.js"></script>
+<script src="data/02-clusters.js"></script>
+<script src="data/03-infectious.js"></script>
+<script src="data/04-equine.js"></script>
+<script src="data/05-bovine.js"></script>
+<script src="data/06-swine.js"></script>
+<script src="data/07-avian.js"></script>
+<script src="data/08-aquatic-herp.js"></script>
+<script src="data/09-smallmammals.js"></script>
+<script src="data/10-oncology.js"></script>
+<script src="data/11-reference.js"></script>
+<script src="data/13-parasitology.js"></script>
+<script src="data/14-smallrum-camelid.js"></script>
+<script src="data/15-latox.js"></script>
+<script src="data/17-sa-tox.js"></script>
+<script src="data/18-sa-heme.js"></script>
+<script src="data/19-sa-cardioresp.js"></script>
+<script src="data/20-sa-neuro.js"></script>
+<script src="data/21-sa-medicine.js"></script>
+<script src="data/22-sa-infectious.js"></script>
+<script src="data/23-sa-parasites.js"></script>
+<script src="data/24-sa-feline.js"></script>
+<script src="data/25-sa-boards.js"></script>
+<script src="data/26-diagnostics.js"></script>
+<script src="data/16-docs.js"></script>
+<script src="data/12-questions.js"></script>
+
+<script>
+(function(){
+"use strict";
+var M = window.NAVLE_MODULES || [];
+var QB = window.NAVLE_QUESTIONS || [];
+var DOCS = window.NAVLE_DOCS || [];
+var GROUP_ORDER = ['Start here','Species','Infectious disease','Differential clusters','Cross-cutting'];
+/* Chapters in these groups render fully open with no toggles — they are short,
+ * and they are the pages you read rather than search. */
+var ALWAYS_OPEN = { 'Start here': true };
+
+/* Per-chapter identity colour. Hues come from a validated categorical set and
+ * are used only as rules, numerals, dots and tinted bands — never as body text
+ * colour, so contrast never depends on them. */
+var HUES = {
+  blue:   ['#2a78d6','#5b9cea'], orange: ['#c85a22','#e0783f'],
+  teal:   ['#1a8a68','#35a883'], amber:  ['#a67c00','#d4a52a'],
+  plum:   ['#8a4f7d','#b878aa'], violet: ['#5245a8','#8d81e0'],
+  green:  ['#3f7a2e','#66a84f'], red:    ['#b0433c','#dd7a72'],
+  slate:  ['#4c5a68','#8496a8']
+};
+var ACCENT = {
+  equine:'orange', bovine:'teal', swine:'plum', smallrum:'green', camelids:'violet',
+  'sa-tox':'red', 'sa-heme':'blue', 'sa-cardioresp':'blue', 'sa-neuro':'blue',
+  'sa-medicine':'blue', 'sa-feline':'blue', 'sa-vectorborne':'blue',
+  'sa-parasites':'green', 'sa-pharm':'slate', 'sa-boards':'slate',
+  'id-smallanimal':'blue', 'clusters-sa':'blue', 'clusters-la':'orange',
+  petbirds:'amber', poultry:'amber', 'avian-crosscutting':'amber',
+  fish:'teal', herps:'green', rabbits:'plum', ferrets:'plum', rodents:'plum', primates:'violet',
+  oncology:'red', parasitology:'green', 'tox-regulatory':'red', latox:'red',
+  reportable:'red', therapeutics:'slate', 'id-exotic-companion':'amber',
+  blueprint:'slate', 'bread-and-butter':'slate', diagnostics:'teal'
+};
+function hueOf(id){
+  var pair = HUES[ACCENT[id] || 'slate'];
+  return document.documentElement.getAttribute('data-theme')==='dark' ? pair[1] : pair[0];
+}
+function monogram(t){
+  var w = t.replace(/[^A-Za-z &]/g,'').split(/\s+/).filter(function(x){ return x && x!=='&'; });
+  if (w.length >= 2) return (w[0][0] + w[1][0]).toUpperCase();
+  return t.replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase();
+}
+function accentVars(id){
+  var h = hueOf(id);
+  return '--mod-accent:'+h+';--mod-tint:color-mix(in srgb,'+h+' 9%,var(--surface-1));'+
+         '--mod-br:color-mix(in srgb,'+h+' 24%,var(--border));';
+}
+
+var content = document.getElementById('content');
+var nav = document.getElementById('nav');
+var search = document.getElementById('search');
+
+var state = {
+  view:'home', id:(M[0]||{}).id, doc:null,
+  open:{},                       // moduleId -> {sectionIndex:true}
+  cfg:{ kind:'mixed', scope:'all', len:20 },
+  run:null,                      // active practice run
+  stats:{}                       // moduleId -> {right, seen}  (this session only)
+};
+
+/* ---------------- helpers ---------------- */
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+// Renders ⚑R / ⚑Z reportable+zoonotic flags, and "Agent\nsub" second lines.
+function fmt(s){
+  var t = esc(s);
+  t = t.replace(/⚑R/g,'<span class="flag r" title="Reportable">R</span>')
+       .replace(/⚑Z/g,'<span class="flag z" title="Zoonotic">Z</span>');
+  t = t.replace(/&lt;b&gt;/g,'<b>').replace(/&lt;\/b&gt;/g,'</b>')
+       .replace(/&lt;i&gt;/g,'<i>').replace(/&lt;\/i&gt;/g,'</i>');
+  if(/^(✓\*?|–)$/.test(s)){
+    if(s==='✓') return '<span class="yes">✓</span>';
+    if(s==='✓*') return '<span class="yes-c">✓*</span>';
+    return '<span class="no">–</span>';
+  }
+  var parts = t.split('\n');
+  if(parts.length > 1) return parts[0] + '<span class="agent">' + parts.slice(1).join(' ') + '</span>';
+  return t;
+}
+function strip(s){ return String(s).replace(/<[^>]+>/g,''); }
+function byId(id){ for(var i=0;i<M.length;i++) if(M[i].id===id) return M[i]; return null; }
+function shuffle(a){
+  a = a.slice();
+  for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; }
+  return a;
+}
+function plural(n, one, many){ return n + ' ' + (n===1?one:(many||one+'s')); }
+function footer(){
+  return '<div class="footer">Study aid only — verify drug doses, protocols, and reporting requirements '+
+    'against current references before clinical use. Part of <strong>desmoVet</strong>, a resource hub for '+
+    'veterinarians and veterinary students.</div>';
+}
+/* The label toggle only flips a class — both label sets are already in the DOM. */
+function wireMatrix(){
+  content.querySelectorAll('[data-mxseg]').forEach(function(seg){
+    var grid = document.getElementById(seg.dataset.mxseg);
+    seg.querySelectorAll('button').forEach(function(b){
+      b.onclick = function(){
+        seg.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+        b.classList.add('on');
+        if(!grid) return;
+        grid.classList.toggle('letters', b.dataset.mode === 'letters');
+        grid.classList.toggle('build',   b.dataset.mode === 'build');
+      };
+    });
+  });
+}
+function wireGoto(){
+  content.querySelectorAll('[data-goto]').forEach(function(a){
+    a.addEventListener('click', function(e){ e.preventDefault(); go('module', a.dataset.goto); });
+  });
+}
+function chapterLink(id){
+  var m = byId(id);
+  return m ? '<a href="#" data-goto="'+id+'">Read the ' + esc(m.title) + ' chapter →</a>' : '';
+}
+
+/* Content counts, used in tiles, plates and the coverage map. */
+function tally(m){
+  var t = { sections:0, rows:0, cards:0, values:0 };
+  m.sections.forEach(function(s){
+    if(!R[s.type]) return;
+    t.sections++;
+    if(s.type==='table') t.rows += s.rows.length;
+    else if(s.type==='rapidfire') t.cards += s.items.length;
+    else if(s.type==='cloze') t.values += s.items.length;
+  });
+  return t;
+}
+
+/* ---------------- nav ---------------- */
+function buildNav(){
+  var groups = {};
+  M.forEach(function(m){ (groups[m.group] = groups[m.group] || []).push(m); });
+  var order = GROUP_ORDER.filter(function(g){ return groups[g]; })
+    .concat(Object.keys(groups).filter(function(g){ return GROUP_ORDER.indexOf(g)<0; }));
+  var html = '<div class="navgroup">Study</div>'+
+    '<div class="navlink" data-view="home"><span class="lbl">Home</span></div>'+
+    '<div class="navlink" data-view="practice"><span class="lbl">Practice</span>'+
+      '<span class="pct">'+bankSize()+'</span></div>'+
+    '<div class="navlink" data-view="coverage"><span class="lbl">Coverage map</span></div>';
+  // Species list reads top-down by exam weight, so the biggest blocks come first.
+  var sortW = function(m){ return m.weight || m.covWeight || 0; };
+  if(groups['Species']) groups['Species'].sort(function(a,b){ return sortW(b)-sortW(a); });
+  order.forEach(function(g){
+    html += '<div class="navgroup">'+esc(g)+'</div>';
+    groups[g].forEach(function(m){
+      html += '<div class="navlink" data-id="'+m.id+'" style="--mod-accent:'+hueOf(m.id)+'">'+
+        '<span class="dot"></span><span class="lbl">'+esc(m.title)+'</span>'+
+        (m.weight ? '<span class="pct">'+m.weight+'%</span>' : '')+'</div>';
+    });
+  });
+  if (DOCS.length) {
+    html += '<div class="navgroup">Documents</div>'+
+      '<div class="navlink" data-view="docs"><span class="lbl">Source documents</span>'+
+      '<span class="pct">'+DOCS.length+'</span></div>';
+  }
+  nav.innerHTML = html;
+  nav.querySelectorAll('.navlink').forEach(function(a){
+    a.addEventListener('click', function(){
+      if(a.dataset.view) go(a.dataset.view); else go('module', a.dataset.id);
+      closeSidebar();
+    });
+  });
+}
+function markNav(){
+  nav.querySelectorAll('.navlink').forEach(function(a){
+    var v = (state.view==='doc') ? 'docs' : state.view;
+    var on = (state.view==='module' && a.dataset.id===state.id) ||
+             (state.view!=='module' && a.dataset.view===v);
+    a.classList.toggle('active', !!on);
+  });
+}
+
+/* ---------------- section renderers ----------------
+ * Bodies only — the section header owns the title. */
+var R = {
+  callout: function(s){
+    var v = s.variant || 'pearl';
+    var glyph = v==='danger' ? '▲' : v==='discrim' ? '⇄' : v==='warn' ? '!' : '◆';
+    var label = CALL_LABEL[v] || 'Note';
+    var body = s.body ? '<p>'+fmt(s.body)+'</p>' : '';
+    var list = s.list ? '<ul>'+s.list.map(function(x){return '<li>'+fmt(x)+'</li>';}).join('')+'</ul>' : '';
+    return '<div class="callout c-'+v+'">'+
+      '<div class="ct"><span class="glyph">'+glyph+'</span>'+esc(label)+'</div>'+
+      (s.title ? '<div class="cname">'+esc(s.title)+'</div>' : '')+
+      body+list+'</div>';
+  },
+  table: function(s){
+    var t = '<table'+(s.wide?' class="wide"':'')+'><thead><tr>'+
+      s.columns.map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+'</tr></thead><tbody>'+
+      s.rows.map(function(r){
+        return '<tr>'+r.map(function(c){return '<td>'+fmt(c)+'</td>';}).join('')+'</tr>';
+      }).join('')+'</tbody></table>';
+    var n = s.note ? '<div class="tnote">'+esc(s.note)+'</div>' : '';
+    return '<div class="tablewrap">'+n+'<div class="tablescroll">'+t+'</div></div>';
+  },
+  list: function(s){
+    return '<ul class="plainlist">'+s.items.map(function(x){return '<li>'+fmt(x)+'</li>';}).join('')+'</ul>';
+  },
+  rapidfire: function(s){
+    return '<div class="rf">'+s.items.map(function(p){
+      return '<div class="rf-row"><div class="rf-cue">'+fmt(p[0])+'</div>'+
+        '<div class="rf-arrow">&rarr;</div><div class="rf-ans">'+fmt(p[1])+'</div></div>';
+    }).join('')+'</div>';
+  },
+  chart: function(s){
+    var max = Math.max.apply(null, s.data.map(function(d){return d[1];}));
+    var rows = s.data.map(function(d){
+      var w = (d[1]/max*100).toFixed(1);
+      return '<div class="bar-row"><div class="bar-label" title="'+esc(d[0])+'">'+esc(d[0])+'</div>'+
+        '<div class="bar-track"><div class="bar-fill" style="width:'+w+'%"></div></div>'+
+        '<div class="bar-val">'+d[1]+'%</div></div>';
+    }).join('');
+    return '<div class="chart">'+(s.note?'<p class="cnote">'+esc(s.note)+'</p>':'')+rows+
+      (s.footnote?'<p class="cfoot">'+esc(s.footnote)+'</p>':'')+'</div>';
+  },
+  /* The 2x2 contingency table, drawn rather than tabulated — this is the shape
+   * the concept lives in, and reading it off a grid is the whole skill. Cells are
+   * placed by name so the mobile template can restack without reflowing. */
+  matrix2x2: function(s){
+    var c = s.cells, area = ['tp','fp','fn','tn'], LET = ['A','B','C','D'];
+    var id = 'mx' + (R.matrix2x2._n = (R.matrix2x2._n || 0) + 1);
+    // A third mode is offered only when the data supplies a formula for every cell.
+    var hasExpr = c.every(function(x){ return !!x.expr; });
+    var cell = function(x, i){
+      return '<div class="mx-cell mx-'+area[i]+' '+(x.ok?'good':'bad')+'" '+
+        'title="'+esc(x.tip||'')+'">'+
+        '<div class="cl">'+esc(x.label)+'</div>'+
+        '<div class="ck"><span class="k-abbr">'+esc(x.key)+'</span>'+
+          '<span class="k-letter">'+LET[i]+'</span>'+
+          (x.expr?'<span class="k-expr">'+esc(x.expr)+'</span>':'')+'</div></div>';
+    };
+    // Letter forms of the four ratios, in the a=TP b=FP c=FN d=TN convention.
+    var LF = { 'Sensitivity':'A / (A + C)', 'Specificity':'D / (B + D)',
+               'PPV':'A / (A + B)', 'NPV':'D / (C + D)' };
+    var marg = function(m){
+      var lf = LF[m.name];
+      return '<div class="mx-marg">'+
+        '<span class="n-name">'+esc(m.name)+'</span>'+
+        (m.buildName?'<span class="n-build">'+esc(m.buildName)+'</span>':
+                     '<span class="n-build">'+esc(m.name)+'</span>')+
+        (m.formula?'<small>'+
+          '<span class="f-abbr">'+esc(m.formula)+'</span>'+
+          (lf?'<span class="f-letter">'+esc(lf)+'</span>':'')+
+          (m.buildFormula?'<span class="f-build">'+esc(m.buildFormula)+'</span>':'')+
+        '</small>':'')+'</div>';
+    };
+    var side = function(m, a){
+      return '<div class="mx-side mx-'+a+'"><span class="mx-arrow">&rarr;</span>'+marg(m)+'</div>';
+    };
+    var under = function(m, a){
+      return '<div class="mx-under mx-'+a+'"><span class="mx-arrow">&darr;</span>'+marg(m)+'</div>';
+    };
+    var bar = '<div class="mxbar"><span class="lab">Read it as</span>'+
+      '<span class="seg" data-mxseg="'+id+'">'+
+        '<button data-mode="abbr" class="on" type="button">TP · FP · FN · TN</button>'+
+        '<button data-mode="letters" type="button">A · B · C · D</button>'+
+        (hasExpr?'<button data-mode="build" type="button">Formula</button>':'')+
+      '</span>'+
+      '<span class="hint" style="font-size:12px;color:var(--text-muted)">'+
+      (hasExpr ? 'Exam items print the letters. <b>Formula</b> shows how to build each cell '+
+                 'straight from prevalence, sensitivity and specificity.'
+               : 'Exam items usually print the lettered version.')+'</span></div>';
+    var h = '<div class="mx" id="'+id+'">'+
+      '<div class="mx-colhead">'+esc(s.colTitle)+'</div>'+
+      '<div class="mx-collabel mx-c1">'+esc(s.cols[0])+'</div>'+
+      '<div class="mx-collabel mx-c2">'+esc(s.cols[1])+'</div>'+
+      '<div class="mx-rowhead">'+esc(s.rowTitle)+'</div>'+
+      '<div class="mx-rowlabel mx-rp">'+esc(s.rows[0])+'</div>'+
+      '<div class="mx-rowlabel mx-rn">'+esc(s.rows[1])+'</div>'+
+      cell(c[0],0)+cell(c[1],1)+cell(c[2],2)+cell(c[3],3)+
+      side(s.rowMargins[0],'pv')+side(s.rowMargins[1],'nv')+
+      under(s.colMargins[0],'sn')+under(s.colMargins[1],'sp')+
+      '</div>';
+    var n = s.note ? '<div class="tnote" style="border:0;padding:12px 2px 0">'+esc(s.note)+'</div>' : '';
+    return bar + h + n;
+  },
+
+  /* In the chapter a calcset is just the raw counts; the drilling happens in
+   * Practice, where each scenario becomes one question per measure. */
+  calcset: function(s){
+    var n = s.note ? '<div class="tnote">'+esc(s.note)+'</div>' : '';
+    var t = '<table><thead><tr><th>Population</th><th>TP</th><th>FP</th><th>FN</th><th>TN</th>'+
+      '<th>Total</th></tr></thead><tbody>'+
+      s.scenarios.map(function(x){
+        return '<tr><td>'+esc(x.stem.split('.')[0])+'</td><td>'+x.tp+'</td><td>'+x.fp+'</td>'+
+          '<td>'+x.fn+'</td><td>'+x.tn+'</td><td>'+(x.tp+x.fp+x.fn+x.tn)+'</td></tr>';
+      }).join('')+'</tbody></table>';
+    return '<div class="tablewrap">'+n+'<div class="tablescroll">'+t+'</div></div>';
+  },
+
+  /* A cloze section reads as a fact list with the answer set in place, and the
+   * same items drive the typed-answer drill in Practice. */
+  cloze: function(s){
+    var n = s.note ? '<div class="tnote">'+esc(s.note)+'</div>' : '';
+    return '<div class="tablewrap">'+n+'<div class="clozelist">'+s.items.map(function(it){
+      return '<div class="cz-row"><div class="cz-q">'+
+        fmt(it.q).replace(/_{2,}/, '<b class="cz-a">'+esc(it.a)+'</b>')+'</div>'+
+        (it.why?'<div class="cz-why">'+fmt(it.why)+'</div>':'')+'</div>';
+    }).join('')+'</div></div>';
+  }
+};
+var CALL_LABEL = {pearl:'Board pearl', danger:'Watch out', warn:'Read this', discrim:'Discriminator'};
+
+/* ---------------- chapter rendering ----------------
+ * Sections are a numbered list on hairlines, not a stack of cards. Callouts —
+ * pearls, discriminators, warnings — render inline and open, because they are
+ * the lines most worth seeing and hiding them behind a toggle wastes them.
+ * Everything else collapses to a title, a preview and a count.
+ */
+function sectionMeta(s){
+  var title = s.title, count = '', prev = '';
+  if(s.type==='table'){
+    count = plural(s.rows.length, 'row');
+    prev  = s.rows.slice(0,4).map(function(r){ return String(r[0]).split('\n')[0]; }).join(' · ');
+  } else if(s.type==='rapidfire'){
+    count = plural(s.items.length, 'card');
+    prev  = s.items.slice(0,3).map(function(p){ return p[0]; }).join(' · ');
+  } else if(s.type==='list'){
+    count = plural(s.items.length, 'item');
+    prev  = String(s.items[0]||'');
+  } else if(s.type==='chart'){
+    count = plural(s.data.length, 'bar');
+    prev  = s.data.slice(0,4).map(function(d){ return d[0]; }).join(' · ');
+  } else if(s.type==='backcalcset'){
+    count = plural(s.scenarios.length, 'population');
+    prev  = 'Given Sn, Sp and prevalence — solve for the cell counts';
+  } else if(s.type==='calcset'){
+    count = plural(s.scenarios.length, 'population');
+    prev  = s.scenarios.length * 6 + ' calculation questions in Practice';
+  } else if(s.type==='matrix2x2'){
+    count = '2 × 2';
+    prev  = s.cells.map(function(x){ return x.key; }).join(' · ');
+  } else if(s.type==='cloze'){
+    count = plural(s.items.length, 'value');
+    prev  = s.items.slice(0,3).map(function(it){ return strip(it.q).replace(/_{2,}/,'___'); }).join(' · ');
+  } else if(s.type==='callout'){
+    title = title || (CALL_LABEL[s.variant] || 'Note');
+    count = '';
+    prev  = s.body ? s.body : (s.list ? s.list[0] : '');
+  }
+  return { title: strip(title || 'Section'), count: count, prev: strip(prev).slice(0,140) };
+}
+
+function renderModule(id){
+  var m = byId(id); if(!m) return;
+  if(!state.open[id]) state.open[id] = {};
+  var openMap = state.open[id];
+  var isStatic = !!ALWAYS_OPEN[m.group];
+  var secs = m.sections.filter(function(s){ return R[s.type]; });
+  var t = tally(m);
+
+  var head =
+    '<div class="plate">'+
+      '<div class="eyebrow">'+esc(m.group)+
+        (m.weight ? ' &nbsp;·&nbsp; <b>'+m.weight+'% of the NAVLE</b>'
+                  : m.weightNote ? ' &nbsp;·&nbsp; <b>'+esc(m.weightNote)+'</b>' : '')+
+      '</div>'+
+      '<h1>'+esc(m.title)+'</h1>'+
+      (m.tagline?'<p class="tagline">'+esc(m.tagline)+'</p>':'')+
+      '<div class="platestats">'+
+        '<div class="pstat"><b>'+t.sections+'</b><span>Sections</span></div>'+
+        (t.rows ? '<div class="pstat"><b>'+t.rows+'</b><span>Table rows</span></div>' : '')+
+        (t.cards ? '<div class="pstat"><b>'+t.cards+'</b><span>Recall cues</span></div>' : '')+
+        (t.values ? '<div class="pstat"><b>'+t.values+'</b><span>Typed values</span></div>' : '')+
+        (countQuestions(m.id) ? '<div class="pstat"><b>'+countQuestions(m.id)+'</b><span>Practice Qs</span></div>' : '')+
+      '</div>'+
+    '</div>';
+
+  var body = '<div class="sections">', n = 0;
+  secs.forEach(function(s, k){
+    var meta = sectionMeta(s);
+    // Callouts are always inline and open, in every chapter.
+    if(s.type === 'callout'){
+      body += '<div class="inlinecall" id="sec-'+k+'">'+R.callout(s)+'</div>';
+      return;
+    }
+    n++;
+    var num = (n<10?'0':'') + n;
+    if(isStatic){
+      body +=
+        '<section class="sec static" id="sec-'+k+'">'+
+          '<div class="statichead">'+
+            '<span class="secnum">'+num+'</span>'+
+            '<span class="sectitle">'+esc(meta.title)+'</span>'+
+            '<span class="seccount">'+esc(meta.count)+'</span>'+
+          '</div>'+
+          '<div class="secbody">'+ R[s.type](s) +'</div>'+
+        '</section>';
+      return;
+    }
+    var isOpen = !!openMap[k];
+    body +=
+      '<section class="sec'+(isOpen?' open':'')+'" id="sec-'+k+'">'+
+        '<button class="sechead" data-sec="'+k+'" aria-expanded="'+isOpen+'">'+
+          '<span class="secnum">'+num+'</span>'+
+          '<span class="lines"><span class="sectitle">'+esc(meta.title)+'</span>'+
+            (meta.prev?'<span class="secprev">'+esc(meta.prev)+'</span>':'')+'</span>'+
+          '<span class="seccount">'+esc(meta.count)+'</span>'+
+          '<svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" '+
+            'stroke-linecap="round" stroke-linejoin="round"><path d="M7 4l6 6-6 6"/></svg>'+
+        '</button>'+
+        '<div class="secbody">'+ R[s.type](s) +'</div>'+
+      '</section>';
+  });
+  body += '</div>';
+
+  var rail = '<aside class="rail"><div class="railtitle">In this chapter</div>';
+  secs.forEach(function(s, k){
+    rail += '<button class="railitem'+(s.type==='callout'?' iscall':'')+'" data-jump="'+k+'">'+
+      esc(sectionMeta(s).title)+'</button>';
+  });
+  if(!isStatic){
+    rail += '<div class="railtools">'+
+      '<button class="btn tiny" id="expandAll">Expand all</button>'+
+      '<button class="btn tiny" id="collapseAll">Collapse all</button></div>';
+  }
+  rail += '</aside>';
+
+  content.innerHTML = '<div style="'+accentVars(m.id)+'">'+ head +
+    '<div class="chapterwrap"><div class="chapterbody">'+ body + footer() +'</div>'+ rail +'</div></div>';
+
+  function setOpen(k, want){
+    var el = document.getElementById('sec-'+k);
+    if(!el || !el.classList.contains('sec') || el.classList.contains('static')) return;
+    el.classList.toggle('open', want);
+    var h = el.querySelector('.sechead');
+    if(h) h.setAttribute('aria-expanded', String(want));
+    openMap[k] = want;
+  }
+  content.querySelectorAll('.sechead').forEach(function(b){
+    b.addEventListener('click', function(){
+      var k = +b.dataset.sec;
+      setOpen(k, !document.getElementById('sec-'+k).classList.contains('open'));
+    });
+  });
+  content.querySelectorAll('[data-jump]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var k = +b.dataset.jump;
+      setOpen(k, true);
+      var el = document.getElementById('sec-'+k);
+      if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+  if(!isStatic){
+    document.getElementById('expandAll').onclick = function(){ secs.forEach(function(_,k){ setOpen(k,true); }); };
+    document.getElementById('collapseAll').onclick = function(){ secs.forEach(function(_,k){ setOpen(k,false); }); };
+  }
+
+  var railItems = content.querySelectorAll('.railitem');
+  function syncRail(){
+    var best = 0, bestTop = -1e9;
+    secs.forEach(function(_, k){
+      var el = document.getElementById('sec-'+k); if(!el) return;
+      var top = el.getBoundingClientRect().top - 95;
+      if(top <= 0 && top > bestTop){ bestTop = top; best = k; }
+    });
+    railItems.forEach(function(b){ b.classList.toggle('cur', +b.dataset.jump === best); });
+  }
+  if(renderModule._scroll) window.removeEventListener('scroll', renderModule._scroll);
+  renderModule._scroll = syncRail;
+  window.addEventListener('scroll', syncRail, {passive:true});
+  syncRail();
+  wireGoto();
+  wireMatrix();
+  window.scrollTo(0,0);
+}
+
+/* ==========================================================================
+   Practice bank — everything is multiple choice
+
+   Two sources, one format:
+     'case'  — the hand-written vignettes, each with three chosen look-alikes
+     'rapid' — chapter rapid-fire cues, with distractors drawn from the other
+               answers in the same chapter so they stay plausible
+   ========================================================================== */
+function caseQuestions(){
+  return QB.map(function(c){
+    var mod = byId(c.m);
+    return { type:'case', m:c.m, src:mod?mod.title:'', stem:c.stem, q:c.lead,
+             a:c.a, wrong:(c.wrong||[]).slice(0,3), why:c.why };
+  });
+}
+var RAPID_CACHE = null;
+function rapidQuestions(){
+  if(RAPID_CACHE) return RAPID_CACHE;
+  var out = [];
+  M.forEach(function(m){
+    // Pool of every answer in this chapter, used as the distractor source.
+    var pool = [];
+    m.sections.forEach(function(s){
+      if(s.type==='rapidfire') s.items.forEach(function(p){ pool.push(strip(p[1])); });
+    });
+    if(pool.length < 4) return;   // too few to build honest distractors
+    m.sections.forEach(function(s){
+      if(s.type!=='rapidfire') return;
+      s.items.forEach(function(p){
+        var ans = strip(p[1]);
+        var others = [];
+        shuffle(pool).forEach(function(x){
+          if(x !== ans && others.indexOf(x) < 0 && others.length < 3) others.push(x);
+        });
+        if(others.length < 3) return;
+        out.push({ type:'rapid', m:m.id, src:m.title, stem:'', q:strip(p[0]),
+                   a:ans, wrong:others,
+                   why:'From the ' + m.title + ' rapid-fire list' +
+                       (s.title ? ' (' + strip(s.title) + ')' : '') + '.' });
+      });
+    });
+  });
+  RAPID_CACHE = out;
+  return out;
+}
+/* Typed-answer items. Unlike the two multiple-choice sources these are recall,
+ * not recognition — you type the value. Answers are matched leniently: case,
+ * spacing, commas, dash style, "to" for a range and a trailing unit are all
+ * ignored, single numbers compare numerically, and an explicit `accept` list
+ * covers the rest. There is still an "I had it right" override, because no
+ * matcher gets every phrasing. */
+/* Calculation items. Every expected answer is computed from the scenario's four
+ * counts, so the arithmetic cannot drift from the table the student is shown. */
+var MEASURES = [
+  { key:'sensitivity', name:'sensitivity',
+    calc:function(x){ return x.tp / (x.tp + x.fn); },
+    lead:'What is the sensitivity of this test?',
+    why:'Sensitivity = TP / (TP + FN) — read straight down the diseased column. It is a property of the test and does not change with prevalence.' },
+  { key:'specificity', name:'specificity',
+    calc:function(x){ return x.tn / (x.tn + x.fp); },
+    lead:'What is the specificity of this test?',
+    why:'Specificity = TN / (TN + FP) — read straight down the healthy column. Also a property of the test, independent of prevalence.' },
+  { key:'ppv', name:'positive predictive value',
+    calc:function(x){ return x.tp / (x.tp + x.fp); },
+    lead:'What is the positive predictive value?',
+    why:'PPV = TP / (TP + FP) — read across the test-positive row. Unlike sensitivity it depends on how common the disease is in this population.' },
+  { key:'npv', name:'negative predictive value',
+    calc:function(x){ return x.tn / (x.tn + x.fn); },
+    lead:'What is the negative predictive value?',
+    why:'NPV = TN / (TN + FN) — read across the test-negative row. It rises as the disease becomes rarer.' },
+  // Prevalence is only asked on scenarios flagged askPrev — otherwise it dominates the deck.
+  { key:'prevalence', name:'prevalence', gate:'askPrev',
+    calc:function(x){ return (x.tp + x.fn) / (x.tp + x.fp + x.fn + x.tn); },
+    lead:'What is the true prevalence in this population?',
+    why:'Prevalence = (TP + FN) / total — the diseased column over everything. It is the hinge on which PPV and NPV turn.' }
+];
+
+/* Back-calculation: given sensitivity, specificity, prevalence and a population
+ * size, reconstruct a cell count. This is the direction exam items are usually
+ * written in, and the work runs down the columns — population splits into
+ * diseased and healthy first, then sensitivity acts on one column and
+ * specificity on the other. */
+function bcCells(x){
+  var dis = x.n * x.prev / 100, hea = x.n - dis;
+  var tp = dis * x.sn / 100, fn = dis - tp;
+  var tn = hea * x.sp / 100, fp = hea - tn;
+  return { dis:dis, hea:hea, tp:tp, fn:fn, tn:tn, fp:fp, pos:tp + fp, neg:tn + fn };
+}
+var BACK_MEASURES = [
+  { key:'fp', lead:'How many FALSE POSITIVES will this test produce?',
+    get:function(c){ return c.fp; },
+    why:'False positives come out of the healthy column: healthy = total × (1 − prevalence), and the test wrongly flags the fraction it fails to clear, which is (1 − specificity). So FP = healthy × (1 − specificity).' },
+  { key:'tp', lead:'How many TRUE POSITIVES will this test produce?',
+    get:function(c){ return c.tp; },
+    why:'True positives come out of the diseased column: diseased = total × prevalence, and sensitivity is the fraction of those the test catches. So TP = diseased × sensitivity.' },
+  { key:'fn', lead:'How many FALSE NEGATIVES will this test produce?',
+    get:function(c){ return c.fn; },
+    why:'The diseased animals the test misses: FN = diseased × (1 − sensitivity). Diseased = total × prevalence.' },
+  { key:'tn', lead:'How many TRUE NEGATIVES will this test produce?',
+    get:function(c){ return c.tn; },
+    why:'The healthy animals the test correctly clears: TN = healthy × specificity, where healthy = total × (1 − prevalence).' },
+  { key:'pos', lead:'How many animals will test POSITIVE in total?',
+    get:function(c){ return c.pos; },
+    why:'The whole test-positive row: TP + FP. Note how much of it is false positives once the disease is uncommon — that is the PPV problem in raw counts.' },
+  { key:'dis', lead:'How many animals in this population truly HAVE the disease?', gate:'askDiseased',
+    get:function(c){ return c.dis; },
+    why:'Total × prevalence. This is always the first step — split the population into the two disease columns before applying sensitivity or specificity to either one.' }
+];
+var BACK_CACHE = null;
+function backQuestions(){
+  if(BACK_CACHE) return BACK_CACHE;
+  var out = [];
+  M.forEach(function(m){
+    m.sections.forEach(function(sec){
+      if(sec.type!=='backcalcset') return;
+      sec.scenarios.forEach(function(x){
+        var c = bcCells(x), kept = [];
+        BACK_MEASURES.forEach(function(bm){
+          if(bm.gate && !x[bm.gate]) return;
+          var v = bm.get(c);
+          // counts must be far enough apart that the grader cannot confuse two of them
+          var all = ['fp','tp','fn','tn','pos','dis'].map(function(k){
+            return k==='pos' ? c.pos : k==='dis' ? c.dis : c[k]; });
+          for(var i=0;i<all.length;i++){
+            if(all[i] !== v && Math.abs(all[i] - v) <= 1) return;
+          }
+          kept.push(v);
+          out.push({
+            type:'back', m:m.id, src:m.title, stem:x.label, q:bm.lead,
+            a: String(Math.round(v)) + ' animals', num: v, tol: 1, scn: x, cells: c,
+            why: bm.why
+          });
+        });
+      });
+    });
+  });
+  BACK_CACHE = out;
+  return out;
+}
+var CALC_TOL = 0.6;    // grading tolerance, in percentage points
+var CALC_MIN_SEP = 3.0; // two measures closer than this are indistinguishable to the grader
+var CALC_CACHE = null;
+/* Within one scenario the six measures can land on top of each other — accuracy in
+ * particular, since accuracy = p·Sn + (1−p)·Sp, so it converges on specificity as
+ * prevalence falls. If two answers sit inside the grading tolerance the item is
+ * unanswerable: a student who computed the *other* measure would also be marked
+ * right. So a measure is only asked when it is at least CALC_MIN_SEP from every
+ * measure already accepted for that scenario; MEASURES is ordered by priority, so
+ * the less useful member of a colliding pair (usually accuracy) is the one dropped. */
+function calcQuestions(){
+  if(CALC_CACHE) return CALC_CACHE;
+  var out = [];
+  M.forEach(function(m){
+    m.sections.forEach(function(sec){
+      if(sec.type!=='calcset') return;
+      sec.scenarios.forEach(function(x){
+        // An asked measure must be distinguishable from every OTHER measure in the
+        // drill vocabulary — including ones this scenario happens not to ask for,
+        // since a student who computed the wrong one would otherwise be marked
+        // right. Accuracy is deliberately not in this list: it is not part of the
+        // drill, so it cannot be the wrong answer a student arrives at here.
+        var allVals = MEASURES.map(function(mv){ return mv.calc(x) * 100; });
+        MEASURES.forEach(function(mv, mi){
+          if(mv.gate && !x[mv.gate]) return;
+          var v = mv.calc(x) * 100;
+          for(var i=0;i<allVals.length;i++){
+            if(i !== mi && Math.abs(allVals[i] - v) < CALC_MIN_SEP) return;
+          }
+          out.push({
+            type:'calc', m:m.id, src:m.title, stem:x.stem, q:mv.lead,
+            a: v.toFixed(1) + '%', num: v, tol: CALC_TOL, scn: x, measure: mv.key,
+            why: mv.why
+          });
+        });
+      });
+    });
+  });
+  CALC_CACHE = out;
+  return out;
+}
+var TYPED_CACHE = null;
+function typedQuestions(){
+  if(TYPED_CACHE) return TYPED_CACHE;
+  var out = [];
+  M.forEach(function(m){
+    m.sections.forEach(function(s){
+      if(s.type!=='cloze') return;
+      s.items.forEach(function(it){
+        out.push({ type:'typed', m:m.id, src:m.title, stem:'', q:it.q,
+                   a:it.a, accept:it.accept||[], why:it.why||'' });
+      });
+    });
+  });
+  TYPED_CACHE = out;
+  return out;
+}
+function normAnswer(x){
+  return String(x).toLowerCase()
+    .replace(/[\u2012-\u2015\u2212]/g,'-')       // dash variants
+    .replace(/[,]/g,'')
+    .replace(/\bto\b/g,'-')                      // "22 to 24" -> "22-24"
+    .replace(/\band\b/g,' ')
+    .replace(/[^a-z0-9.\-\/:%]+/g,' ')
+    .replace(/\s*-\s*/g,'-')
+    .replace(/\s+/g,' ')
+    .replace(/[.\s]+$/,'')
+    .trim();
+}
+/* Calculation answers grade numerically: a percentage within tolerance, or the
+ * same value written as a decimal fraction. */
+function numericMatches(input, q){
+  var t = String(input).replace(/[,\s%]/g,'');
+  if(!t || !/^[0-9]*\.?[0-9]+$/.test(t)) return false;
+  var v = parseFloat(t);
+  if(isNaN(v)) return false;
+  if(Math.abs(v - q.num) <= q.tol) return true;
+  // percentages may also be written as a decimal fraction — 0.933 for 93.3%
+  if(q.type !== 'back' && v <= 1 && Math.abs(v*100 - q.num) <= q.tol) return true;
+  return false;
+}
+function answerMatches(input, q){
+  if(q.type === 'calc' || q.type === 'back') return numericMatches(input, q);
+  var got = normAnswer(input);
+  if(!got) return false;
+  var cands = [q.a].concat(q.accept||[]).map(normAnswer);
+  if(cands.indexOf(got) >= 0) return true;
+  // strip a trailing unit word the prompt already supplies ("60 mmhg" -> "60")
+  var bare = got.replace(/\s*(mmhg|mg\/dl|meq\/l|mmol\/l|ml\/kg|mg\/ml|days?|hours?|hrs?|months?|weeks?|wks?|degrees?|f|%)$/,'').trim();
+  if(bare && cands.indexOf(bare) >= 0) return true;
+  // single numbers compare numerically, so "1.0" answers "1"
+  var n = parseFloat(bare || got);
+  if(!isNaN(n) && /^[0-9.]+$/.test((bare||got))){
+    for(var i=0;i<cands.length;i++){
+      if(/^[0-9.]+$/.test(cands[i]) && parseFloat(cands[i]) === n) return true;
+    }
+  }
+  return false;
+}
+function bank(kind){
+  if(kind==='case')  return caseQuestions();
+  if(kind==='rapid') return rapidQuestions();
+  if(kind==='typed') return typedQuestions();
+  if(kind==='calc')  return calcQuestions().concat(backQuestions());
+  return caseQuestions().concat(rapidQuestions()).concat(typedQuestions())
+           .concat(calcQuestions()).concat(backQuestions());
+}
+function bankSize(){
+  return caseQuestions().length + rapidQuestions().length + typedQuestions().length +
+         calcQuestions().length + backQuestions().length;
+}
+function countQuestions(modId){
+  var n = 0;
+  bank('mixed').forEach(function(q){ if(q.m===modId) n++; });
+  return n;
+}
+/* Scope options: everything, one group, or one chapter. */
+function scopeMatches(q, scope){
+  if(scope==='all') return true;
+  if(scope.indexOf('g:')===0){ var m = byId(q.m); return !!m && m.group === scope.slice(2); }
+  return q.m === scope;
+}
+function scopeLabel(scope){
+  if(scope==='all') return 'the whole hub';
+  if(scope.indexOf('g:')===0) return scope.slice(2);
+  var m = byId(scope); return m ? m.title : scope;
+}
+
+function practiceSetup(){
+  var c = state.cfg;
+  var pool = bank(c.kind).filter(function(q){ return scopeMatches(q, c.scope); });
+  var counts = { case:caseQuestions().length, rapid:rapidQuestions().length,
+                 typed:typedQuestions().length,
+                 calc:calcQuestions().length + backQuestions().length };
+  counts.mixed = counts.case + counts.rapid + counts.typed + counts.calc;
+
+  var groups = [];
+  M.forEach(function(m){ if(groups.indexOf(m.group)<0) groups.push(m.group); });
+  groups.sort(function(a,b){ return GROUP_ORDER.indexOf(a)-GROUP_ORDER.indexOf(b); });
+  var opts = '<option value="all"'+(c.scope==='all'?' selected':'')+'>Everything — the whole hub</option>';
+  groups.forEach(function(g){
+    opts += '<option value="g:'+esc(g)+'"'+(c.scope==='g:'+g?' selected':'')+'>All of: '+esc(g)+'</option>';
+  });
+  groups.forEach(function(g){
+    opts += '<optgroup label="'+esc(g)+'">';
+    M.filter(function(m){ return m.group===g; }).forEach(function(m){
+      var n = countQuestions(m.id);
+      if(!n) return;
+      opts += '<option value="'+m.id+'"'+(c.scope===m.id?' selected':'')+'>'+esc(m.title)+' ('+n+')</option>';
+    });
+    opts += '</optgroup>';
+  });
+
+  function kindOpt(v, label, sub){
+    return '<button class="opt'+(c.kind===v?' on':'')+'" data-kind="'+v+'">'+label+
+      '<small>'+sub+'</small></button>';
+  }
+  var lens = [10,20,40,'all'];
+  var lenBtns = lens.map(function(v){
+    return '<button class="opt'+(String(c.len)===String(v)?' on':'')+'" data-len="'+v+'">'+
+      (v==='all'?'All':v)+'</button>';
+  }).join('');
+
+  content.innerHTML =
+    '<div class="plate"><div class="eyebrow">Study</div><h1>Practice</h1>'+
+    '<p class="tagline">Multiple choice with real look-alike distractors, plus a typed-answer '+
+    'drill for the values worth knowing cold. Pick a source, a scope and a length.</p></div>'+
+    '<div class="practicewrap"><div class="setup">'+
+      '<div class="field"><div class="flabel">Question source</div><div class="opts">'+
+        kindOpt('mixed','Mixed', counts.mixed+' questions')+
+        kindOpt('case','Case vignettes', counts.case+' questions')+
+        kindOpt('rapid','Rapid recall', counts.rapid+' questions')+
+        kindOpt('typed','Type the answer', counts.typed+' values')+
+        kindOpt('calc','Calculate', counts.calc+' problems')+
+      '</div></div>'+
+      '<div class="field"><div class="flabel">Scope</div>'+
+        '<select class="opt" id="scopeSel">'+opts+'</select></div>'+
+      '<div class="field"><div class="flabel">Length</div><div class="opts">'+lenBtns+'</div></div>'+
+      '<div class="startrow">'+
+        '<button class="btn primary big" id="startBtn"'+(pool.length?'':' disabled')+'>Start practice</button>'+
+        '<span class="n">'+(pool.length
+          ? plural(Math.min(pool.length, c.len==='all'?pool.length:c.len), 'question')+
+            ' from '+esc(scopeLabel(c.scope))+' · '+pool.length+' available'
+          : 'No questions match that combination yet — widen the scope.')+'</span>'+
+      '</div>'+
+    '</div>'+
+    (statLines().length ? '<div class="panel" style="margin-top:20px">'+
+      '<h2>This session</h2><div class="sub">Accuracy by chapter, reset when the page reloads.</div>'+
+      '<div style="margin-top:14px">'+statLines().join('')+'</div></div>' : '')+
+    '</div>'+footer();
+
+  content.querySelectorAll('[data-kind]').forEach(function(b){
+    b.onclick = function(){ state.cfg.kind = b.dataset.kind; practiceSetup(); };
+  });
+  content.querySelectorAll('[data-len]').forEach(function(b){
+    b.onclick = function(){ var v=b.dataset.len; state.cfg.len = (v==='all'?'all':+v); practiceSetup(); };
+  });
+  document.getElementById('scopeSel').onchange = function(e){
+    state.cfg.scope = e.target.value; practiceSetup();
+  };
+  var start = document.getElementById('startBtn');
+  if(start) start.onclick = startRun;
+  content.querySelectorAll('[data-stat]').forEach(function(b){
+    b.onclick = function(){ go('module', b.dataset.stat); };
+  });
+  window.scrollTo(0,0);
+}
+
+function startRun(){
+  var c = state.cfg;
+  var pool = shuffle(bank(c.kind).filter(function(q){ return scopeMatches(q, c.scope); }));
+  var n = (c.len==='all') ? pool.length : Math.min(pool.length, c.len);
+  state.run = {
+    qs: pool.slice(0, n).map(function(q){
+      return { q:q, choices: q.type==='typed' ? null : shuffle([q.a].concat(q.wrong)) };
+    }),
+    i:0, score:0, answered:false
+  };
+  state.view = 'practice';
+  drawQuestion();
+}
+
+/* ---------------- solve pad ----------------
+ * The scaffold for a calculation question. It shows the four counts, lets you
+ * assign cells to a numerator and a denominator, and does the addition and the
+ * division on request. What it deliberately does NOT do is name the measures or
+ * mark any cell as belonging to one — picking the right cells is the skill being
+ * tested, so that stays entirely with the student.
+ */
+function solvePad(x){
+  var cells = [
+    {k:'TP', letter:'A', n:x.tp, area:'tp'},
+    {k:'FP', letter:'B', n:x.fp, area:'fp'},
+    {k:'FN', letter:'C', n:x.fn, area:'fn'},
+    {k:'TN', letter:'D', n:x.tn, area:'tn'}
+  ];
+  var total = x.tp + x.fp + x.fn + x.tn;
+  var btn = function(c, i){
+    return '<button class="pcell a-'+['tp','fp','fn','tn'][i]+'" data-cell="'+i+'" type="button">'+
+      '<span class="pk"><span class="k-abbr">'+c.k+'</span>'+
+        '<span class="k-letter">'+c.letter+'</span></span>'+
+      '<span class="pn">'+c.n+'</span>'+
+      '<span class="tagrow"></span></button>';
+  };
+  return '<div class="pad" id="solvepad">'+
+    '<div class="padhead"><span class="t">Work it out</span>'+
+      '<span class="hint">Click cells to build the numerator, switch slots, then click cells for the denominator. '+
+      'It adds and divides — it will not tell you which cells to pick.</span></div>'+
+    '<div class="mxbar" style="margin-bottom:12px">'+
+      '<span class="seg" data-mxseg="solvepad">'+
+        '<button data-mode="abbr" class="on" type="button">TP · FP · FN · TN</button>'+
+        '<button data-mode="letters" type="button">A · B · C · D</button>'+
+      '</span>'+
+      '<span class="slotpick"><label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer">'+
+      '<input type="checkbox" id="padTotals"> show row &amp; column totals</label></span>'+
+    '</div>'+
+    '<div class="pg" id="padGrid">'+
+      '<div class="a-h0"></div><div class="ph a-h1">Diseased</div><div class="ph a-h2">Healthy</div>'+
+      '<div class="ptot padtot a-h3" hidden>Row total</div>'+
+      '<div class="rl a-rp">Test +</div>'+ btn(cells[0],0) + btn(cells[1],1) +
+      '<div class="ptot padtot a-r1" hidden>'+(x.tp+x.fp)+'</div>'+
+      '<div class="rl a-rn">Test −</div>'+ btn(cells[2],2) + btn(cells[3],3) +
+      '<div class="ptot padtot a-r2" hidden>'+(x.fn+x.tn)+'</div>'+
+      '<div class="ptot padtot a-ct" hidden>Col total</div>'+
+      '<div class="ptot padtot a-c1" hidden>'+(x.tp+x.fn)+'</div>'+
+      '<div class="ptot padtot a-c2" hidden>'+(x.fp+x.tn)+'</div>'+
+      '<div class="ptot padtot a-ca" hidden>'+total+'</div>'+
+    '</div>'+
+    '<div class="padslots">'+
+      '<div class="fracwrap">'+
+        '<span class="frac"><span class="num" id="padNum">—</span>'+
+          '<span class="bar"></span><span class="den" id="padDen">—</span></span>'+
+        '<span class="fraceq" id="padEq"></span>'+
+      '</div>'+
+      '<div class="padacts">'+
+        '<button class="btn tiny" id="padSlotN" type="button">Adding to numerator</button>'+
+        '<button class="btn tiny" id="padSlotD" type="button">Adding to denominator</button>'+
+        '<button class="btn tiny" id="padCompute" type="button">Divide</button>'+
+        '<button class="btn tiny" id="padClear" type="button">Clear</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+/* The scaffold for a back-calculation question: the givens, an empty 2 x 2 to
+ * fill in, and a running reconciliation against the population size. It never
+ * supplies a cell value — it only says whether your four add up to N. */
+function fillPad(x){
+  var keys = [['tp','TP','A'],['fp','FP','B'],['fn','FN','C'],['tn','TN','D']];
+  var box = function(k, area){
+    return '<div class="wcell a-'+area+'"><span class="pk"><span class="k-abbr">'+k[1]+'</span>'+
+      '<span class="k-letter">'+k[2]+'</span></span>'+
+      '<input type="text" inputmode="decimal" autocomplete="off" data-w="'+k[0]+'" '+
+      'aria-label="'+k[1]+'" placeholder="—"></div>';
+  };
+  var key = function(label, kind, attr){
+    return '<button class="key'+(kind?' '+kind:'')+'" type="button" '+attr+'>'+label+'</button>';
+  };
+  // the givens and their complements, deduped, largest first
+  var vs = [x.n, x.prev, 100-x.prev, x.sn, 100-x.sn, x.sp, 100-x.sp]
+    .filter(function(v,i,a){ return a.indexOf(v) === i; })
+    .sort(function(a,b){ return b-a; });
+
+  return '<div class="pad" id="fillpad">'+
+    '<div class="padhead"><span class="t">Work it out</span>'+
+      '<span class="hint">Work down the columns. Split the population first — every cell is then '+
+      'just a column total times a percentage: sensitivity or its complement for the diseased '+
+      'column, specificity or its complement for the healthy one. Nothing here is filled in for '+
+      'you.</span></div>'+
+
+    '<div class="givens">'+
+      '<div class="given"><b>'+x.n+'</b><span>Population</span></div>'+
+      '<div class="given"><b>'+x.prev+'%</b><span>Prevalence</span></div>'+
+      '<div class="given"><b>'+x.sn+'%</b><span>Sensitivity</span></div>'+
+      '<div class="given"><b>'+x.sp+'%</b><span>Specificity</span></div>'+
+    '</div>'+
+
+    '<div class="calcstrip">'+
+      '<div class="calcsub" id="calcSub"></div>'+
+      '<div class="calcdisp" id="calcDisp">0</div>'+
+      '<div class="keypad">'+
+        key('C','fn','data-k="clear"')+key('⌫','fn','data-k="back"')+
+          key('÷','op','data-k="op" data-v="÷"')+key('×','op','data-k="op" data-v="×"')+
+        key('7','','data-k="d" data-v="7"')+key('8','','data-k="d" data-v="8"')+
+          key('9','','data-k="d" data-v="9"')+key('−','op','data-k="op" data-v="−"')+
+        key('4','','data-k="d" data-v="4"')+key('5','','data-k="d" data-v="5"')+
+          key('6','','data-k="d" data-v="6"')+key('+','op','data-k="op" data-v="+"')+
+        key('1','','data-k="d" data-v="1"')+key('2','','data-k="d" data-v="2"')+
+          key('3','','data-k="d" data-v="3"')+key('=','eq','data-k="eq"')+
+        '<button class="key" type="button" data-k="d" data-v="0" style="grid-column:span 2">0</button>'+
+        '<button class="key" type="button" data-k="d" data-v="." style="grid-column:span 2">.</button>'+
+      '</div>'+
+      '<div class="chips"><span class="cl">tap to enter</span>'+
+        vs.map(function(v){
+          return '<button class="chip" type="button" data-v="'+v+'">'+v+'</button>';
+        }).join('')+
+      '</div>'+
+    '</div>'+
+
+    '<div class="steplab">Step 1 <em>· split the population into the two disease columns</em></div>'+
+    '<div class="split">'+
+      '<div class="wfield"><label>Diseased</label>'+
+        '<input type="text" inputmode="decimal" data-w="dis" placeholder="—" autocomplete="off"></div>'+
+      '<div class="wfield"><label>Healthy</label>'+
+        '<input type="text" inputmode="decimal" data-w="hea" placeholder="—" autocomplete="off"></div>'+
+    '</div>'+
+
+    '<div class="steplab">Step 2 <em>· sensitivity acts on the diseased column, specificity on the healthy one</em></div>'+
+    '<div class="mxbar" style="margin-bottom:10px">'+
+      '<span class="seg" data-mxseg="fillpad">'+
+        '<button data-mode="abbr" class="on" type="button">TP · FP · FN · TN</button>'+
+        '<button data-mode="letters" type="button">A · B · C · D</button>'+
+      '</span></div>'+
+    '<div class="pg">'+
+      '<div class="a-h0"></div><div class="ph a-h1">Diseased</div>'+
+      '<div class="ph a-h2">Healthy</div><div class="a-h3"></div>'+
+      '<div class="rl a-rp">Test +</div>'+box(keys[0],'tp')+box(keys[1],'fp')+
+        '<div class="ptot a-r1" id="wRow1">—</div>'+
+      '<div class="rl a-rn">Test −</div>'+box(keys[2],'fn')+box(keys[3],'tn')+
+        '<div class="ptot a-r2" id="wRow2">—</div>'+
+      '<div class="ptot a-ct">Col total</div><div class="ptot a-c1" id="wCol1">—</div>'+
+      '<div class="ptot a-c2" id="wCol2">—</div><div class="ptot a-ca" id="wAll">—</div>'+
+    '</div>'+
+    '<div class="checks" id="wChecks"></div>'+
+  '</div>';
+}
+
+function wireFillPad(x){
+  var pad = document.getElementById('fillpad');
+  if(!pad) return;
+
+  /* ---- a plain four-function calculator ---- */
+  var dispEl = document.getElementById('calcDisp'), subEl = document.getElementById('calcSub');
+  var disp = '0', acc = null, pend = null, fresh = true;
+  var tidy = function(v){
+    if(!isFinite(v)) return 'Error';
+    return String(Math.round(v * 1e6) / 1e6);
+  };
+  var draw = function(){
+    dispEl.textContent = disp;
+    subEl.textContent = (pend !== null && acc !== null) ? tidy(acc) + ' ' + pend : '';
+  };
+  var apply = function(a, b, op){
+    return op === '+' ? a + b : op === '−' ? a - b : op === '×' ? a * b : (b === 0 ? NaN : a / b);
+  };
+  var actions = {
+    d: function(v){
+      if(fresh){ disp = (v === '.') ? '0.' : v; fresh = false; }
+      else if(v === '.'){ if(disp.indexOf('.') < 0) disp += '.'; }
+      else { disp = (disp === '0') ? v : disp + v; }
+      draw();
+    },
+    op: function(v){
+      var cur = parseFloat(disp);
+      // chain: an operator after a completed entry evaluates what is pending first
+      if(pend !== null && !fresh){ cur = apply(acc, cur, pend); disp = tidy(cur); }
+      acc = cur; pend = v; fresh = true; draw();
+    },
+    eq: function(){
+      if(pend === null) return;
+      disp = tidy(apply(acc, parseFloat(disp), pend));
+      acc = null; pend = null; fresh = true; draw();
+    },
+    clear: function(){ disp = '0'; acc = null; pend = null; fresh = true; draw(); },
+    back: function(){
+      if(fresh) return;
+      disp = disp.length > 1 ? disp.slice(0, -1) : '0';
+      if(disp === '' || disp === '-') disp = '0';
+      draw();
+    }
+  };
+  pad.querySelectorAll('.key').forEach(function(b){
+    b.onclick = function(){ actions[b.dataset.k](b.dataset.v); };
+  });
+  pad.querySelectorAll('.chip[data-v]').forEach(function(c){
+    c.onclick = function(){ disp = c.dataset.v; fresh = false; draw(); };
+  });
+  draw();
+
+  /* ---- worksheet ---- */
+  var get = function(k){
+    var el = pad.querySelector('[data-w="'+k+'"]');
+    var v = parseFloat(String(el.value).replace(/[,\s]/g,''));
+    return isNaN(v) ? null : v;
+  };
+  var near = function(a, b){ return Math.abs(a - b) < 0.51; };
+  var round = function(v){ return Math.round(v * 100) / 100; };
+
+  function put(id, v, ok){
+    var el = document.getElementById(id);
+    el.textContent = (v === null) ? '—' : round(v);
+    el.classList.toggle('ok', ok === true);
+    el.classList.toggle('no', ok === false);
+  }
+
+  function refresh(){
+    var dis=get('dis'), hea=get('hea'), tp=get('tp'), fp=get('fp'), fn=get('fn'), tn=get('tn');
+
+    // row totals come from the cells
+    put('wRow1', (tp!==null && fp!==null) ? tp+fp : null);
+    put('wRow2', (fn!==null && tn!==null) ? fn+tn : null);
+
+    // column totals mirror step 1 the moment it is filled, and turn green once the
+    // two cells above them add up to it
+    put('wCol1', dis, (dis!==null && tp!==null && fn!==null) ? near(tp+fn, dis) : undefined);
+    put('wCol2', hea, (hea!==null && fp!==null && tn!==null) ? near(fp+tn, hea) : undefined);
+    put('wAll', (dis!==null && hea!==null) ? dis+hea : null,
+        (dis!==null && hea!==null) ? near(dis+hea, x.n) : undefined);
+
+    var el = document.getElementById('wChecks');
+    if(dis === null || hea === null){
+      el.innerHTML = '<span class="chk">Fill in step 1 — the column totals follow from it.</span>';
+      return;
+    }
+    var ok = near(dis+hea, x.n);
+    el.innerHTML = '<span class="chk '+(ok?'ok':'no')+'">'+(ok?'✓ ':'✗ ')+
+      round(dis)+' + '+round(hea)+' = '+round(dis+hea)+' vs population '+x.n+'</span>';
+  }
+  pad.querySelectorAll('[data-w]').forEach(function(i){ i.addEventListener('input', refresh); });
+  refresh();
+}
+
+function wireSolvePad(x){
+  var pad = document.getElementById('solvepad');
+  if(!pad) return;
+  var counts = [x.tp, x.fp, x.fn, x.tn];
+  var picked = { num:[], den:[] };
+  var slot = 'num';
+
+  function sum(list){ return list.reduce(function(a,i){ return a + counts[i]; }, 0); }
+  function paint(){
+    pad.querySelectorAll('.pcell').forEach(function(b){
+      var i = +b.dataset.cell;
+      var inN = picked.num.indexOf(i) >= 0, inD = picked.den.indexOf(i) >= 0;
+      b.classList.toggle('inN', inN && !inD);
+      b.classList.toggle('inD', inD && !inN);
+      b.classList.toggle('inB', inN && inD);
+      b.querySelector('.tagrow').innerHTML =
+        (inN?'<span class="tag n">NUM</span>':'') + (inD?'<span class="tag d">DEN</span>':'');
+    });
+    document.getElementById('padNum').textContent =
+      picked.num.length ? sum(picked.num) : '—';
+    document.getElementById('padDen').textContent =
+      picked.den.length ? sum(picked.den) : '—';
+    document.getElementById('padEq').textContent = '';
+    document.getElementById('padSlotN').classList.toggle('primary', slot==='num');
+    document.getElementById('padSlotD').classList.toggle('primary', slot==='den');
+  }
+  pad.querySelectorAll('.pcell').forEach(function(b){
+    b.onclick = function(){
+      var i = +b.dataset.cell, list = picked[slot], at = list.indexOf(i);
+      if(at >= 0) list.splice(at, 1); else list.push(i);
+      paint();
+    };
+  });
+  document.getElementById('padSlotN').onclick = function(){ slot='num'; paint(); };
+  document.getElementById('padSlotD').onclick = function(){ slot='den'; paint(); };
+  document.getElementById('padClear').onclick = function(){
+    picked = {num:[], den:[]}; slot='num'; paint(); };
+  document.getElementById('padCompute').onclick = function(){
+    if(!picked.num.length || !picked.den.length) return;
+    var d = sum(picked.den);
+    document.getElementById('padEq').textContent =
+      d ? '= ' + (sum(picked.num)/d*100).toFixed(1) + '%' : '';
+  };
+  document.getElementById('padTotals').onchange = function(e){
+    pad.querySelectorAll('.padtot').forEach(function(t){ t.hidden = !e.target.checked; });
+  };
+  paint();
+}
+
+function drawQuestion(){
+  var run = state.run;
+  if(!run) return practiceSetup();
+  if(run.i >= run.qs.length) return runResults();
+  var item = run.qs[run.i], q = item.q;
+  var mod = byId(q.m);
+  var pct = (run.i/run.qs.length*100).toFixed(1);
+  var KEYS = ['A','B','C','D'];
+  var isCalc = (q.type === 'calc'), isBack = (q.type === 'back');
+  var typed = (q.type === 'typed' || isCalc || isBack);
+  var label = isCalc ? 'Calculate' : isBack ? 'Back-calculate'
+            : q.type==='typed' ? 'Type the answer'
+            : q.type==='case' ? 'Case vignette' : 'Rapid recall';
+
+  // A typed prompt shows its blank; a multiple-choice prompt does not have one.
+  var prompt = typed
+    ? fmt(q.q).replace(/_{2,}/, '<span style="display:inline-block;width:52px;border-bottom:2.5px solid var(--mod-accent,var(--accent));margin:0 4px"></span>')
+    : fmt(q.q);
+
+  content.innerHTML =
+    '<div style="'+(mod?accentVars(mod.id):'')+'">'+
+    '<div class="practicewrap">'+
+      '<div class="qhead">'+
+        '<span class="qtype">'+label+'</span>'+
+        '<span class="qsrc" id="qsrc">'+(run.answered?esc(q.src):'')+'</span>'+
+        '<span class="spacer" style="flex:1"></span>'+
+        '<button class="btn tiny" id="quitBtn">End set</button>'+
+      '</div>'+
+      (q.stem ? '<div class="qstem">'+fmt(q.stem)+'</div>' : '')+
+      '<div class="qprompt'+(q.stem?'':' solo')+'">'+prompt+'</div>'+
+      (isCalc ? solvePad(q.scn) : isBack ? fillPad(q.scn) : '')+
+      (typed
+        ? '<div class="typebox">'+
+            '<input id="typeIn" type="text" autocomplete="off" autocapitalize="off" '+
+              'autocorrect="off" spellcheck="false" placeholder="Type your answer">'+
+            '<button class="btn primary big" id="checkBtn">Check</button>'+
+          '</div>'+
+          '<div class="typehint">'+(isCalc
+            ? 'Answer as a percentage — “90”, “90%” or “0.9” all count, to within 0.6 of a point.'
+            : isBack ? 'Answer as a number of animals.'
+            : 'Units and spacing do not matter — “22-24”, “22 to 24” and “22–24 mEq/L” all count.')+
+          ' Enter to check.</div>'+
+          '<div id="verdict"></div>'
+        : '<div class="choices">'+item.choices.map(function(ch,i){
+            return '<button class="choice" data-i="'+i+'"><span class="key">'+KEYS[i]+'</span>'+
+              '<span>'+fmt(ch)+'</span></button>';
+          }).join('')+'</div>')+
+      '<div id="expl"></div>'+
+      '<div class="studybar"><div class="progress"><div style="width:'+pct+'%"></div></div>'+
+        '<span class="counter">'+(run.i+1)+' / '+run.qs.length+'</span>'+
+        '<button class="btn primary" id="nextBtn">Next →</button></div>'+
+      '<div class="score" id="scoreLine">Score '+run.score+' / '+run.i+'</div>'+
+    '</div></div>';
+
+  function reveal(right, extra){
+    run.answered = true;
+    if(right) run.score++;
+    recordStat(q.m, right);
+    document.getElementById('qsrc').textContent = q.src;
+    document.getElementById('expl').innerHTML =
+      '<div class="explain"><div class="et">'+(right?'Correct':'Why')+'</div>'+fmt(q.why||'')+
+      '<div style="margin-top:9px">'+chapterLink(q.m)+'</div></div>';
+    document.getElementById('scoreLine').textContent = 'Score '+run.score+' / '+(run.i+1);
+    if(extra) extra();
+    wireGoto();
+  }
+
+  if(isCalc){ wireSolvePad(q.scn); wireMatrix(); }
+  if(isBack){ wireFillPad(q.scn); wireMatrix(); }
+  if(typed){
+    var input = document.getElementById('typeIn');
+    var checkBtn = document.getElementById('checkBtn');
+    input.focus();
+    var check = function(){
+      if(run.answered) return;
+      var right = answerMatches(input.value, q);
+      input.disabled = true;
+      input.classList.add(right ? 'right' : 'wrong');
+      checkBtn.disabled = true;
+      document.getElementById('verdict').innerHTML =
+        '<div class="verdict"><span class="vmark '+(right?'ok':'no')+'">'+
+          (right?'Correct':'Not quite')+'</span>'+
+        (right ? '<span class="truth">'+esc(q.a)+'</span>'
+               : '<span class="truth">Answer: <b>'+esc(q.a)+'</b></span>'+
+                 '<button class="btn tiny" id="overrideBtn">I had it right</button>')+
+        '</div>';
+      reveal(right);
+      var ov = document.getElementById('overrideBtn');
+      if(ov) ov.onclick = function(){
+        // Credit the answer and unwind the miss the matcher recorded.
+        run.score++;
+        var st = state.stats[q.m]; if(st) st.right++;
+        input.classList.remove('wrong'); input.classList.add('right');
+        document.querySelector('.verdict .vmark').className = 'vmark ok';
+        document.querySelector('.verdict .vmark').textContent = 'Counted correct';
+        ov.remove();
+        document.getElementById('scoreLine').textContent = 'Score '+run.score+' / '+(run.i+1);
+      };
+    };
+    checkBtn.onclick = check;
+    input.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        if(run.answered) document.getElementById('nextBtn').click();
+        else check();
+      }
+    });
+  } else {
+    var btns = content.querySelectorAll('.choice');
+    btns.forEach(function(b){
+      b.onclick = function(){
+        if(run.answered) return;
+        var picked = item.choices[+b.dataset.i];
+        var right = (picked === q.a);
+        reveal(right, function(){
+          btns.forEach(function(x){
+            x.disabled = true;
+            if(item.choices[+x.dataset.i] === q.a) x.classList.add('right');
+            else if(x === b) x.classList.add('wrong');
+          });
+        });
+      };
+    });
+  }
+
+  document.getElementById('nextBtn').onclick = function(){
+    run.i++; run.answered = false; drawQuestion();
+  };
+  document.getElementById('quitBtn').onclick = function(){
+    run.qs = run.qs.slice(0, run.i + (run.answered?1:0)); runResults();
+  };
+  window.scrollTo(0,0);
+}
+
+function runResults(){
+  var run = state.run;
+  var done = run.qs.length || 1;
+  var pct = Math.round(run.score/done*100);
+  var byMod = {};
+  run.qs.forEach(function(it){ byMod[it.q.m] = true; });
+  content.innerHTML =
+    '<div class="plate"><div class="eyebrow">Study</div><h1>Set complete</h1></div>'+
+    '<div class="practicewrap">'+
+      '<div class="panel"><div class="bigscore"><div class="n">'+pct+'%</div>'+
+        '<div class="of">'+run.score+' of '+done+' correct · '+esc(scopeLabel(state.cfg.scope))+'</div></div>'+
+        '<div style="margin-top:22px">'+statLines().join('')+'</div>'+
+      '</div>'+
+      '<div class="startrow" style="justify-content:center;border:0">'+
+        '<button class="btn primary big" id="againBtn">Another set</button>'+
+        '<button class="btn big" id="setupBtn">Change settings</button>'+
+      '</div>'+
+    '</div>'+footer();
+  document.getElementById('againBtn').onclick = startRun;
+  document.getElementById('setupBtn').onclick = function(){ state.run=null; practiceSetup(); };
+  content.querySelectorAll('[data-stat]').forEach(function(b){
+    b.onclick = function(){ go('module', b.dataset.stat); };
+  });
+  window.scrollTo(0,0);
+}
+
+/* Session accuracy, kept in memory only — nothing is written to the browser. */
+function recordStat(modId, right){
+  var s = state.stats[modId] || (state.stats[modId] = {right:0, seen:0});
+  s.seen++; if(right) s.right++;
+}
+function statLines(limit){
+  var rows = Object.keys(state.stats).map(function(id){
+    var s = state.stats[id], m = byId(id);
+    return { id:id, title:m?m.title:id, pct:Math.round(s.right/s.seen*100), seen:s.seen };
+  }).filter(function(r){ return r.seen >= 2; })
+    .sort(function(a,b){ return a.pct-b.pct; });
+  if(limit) rows = rows.slice(0, limit);
+  return rows.map(function(r){
+    var band = r.pct < 60 ? 'low' : r.pct < 80 ? 'mid' : 'high';
+    return '<div class="weakrow">'+
+      '<div class="weakname" data-stat="'+r.id+'">'+esc(r.title)+'</div>'+
+      '<div class="meter '+band+'"><div style="width:'+r.pct+'%"></div></div>'+
+      '<div class="weakpct">'+r.pct+'%</div></div>';
+  });
+}
+
+/* ==========================================================================
+   Home dashboard
+   ========================================================================== */
+function home(){
+  var totalSecs=0, totalRows=0, totalVals=0;
+  M.forEach(function(m){ var t=tally(m); totalSecs+=t.sections; totalRows+=t.rows; totalVals+=t.values; });
+  var weak = statLines(5);
+
+  var html =
+    '<div class="hero">'+
+      '<div class="eyebrow">desmoVet · veterinary resource hub</div>'+
+      '<h1>NAVLE Study Hub</h1>'+
+      '<p class="tagline">'+M.length+' chapters organized by how the ICVA actually weights the exam, '+
+        'a '+bankSize()+'-question practice bank — multiple choice plus a typed-answer drill — '+
+        'and every source document in one place.</p>'+
+      '<div class="herostats">'+
+        '<div class="pstat"><b>'+M.length+'</b><span>Chapters</span></div>'+
+        '<div class="pstat"><b>'+bankSize()+'</b><span>Practice questions</span></div>'+
+        '<div class="pstat"><b>'+totalRows+'</b><span>Reference rows</span></div>'+
+        '<div class="pstat"><b>'+totalVals+'</b><span>Values to memorize</span></div>'+
+        '<div class="pstat"><b>'+DOCS.length+'</b><span>Source PDFs</span></div>'+
+      '</div>'+
+    '</div>'+
+
+    '<div class="homegrid">'+
+      '<div class="panel cta">'+
+        '<h2>Practice</h2>'+
+        '<div class="sub">Case vignettes carry hand-picked look-alike distractors and rapid-recall '+
+        'questions pull theirs from the same chapter, so nothing is answerable by elimination alone. '+
+        'The typed drill is pure recall — no options at all.</div>'+
+        '<div class="bankline">'+
+          '<div><b>'+caseQuestions().length+'</b>Case vignettes</div>'+
+          '<div><b>'+rapidQuestions().length+'</b>Rapid recall</div>'+
+          '<div><b>'+typedQuestions().length+'</b>Type the answer</div>'+
+          '<div><b>'+(calcQuestions().length+backQuestions().length)+'</b>Calculate</div>'+
+          '<div><b>'+bankSize()+'</b>Total</div>'+
+        '</div>'+
+        '<div class="ctarow">'+
+          '<button class="btn primary big" id="quick20">Start 20 questions</button>'+
+          '<button class="btn big" id="toSetup">Choose a topic</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="panel">'+
+        '<h2>'+(weak.length?'Weakest chapters':'Where to start')+'</h2>'+
+        '<div class="sub">'+(weak.length
+          ? 'Lowest accuracy this session. Click a chapter to read it.'
+          : 'Nothing practiced yet this session. The blueprint chapter explains where the '+
+            '360 questions actually come from — that is the efficient first read.')+'</div>'+
+        '<div style="margin-top:16px">'+(weak.length ? weak.join('') :
+          '<button class="btn big" data-goto="blueprint">Exam blueprint &amp; strategy →</button>')+
+        '</div>'+
+      '</div>'+
+    '</div>';
+
+  // Chapter tiles, grouped, biggest exam blocks first
+  var groups = {};
+  M.forEach(function(m){ (groups[m.group] = groups[m.group] || []).push(m); });
+  var order = GROUP_ORDER.filter(function(g){ return groups[g]; })
+    .concat(Object.keys(groups).filter(function(g){ return GROUP_ORDER.indexOf(g)<0; }));
+  var sortW = function(m){ return m.weight || m.covWeight || 0; };
+  if(groups['Species']) groups['Species'].sort(function(a,b){ return sortW(b)-sortW(a); });
+  order.forEach(function(g){
+    html += '<div class="sectionhead"><h2>'+esc(g)+'</h2><div class="rule"></div>'+
+      '<div class="note">'+plural(groups[g].length,'chapter')+'</div></div><div class="tilegrid">';
+    groups[g].forEach(function(m){
+      var t = tally(m);
+      html += '<button class="tile" data-id="'+m.id+'" style="'+accentVars(m.id)+'">'+
+        '<div class="band"></div><div class="tbody">'+
+        '<div class="ttop"><div class="tmono">'+esc(monogram(m.title))+'</div>'+
+          (m.weight?'<div class="tw">'+m.weight+'%</div>':'')+'</div>'+
+        '<div class="ttitle">'+esc(m.title)+'</div>'+
+        (m.tagline?'<div class="ttag">'+esc(m.tagline)+'</div>':'')+
+        '<div class="tmeta"><span>'+plural(t.sections,'section')+'</span>'+
+          (t.rows?'<span>'+t.rows+' rows</span>':'')+
+          (countQuestions(m.id)?'<span>'+countQuestions(m.id)+' Qs</span>':'')+
+          (t.values?'<span>'+t.values+' values</span>':'')+
+        '</div></div></button>';
+    });
+    html += '</div>';
+  });
+  html += footer();
+
+  content.innerHTML = html;
+  document.getElementById('quick20').onclick = function(){
+    state.cfg = {kind:'mixed', scope:'all', len:20}; startRun();
+  };
+  document.getElementById('toSetup').onclick = function(){ go('practice'); };
+  content.querySelectorAll('.tile').forEach(function(b){
+    b.onclick = function(){ go('module', b.dataset.id); };
+  });
+  content.querySelectorAll('[data-stat]').forEach(function(b){
+    b.onclick = function(){ go('module', b.dataset.stat); };
+  });
+  wireGoto();
+  window.scrollTo(0,0);
+}
+
+/* ---------------- search ---------------- */
+function collectText(m){
+  var out = [];
+  m.sections.forEach(function(s){
+    if(s.title) out.push({t:s.title, ctx:s.title});
+    if(s.body) out.push({t:s.body, ctx:s.title||m.title});
+    (s.list||[]).forEach(function(x){ out.push({t:x, ctx:s.title||m.title}); });
+    (s.items||[]).forEach(function(x){
+      if(Array.isArray(x)) out.push({t:x[0]+' → '+x[1], ctx:s.title||m.title});
+      else out.push({t:x, ctx:s.title||m.title});
+    });
+    (s.rows||[]).forEach(function(r){ out.push({t:r.join(' · '), ctx:s.title||m.title}); });
+    (s.data||[]).forEach(function(d){ out.push({t:d[0]+' '+d[1]+'%', ctx:s.title||m.title}); });
+  });
+  return out;
+}
+function runSearch(q){
+  var needle = q.toLowerCase(), hits = [];
+  M.forEach(function(m){
+    collectText(m).forEach(function(e){
+      var i = e.t.toLowerCase().indexOf(needle);
+      if(i>=0 && hits.length<80){
+        var start = Math.max(0, i-70), snip = (start>0?'…':'')+e.t.slice(start, i+230)+(e.t.length>i+230?'…':'');
+        hits.push({mod:m, ctx:e.ctx, snip:snip});
+      }
+    });
+  });
+  var html = '<div class="plate"><div class="eyebrow">Search</div><h1>'+hits.length+
+    ' result'+(hits.length===1?'':'s')+'</h1><p class="tagline">for “'+esc(q)+'”</p></div><div style="margin-top:18px">';
+  if(!hits.length){ html += '<p class="empty">Nothing matched. Try a buzzword, an agent name, or a drug.</p>'; }
+  hits.forEach(function(h){
+    var re = new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig');
+    html += '<button class="result" data-id="'+h.mod.id+'">'+
+      '<div class="rmod">'+esc(h.mod.title)+' · '+esc(strip(h.ctx))+'</div>'+
+      '<div class="rtxt">'+esc(strip(h.snip)).replace(re,'<mark>$1</mark>')+'</div></button>';
+  });
+  html += '</div>';
+  content.innerHTML = html;
+  content.querySelectorAll('.result').forEach(function(b){
+    b.addEventListener('click', function(){ search.value=''; go('module', b.dataset.id); });
+  });
+  window.scrollTo(0,0);
+}
+
+/* ---------------- coverage map ---------------- */
+function coverage(){
+  var rows = M.filter(function(m){ return m.group==='Species' || m.covKey; }).map(function(m){
+    var filled=0;
+    m.sections.forEach(function(s){
+      if(s.type==='table') filled += (s.rows||[]).length;
+      else if(s.type==='rapidfire'||s.type==='list'||s.type==='cloze') filled += (s.items||[]).length;
+      else filled += 1;
+    });
+    return {m:m, filled:filled};
+  });
+  // Modules sharing a covKey are chapters of one exam block (the ICVA weights the
+  // species, not the body system) — merge them into a single row so the bar means
+  // something. covTitle/covWeight describe the merged block.
+  var merged = [], seen = {};
+  rows.forEach(function(r){
+    var k = r.m.covKey;
+    if(!k){ merged.push(r); return; }
+    if(!seen[k]){
+      seen[k] = {m:{title:r.m.covTitle||r.m.title, weight:r.m.covWeight||r.m.weight,
+                    weightNote:r.m.weightNote, id:r.m.id}, filled:0};
+      merged.push(seen[k]);
+    }
+    seen[k].filled += r.filled;
+  });
+  rows = merged;
+  var maxF = Math.max.apply(null, rows.map(function(r){return r.filled;}));
+  var maxW = Math.max.apply(null, rows.map(function(r){return r.m.weight||0;})) || 1;
+  var html = '<div class="plate"><div class="eyebrow">Study</div><h1>Coverage map</h1>'+
+    '<p class="tagline">Exam weight against how much content this hub currently holds. '+
+    'Where a bar is short and the weight is high, that is where the next source document should go.</p></div>'+
+    '<div class="covgrid">';
+  rows.sort(function(a,b){ return (b.m.weight||0)-(a.m.weight||0); }).forEach(function(r){
+    var wPct = r.m.weight ? (r.m.weight/maxW*100).toFixed(1) : 0;
+    var cPct = (r.filled/maxF*100).toFixed(1);
+    html += '<div class="covrow"><div class="covname">'+esc(r.m.title)+
+      '<small>'+(r.m.weight?r.m.weight+'% of exam':(r.m.weightNote||'weight n/a'))+'</small></div>'+
+      '<div class="covbars">'+
+      '<div class="covline"><span>Exam weight</span><div class="bar-track" style="height:10px">'+
+        '<div class="bar-fill" style="height:10px;width:'+wPct+'%"></div></div>'+
+        '<span>'+(r.m.weight||'—')+(r.m.weight?'%':'')+'</span></div>'+
+      '<div class="covline"><span>Content here</span><div class="bar-track" style="height:10px">'+
+        '<div class="bar-fill" style="height:10px;width:'+cPct+'%;opacity:.45"></div></div>'+
+        '<span>'+r.filled+' items</span></div>'+
+      '</div></div>';
+  });
+  html += '</div>'+footer();
+  content.innerHTML = html;
+  window.scrollTo(0,0);
+}
+
+/* ---------------- document library ---------------- */
+function docLibrary(){
+  var html = '<div class="plate"><div class="eyebrow">Documents</div>'+
+    '<h1>Source documents</h1>'+
+    '<p class="tagline">The original study guides, viewable and printable. Every chapter in this hub '+
+    'is built from one of these.</p></div><div style="margin-top:18px">';
+  DOCS.forEach(function(d){
+    var mod = byId(d.module);
+    html += '<div class="doccard">'+
+      '<div class="docicon">PDF</div>'+
+      '<div><div class="doctitle">'+esc(d.title)+'</div>'+
+      '<div class="docmeta">'+plural(d.pages,'page')+
+        (mod ? ' · builds the <a href="#" data-goto="'+d.module+'">'+esc(mod.title)+'</a> chapter' : '')+
+      '</div>'+
+      '<div class="docdesc">'+esc(d.desc)+'</div></div>'+
+      '<div class="docacts">'+
+        '<button class="btn primary" data-doc="'+esc(d.file)+'">Preview</button>'+
+        '<a class="btn" href="docs/'+esc(d.file)+'" target="_blank" rel="noopener">Open</a>'+
+        '<a class="btn" href="docs/'+esc(d.file)+'" download>Download</a>'+
+      '</div></div>';
+  });
+  html += '</div>'+footer();
+  content.innerHTML = html;
+  content.querySelectorAll('[data-doc]').forEach(function(b){
+    b.addEventListener('click', function(){ go('doc', b.dataset.doc); });
+  });
+  wireGoto();
+  window.scrollTo(0,0);
+}
+function docViewer(file){
+  var d = null;
+  DOCS.forEach(function(x){ if(x.file===file) d = x; });
+  if(!d) return docLibrary();
+  var url = 'docs/' + d.file;
+  content.innerHTML =
+    '<div class="plate"><div class="eyebrow">Documents</div><h1>'+esc(d.title)+'</h1>'+
+    '<p class="tagline">'+esc(d.desc)+'</p></div>'+
+    '<div class="viewbar">'+
+      '<button class="btn" id="backLib">← All documents</button>'+
+      '<div class="spacer" style="flex:1"></div>'+
+      '<button class="btn" id="printDoc">Print</button>'+
+      '<a class="btn" href="'+url+'" target="_blank" rel="noopener">Open in new tab</a>'+
+      '<a class="btn primary" href="'+url+'" download>Download</a>'+
+    '</div>'+
+    '<div class="viewer">'+
+      '<object id="pdfFrame" data="'+url+'#view=FitH" type="application/pdf" title="'+esc(d.title)+'">'+
+        '<div class="fallback"><strong>Preview unavailable in this browser.</strong><br>'+
+        'Use <em>Open in new tab</em> or <em>Download</em> to read '+esc(d.title)+'. '+
+        'If you are opening a copy of this file on its own, make sure the <code>docs/</code> '+
+        'folder sits beside it.</div>'+
+      '</object>'+
+    '</div>'+footer();
+  document.getElementById('backLib').onclick = function(){ go('docs'); };
+  // The embedded viewer owns its own print UI, and cross-document print() is
+  // blocked in most browsers — so open a tab and let the PDF viewer print it.
+  document.getElementById('printDoc').onclick = function(){ window.open(url, '_blank'); };
+  window.scrollTo(0,0);
+}
+
+/* ---------------- router ---------------- */
+function go(view, id){
+  state.view = view;
+  if(view==='module'){ state.id = id; renderModule(id); }
+  else if(view==='home'){ home(); }
+  else if(view==='practice'){ state.run = null; practiceSetup(); }
+  else if(view==='coverage'){ coverage(); }
+  else if(view==='docs'){ docLibrary(); }
+  else if(view==='doc'){ state.doc = id; docViewer(id); }
+  markNav();
+}
+
+/* ---------------- chrome ---------------- */
+var to;
+search.addEventListener('input', function(){
+  clearTimeout(to);
+  to = setTimeout(function(){
+    var q = search.value.trim();
+    if(q.length < 2){
+      if(state.view==='search') go(state.id ? 'module' : 'home', state.id);
+      return;
+    }
+    state.view = 'search'; runSearch(q); markNav();
+  }, 130);
+});
+document.getElementById('themeBtn').onclick = function(){
+  var d = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme', d?'light':'dark');
+  // Accents are resolved per theme, so repaint whatever is on screen.
+  if(state.view==='practice' && state.run) drawQuestion();
+  else if(state.view==='search') runSearch(search.value.trim());
+  else go(state.view, state.view==='doc'?state.doc:state.id);
+};
+document.getElementById('homeBtn').onclick = function(){ go('home'); };
+document.getElementById('practiceBtn').onclick = function(){ go('practice'); };
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('scrim').classList.remove('on'); }
+document.getElementById('menuBtn').onclick = function(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('scrim').classList.toggle('on'); };
+document.getElementById('scrim').onclick = closeSidebar;
+document.addEventListener('keydown', function(e){
+  if(document.activeElement === search) return;
+  if(state.view==='practice' && state.run){
+    if(document.activeElement && document.activeElement.id === 'typeIn') return;
+    var keys = {a:0,b:1,c:2,d:3,1:0,2:1,3:2,4:3};
+    var k = keys[e.key.toLowerCase()];
+    if(k !== undefined){
+      var btn = content.querySelectorAll('.choice')[k];
+      if(btn && !btn.disabled){ e.preventDefault(); btn.click(); }
+    }
+    if(e.key==='Enter' || e.key===' '){
+      var nx = document.getElementById('nextBtn');
+      if(nx){ e.preventDefault(); nx.click(); }
+    }
+  }
+  if(e.key==='/'){ e.preventDefault(); search.focus(); }
+});
+
+/* ---------------- init ---------------- */
+if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+  document.documentElement.setAttribute('data-theme','dark');
+}
+buildNav();
+go('home');
+})();
+</script>
+</body>
+</html>
