@@ -174,10 +174,17 @@
         <label><input type="checkbox" id="opt-panels" checked> One sentence per panel</label>
         <label><input type="checkbox" id="opt-units"> Include units</label>
         <label><input type="checkbox" id="opt-ref"> Include reference intervals</label>
+        <label>Most recent draw:
+          <select id="opt-column" style="background:var(--navy);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:3px 6px;font-family:inherit;font-size:0.85rem;margin-left:4px;">
+            <option value="first" selected>leftmost column</option>
+            <option value="last">rightmost column</option>
+          </select>
+        </label>
       </div>
       <p class="hint" style="margin-top:12px">
-        <b>Cumulative report with several draw dates?</b> The first value on each line is
-        the one used — check that your most recent column is the leftmost one.
+        <b>Cumulative report with several draw dates?</b> Set <b>Most recent draw</b> above to
+        whichever column holds the latest result. The analyte name is read the same way either
+        way — only which value is taken changes.
         Only the printed reference interval decides high or low; the analyzer's own
         H/L marks are shown in the detail table but never drive the result.
       </p>
@@ -415,7 +422,7 @@
     return null;
   }
 
-  function parseLine(line){
+  function parseLine(line, useLast){
     var s = line.replace(/[‒–—―]/g, "-")
                 .replace(/[−]/g, "-")
                 .replace(/\t/g, "  ")
@@ -474,20 +481,36 @@
        most recent result, which is the one to report. */
     var tokens = head.split(" ").filter(Boolean);
 
-    var valIdx = -1, valStr = null, flag = null, censored = null;
-    for (var i = 0; i < tokens.length; i++) {
-      if (i === 0) continue; /* first token is always part of the name */
+    /* A value token is a plain number, a censored one ("<5"), or a number with
+       its flag stuck on ("174L"). */
+    function readValue(i){
       var t = tokens[i];
-      if (PURE_NUM_RE.test(t)) { valIdx = i; valStr = t; break; }
+      if (PURE_NUM_RE.test(t)) return { valStr: t, censored: null, flag: null };
       var cz = t.match(CENSORED_RE);
-      if (cz) { valIdx = i; valStr = t; censored = cz[1]; break; }
+      if (cz) return { valStr: t, censored: cz[1], flag: null };
       var nf = t.match(NUM_FLAG_RE);
-      if (nf) { valIdx = i; valStr = nf[1]; flag = flagLetter(nf[2]); break; }
+      if (nf) return { valStr: nf[1], censored: null, flag: flagLetter(nf[2]) };
+      return null;
+    }
+
+    /* firstIdx always marks where the name ends, whichever column is chosen.
+       Without that, picking the rightmost value would drag the earlier columns
+       into the analyte name. Index 0 is never a value — it is the name. */
+    var firstIdx = -1, lastIdx = -1;
+    for (var i = 1; i < tokens.length; i++) {
+      if (readValue(i)) { if (firstIdx < 0) firstIdx = i; lastIdx = i; }
+    }
+
+    var valIdx = -1, valStr = null, flag = null, censored = null;
+    if (firstIdx >= 0) {
+      valIdx = useLast ? lastIdx : firstIdx;
+      var v = readValue(valIdx);
+      valStr = v.valStr; censored = v.censored; flag = v.flag;
     }
 
     if (valStr === null) return { kind: "unparsed", text: s };
 
-    var name = tokens.slice(0, Math.min(valIdx, tokens.length)).join(" ").trim();
+    var name = tokens.slice(0, Math.min(firstIdx, tokens.length)).join(" ").trim();
     if (!name) return { kind: "unparsed", text: s };
 
     /* flag + units after the value */
@@ -633,7 +656,7 @@
     var lines = text.replace(/\r\n?/g, "\n").split("\n");
     var rows = [], unparsed = [];
     lines.forEach(function(l){
-      var p = parseLine(l);
+      var p = parseLine(l, opts && opts.useLast);
       if (!p) return;
       if (p.kind === "analyte") rows.push(p);
       else if (p.kind === "unparsed") unparsed.push(p.text);
@@ -730,7 +753,8 @@ if (typeof document !== "undefined") (function(){
     return {
       perPanel: $("opt-panels").checked,
       units: $("opt-units").checked,
-      ref: $("opt-ref").checked
+      ref: $("opt-ref").checked,
+      useLast: $("opt-column").value === "last"
     };
   }
 
@@ -809,7 +833,7 @@ if (typeof document !== "undefined") (function(){
 
   var t;
   input.addEventListener("input", function(){ clearTimeout(t); t = setTimeout(render, 150); });
-  ["opt-panels", "opt-units", "opt-ref"].forEach(function(id){
+  ["opt-panels", "opt-units", "opt-ref", "opt-column"].forEach(function(id){
     $(id).addEventListener("change", render);
   });
   $("btn-format").addEventListener("click", render);
