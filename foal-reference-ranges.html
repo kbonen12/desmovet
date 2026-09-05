@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foal Reference Ranges — desmoVet</title>
+<meta name="description" content="Age-specific CBC and chemistry reference intervals for foals from birth to one year, with a paste-in value checker.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{
+    --navy:#0f1c2b; --panel:#16273a; --panel-2:#1c3247; --line:#28405a;
+    --ink:#ffffff; --sub:#c9d6e4; --gold:#e6b24f; --gold-bright:#f0c95a;
+    --high:#f0a08a; --high-bg:rgba(200,80,50,0.16);
+    --low:#8fc3e8; --low-bg:rgba(60,130,190,0.16);
+    --soft:#e6c98a; --ok:#8fd0a4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--navy);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;line-height:1.6;}
+  a{color:inherit;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+  nav{border-bottom:1px solid var(--line);background:rgba(15,28,43,0.92);
+    backdrop-filter:blur(8px);position:sticky;top:0;z-index:50;}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;}
+  .brand{font-weight:700;font-size:1.15rem;text-decoration:none;}
+  .navlinks{display:flex;gap:22px;font-size:0.92rem;font-weight:600;}
+  .navlinks a{color:var(--sub);text-decoration:none;}
+  .navlinks a:hover{color:var(--ink);}
+  header.page{padding:40px 0 8px;}
+  h1{font-size:1.9rem;margin:0 0 8px;}
+  .lede{color:var(--sub);max-width:720px;margin:0 0 4px;}
+  .srcline{color:var(--sub);font-size:0.85rem;max-width:760px;}
+  section{padding:28px 0;border-top:1px solid var(--line);margin-top:28px;}
+  h2{font-size:1.25rem;margin:0 0 6px;}
+  .hint{color:var(--sub);font-size:0.88rem;margin:0 0 16px;}
+  .agebar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+  .agebtn{background:var(--panel);border:1px solid var(--line);color:var(--ink);
+    padding:8px 14px;border-radius:8px;font-size:0.88rem;font-weight:600;cursor:pointer;
+    font-family:inherit;}
+  .agebtn:hover{border-color:var(--gold);}
+  .agebtn[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#12202f;}
+  .neonate-flag{display:inline-block;margin-top:10px;font-size:0.82rem;color:var(--gold);
+    border:1px solid var(--line);border-radius:6px;padding:4px 10px;background:var(--panel);}
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:18px;}
+  @media(max-width:820px){.panels{grid-template-columns:1fr;}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .card h3{margin:0;padding:14px 18px;font-size:1rem;border-bottom:1px solid var(--line);
+    background:var(--panel-2);}
+  table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+  th,td{text-align:left;padding:7px 18px;border-bottom:1px solid rgba(40,64,90,0.6);}
+  th{color:var(--sub);font-size:0.76rem;text-transform:uppercase;letter-spacing:0.04em;font-weight:700;}
+  td.val{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  td.unit{color:var(--sub);white-space:nowrap;font-size:0.82rem;}
+  tr.sec td{background:var(--panel-2);color:var(--sub);font-weight:700;font-size:0.76rem;
+    text-transform:uppercase;letter-spacing:0.04em;}
+  .na{color:var(--sub);}
+  textarea{width:100%;min-height:170px;background:var(--panel);color:var(--ink);
+    border:1px solid var(--line);border-radius:10px;padding:14px;font-family:ui-monospace,
+    SFMono-Regular,Menlo,Consolas,monospace;font-size:0.86rem;line-height:1.5;resize:vertical;}
+  .btnrow{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  button.go{background:var(--gold);color:#12202f;border:none;padding:10px 20px;border-radius:8px;
+    font-weight:700;font-size:0.92rem;cursor:pointer;font-family:inherit;}
+  button.go:hover{background:var(--gold-bright);}
+  button.ghost{background:transparent;color:var(--sub);border:1px solid var(--line);
+    padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;font-family:inherit;}
+  button.ghost:hover{color:var(--ink);border-color:var(--gold);}
+  #results{margin-top:18px;}
+  .flag{display:flex;gap:12px;align-items:baseline;padding:9px 14px;border:1px solid var(--line);
+    border-radius:8px;margin-bottom:8px;font-size:0.92rem;}
+  .flag.h{background:var(--high-bg);border-color:rgba(200,80,50,0.5);}
+  .flag.l{background:var(--low-bg);border-color:rgba(60,130,190,0.5);}
+  .flag .nm{font-weight:700;min-width:190px;}
+  .flag .hl{font-weight:800;}
+  .flag.h .hl{color:var(--high);}
+  .flag.l .hl{color:var(--low);}
+  .flag .ref{color:var(--sub);font-size:0.86rem;}
+  .flag .soft{color:var(--soft);font-size:0.82rem;font-style:italic;}
+  .allclear{color:var(--ok);font-weight:600;}
+  .unmatched{color:var(--sub);font-size:0.84rem;margin-top:10px;}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-top:14px;}
+  summary{cursor:pointer;font-weight:600;}
+  details p, details li{color:var(--sub);font-size:0.9rem;}
+  .disclaim{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);
+    border-radius:8px;padding:16px 20px;color:var(--sub);font-size:0.9rem;margin-top:22px;}
+  footer{border-top:1px solid var(--line);margin-top:40px;padding:24px 0 40px;color:var(--sub);font-size:0.85rem;}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="brand" href="index.html">desmoVet</a>
+  <div class="navlinks">
+    <a href="index.html#tools">Tools</a>
+    <a href="bloodwork-abnormals.html">Bloodwork Abnormals</a>
+    <a href="index.html">Home</a>
+  </div>
+</div></nav>
+
+<div class="wrap">
+<header class="page">
+  <h1>Foal Reference Ranges</h1>
+  <p class="lede">Age-specific CBC and serum chemistry reference intervals for foals from birth to
+  one year, in conventional US units. Pick an age to read the intervals, or paste analyzer output
+  to have the values checked against them.</p>
+  <p class="srcline">Compiled from Koterba, Drummond &amp; Kosch, <em>Equine Clinical Neonatology</em>
+  (tables 24-1 to 24-3 and 27-2 to 27-5); Harvey et al. 1984, <em>Equine vet. J.</em> 16(4), 347–353;
+  and the Rossdales Laboratories neonatal Thoroughbred panel. Nothing on this page is computed or
+  estimated — every interval is transcribed from a published table.</p>
+</header>
+
+<section>
+  <h2>1 · Age of foal</h2>
+  <p class="hint">Brackets are the ages the sources actually publish. Pick the closest one; for a
+  foal between two brackets the younger is the more conservative choice.</p>
+  <div class="agebar" id="agebar" role="group" aria-label="Foal age"></div>
+  <div id="neoflag"></div>
+  <div class="panels">
+    <div class="card"><h3>CBC &amp; haematology</h3><table id="tblCBC"></table></div>
+    <div class="card"><h3>Serum chemistry</h3><table id="tblCHEM"></table></div>
+  </div>
+  <div class="card" id="suppCard" style="margin-top:20px;display:none;">
+    <h3>Neonatal supplement — under 36 hours only</h3><table id="tblSUPP"></table>
+  </div>
+</section>
+
+<section>
+  <h2>2 · Check values</h2>
+  <p class="hint">Paste analyzer output — one analyte per line, name then value. Only values outside
+  the interval for the selected age are reported. The lab's own printed ranges are ignored.</p>
+  <textarea id="input" spellcheck="false" placeholder="HCT      26 %&#10;HGB      8.9 g/dL&#10;WBC      3.8&#10;Seg#     2.10&#10;PLT      88&#10;TP       4.2&#10;GLU      64&#10;CREAT    3.9&#10;AST      880&#10;IgG      210"></textarea>
+  <div class="btnrow">
+    <button class="go" id="run">Check values</button>
+    <button class="ghost" id="clear">Clear</button>
+    <button class="ghost" id="demo">Load example</button>
+  </div>
+  <div id="results"></div>
+</section>
+
+<section>
+  <h2>Notes and sources</h2>
+  <details><summary>Where each interval comes from</summary>
+    <p>Koterba is primary for every age-series analyte — it is the only source giving a full
+    birth-to-one-year series in conventional units, and it carries age points the others lack
+    (under 1 hour before nursing, 5 days, adult). Harvey et al. 1984 supplies MCH, the one analyte
+    Koterba does not report. The under-36-hour supplement comes from the Rossdales neonatal
+    Thoroughbred panel and covers analytes no age-series source reports at all, IgG among them.</p>
+    <p>The source for each analyte is shown in the tables above. Adult leukocyte values come from
+    Jain, <em>Schalm's Veterinary Hematology</em>, 4th ed., 1986, by way of Koterba.</p>
+  </details>
+  <details><summary>How the intervals were constructed, and where the sources disagree</summary>
+    <p>Koterba publishes intervals as mean ± 2 S.D.; Harvey publishes the observed minimum and
+    maximum alongside mean ± SD. Comparing the two across every shared analyte and age, their
+    intervals overlap by only about 84% on average — so a value sitting close to a boundary here
+    may be inside the interval a different text would give. For a borderline value, treat it as
+    borderline rather than as a clean abnormal.</p>
+    <p>The electrolyte intervals (sodium, potassium, chloride, TCO₂, phosphorus, calcium,
+    magnesium, anion gap) are derived arithmetically from a mean ± 2 S.D. table, so their bounds
+    are statistical rather than observed. On small skewed samples this occasionally produces an
+    implausible bound — magnesium at 3 weeks derives a negative lower limit, and the checker below
+    will not flag a low magnesium at that age.</p>
+  </details>
+  <details><summary>Known artifacts in the published tables</summary>
+    <ul>
+      <li>Magnesium at 3 weeks derives a lower bound of −0.7 mg/dL. Low magnesium is not flagged at
+      that bracket.</li>
+      <li>Cholesterol at 9 months is printed as 11–187 mg/dL. The lower bound is out of step with
+      every neighbouring age and is almost certainly a typographical error for 111, so low
+      cholesterol is not flagged at that bracket.</li>
+      <li>Lymphocytes at 1 month in Harvey's table are printed with an upper bound duplicating the
+      neutrophil row; that source is not used for lymphocytes here.</li>
+    </ul>
+  </details>
+  <details><summary>What the checker will not flag</summary>
+    <p>RDW, MPV, nRBC, reticulocytes, osmolality, lactate and ionised calcium have no published
+    foal interval in these sources. Analyzer sample-quality indices (lipemia, hemolysis, icterus
+    index flags) are not the same measurement as the icterus index in the haematology table and are
+    ignored. Differential percentages are only checked for foals under 36 hours, where the
+    Rossdales panel provides them.</p>
+  </details>
+
+  <div class="disclaim">
+    These are population reference intervals derived from healthy foals — not decision thresholds,
+    and not a diagnosis. A value inside the interval does not exclude disease, and a value outside
+    it does not establish one. Interpret alongside the foal's clinical picture, hydration status
+    and serial trend. Verify against your own laboratory's methods before acting on any result.
+  </div>
+</section>
+
+<footer><div>desmoVet · Foal reference ranges · Values transcribed from the published sources
+cited above.</div></footer>
+</div>
+
+<script>
+const DATA = {"ages":[{"k":"1h","l":"<1 hour","d":0.04},{"k":"12h","l":"<12 hours","d":0.5},{"k":"1d","l":"1 day","d":1.0},{"k":"3d","l":"3 days","d":3.0},{"k":"5d","l":"5 days","d":5.0},{"k":"1w","l":"1 week","d":7.0},{"k":"2w","l":"2 weeks","d":14.0},{"k":"3w","l":"3 weeks","d":21.0},{"k":"1mo","l":"1 month","d":30.0},{"k":"2mo","l":"2 months","d":60.0},{"k":"3mo","l":"3 months","d":90.0},{"k":"4mo","l":"4 months","d":120.0},{"k":"5mo","l":"5 months","d":150.0},{"k":"6mo","l":"6 months","d":180.0},{"k":"9mo","l":"9 months","d":270.0},{"k":"12mo","l":"12 months","d":365.0},{"k":"ad","l":"Adult","d":null}],"analytes":[{"n":"Packed cell volume (HCT)","u":"%","p":"CBC","s":"Erythrocytes","src":"Koterba 24-1","a":["hct","pcv","packed cell volume","hematocrit","haematocrit"],"dp":0,"r":{"1h":[40.0,52.0],"12h":[37.0,49.0],"1d":[32.0,46.0],"3d":[30.0,46.0],"5d":[30.0,44.0],"1w":[28.0,43.0],"2w":[28.0,41.0],"3w":[29.0,40.0],"1mo":[29.0,41.0],"2mo":[31.0,44.0],"3mo":[32.0,42.0],"4mo":[32.0,43.0],"5mo":[29.0,41.0],"6mo":[29.0,41.0],"9mo":[31.0,44.0],"12mo":[31.0,42.0],"ad":[31.0,47.0]}},{"n":"Hemoglobin","u":"g/dL","p":"CBC","s":"Erythrocytes","src":"Koterba 24-1","a":["hgb","hb","hemoglobin","haemoglobin"],"dp":1,"r":{"1h":[13.4,19.9],"12h":[12.6,17.4],"1d":[12.0,16.6],"3d":[11.5,16.7],"5d":[11.0,16.6],"1w":[10.7,15.8],"2w":[10.1,15.3],"3w":[10.5,14.8],"1mo":[10.9,15.3],"2mo":[11.6,16.0],"3mo":[11.7,15.3],"4mo":[11.6,17.2],"5mo":[10.5,15.2],"6mo":[10.8,15.4],"9mo":[10.9,15.9],"12mo":[11.0,15.4],"ad":[11.0,18.0]}},{"n":"Red blood cells","u":"×10⁶/µL","p":"CBC","s":"Erythrocytes","src":"Koterba 24-1","a":["rbc","red blood cells","erythrocytes","red cell count"],"dp":1,"r":{"1h":[9.3,12.9],"12h":[9.0,12.0],"1d":[8.2,11.0],"3d":[7.8,11.4],"5d":[7.2,11.6],"1w":[7.4,10.6],"2w":[7.2,10.8],"3w":[7.8,10.6],"1mo":[7.9,11.1],"2mo":[9.1,13.2],"3mo":[9.2,12.0],"4mo":[8.9,12.7],"5mo":[8.8,11.4],"6mo":[7.9,11.6],"9mo":[8.0,11.2],"12mo":[7.7,10.9],"ad":[5.9,9.9]}},{"n":"MCV","u":"fL","p":"CBC","s":"Erythrocytes","src":"Koterba 24-1","a":["mcv","mean cell volume","mean corpuscular volume"],"dp":0,"r":{"1h":[37.0,45.0],"12h":[36.0,45.0],"1d":[36.0,46.0],"3d":[35.0,44.0],"5d":[35.0,45.0],"1w":[35.0,44.0],"2w":[35.0,41.0],"3w":[34.0,41.0],"1mo":[33.0,40.0],"2mo":[32.0,38.0],"3mo":[31.0,38.0],"4mo":[31.0,37.0],"5mo":[32.0,38.0],"6mo":[32.0,39.0],"9mo":[36.0,43.0],"12mo":[35.0,44.0],"ad":[41.0,51.0]}},{"n":"MCHC","u":"g/dL","p":"CBC","s":"Erythrocytes","src":"Koterba 24-1","a":["mchc","mean cell hemoglobin concentration","mean corpuscular hemoglobin concentration"],"dp":0,"r":{"1h":[33.0,39.0],"12h":[32.0,40.0],"1d":[32.0,40.0],"3d":[34.0,40.0],"5d":[34.0,40.0],"1w":[35.0,40.0],"2w":[34.0,40.0],"3w":[34.0,40.0],"1mo":[34.0,40.0],"2mo":[33.0,40.0],"3mo":[34.0,40.0],"4mo":[34.0,40.0],"5mo":[34.0,41.0],"6mo":[33.0,40.0],"9mo":[32.0,40.0],"12mo":[34.0,40.0],"ad":[33.0,41.0]}},{"n":"MCH","u":"pg","p":"CBC","s":"Erythrocytes","src":"Harvey T2","a":["mch","mean cell hemoglobin","mean corpuscular hemoglobin"],"dp":0,"r":{"12h":[12.0,16.0],"1d":[13.0,16.0],"3d":[13.0,17.0],"1w":[13.0,20.0],"2w":[13.0,18.0],"3w":[12.0,15.0],"1mo":[13.0,15.0],"2mo":[11.0,15.0],"3mo":[10.0,15.0],"4mo":[12.0,14.0],"5mo":[11.0,14.0],"6mo":[12.0,15.0],"9mo":[12.0,15.0],"12mo":[12.0,15.0]}},{"n":"Total leukocytes (WBC)","u":"×10³/µL","p":"CBC","s":"Leukocytes","src":"Koterba 24-2","a":["wbc","ncc","nucleated cells","total leukocytes","total leucocytes","white blood cells","nucleated cell count"],"dp":1,"r":{"12h":[6.9,14.4],"1d":[4.9,11.7],"3d":[5.1,10.1],"1w":[6.3,13.6],"2w":[5.2,11.9],"3w":[5.4,12.4],"1mo":[5.3,12.2],"2mo":[5.4,13.5],"3mo":[6.7,16.8],"4mo":[6.2,14.2],"5mo":[6.4,14.6],"6mo":[7.8,11.6],"9mo":[6.3,11.1],"12mo":[6.5,11.8],"ad":[5.4,14.3]}},{"n":"Segmented neutrophils","u":"×10³/µL","p":"CBC","s":"Leukocytes","src":"Koterba 24-2","a":["seg","segs","seg#","neut","neut#","neutrophil","neutrophils","segmented neutrophils","mature neutrophils","pmn"],"dp":2,"r":{"12h":[5.55,12.38],"1d":[3.36,9.57],"3d":[3.21,8.58],"1w":[4.35,10.55],"2w":[3.99,9.08],"3w":[3.16,8.94],"1mo":[2.76,9.27],"2mo":[2.7,9.46],"3mo":[3.92,10.35],"4mo":[3.01,7.48],"5mo":[1.7,8.4],"6mo":[2.89,5.56],"9mo":[2.6,5.38],"12mo":[2.66,5.9],"ad":[2.26,8.58]}},{"n":"Lymphocytes","u":"×10³/µL","p":"CBC","s":"Leukocytes","src":"Koterba 24-2","a":["lymph","lymph#","lymphs","lymphocyte","lymphocytes"],"dp":2,"r":{"12h":[0.46,2.54],"1d":[0.67,2.12],"3d":[0.73,2.17],"1w":[1.43,2.28],"2w":[1.32,3.12],"3w":[1.47,3.26],"1mo":[1.73,4.85],"2mo":[2.37,4.72],"3mo":[2.88,7.15],"4mo":[2.8,7.32],"5mo":[2.37,7.88],"6mo":[3.2,6.01],"9mo":[2.98,6.59],"12mo":[2.01,6.53],"ad":[1.5,7.7]}},{"n":"Monocytes","u":"×10³/µL","p":"CBC","s":"Leukocytes","src":"Koterba 24-2","a":["mono","mono#","monos","monocyte","monocytes"],"dp":2,"r":{"12h":[0.04,0.43],"1d":[0.07,0.39],"3d":[0.08,0.58],"1w":[0.03,0.54],"2w":[0.07,0.58],"3w":[0.06,0.69],"1mo":[0.05,0.63],"2mo":[0.05,0.61],"3mo":[0.12,0.76],"4mo":[0.08,0.66],"5mo":[0.09,0.51],"6mo":[0.04,0.45],"9mo":[0.05,0.42],"12mo":[0.04,0.44],"ad":[0.0,1.0]}},{"n":"Eosinophils","u":"×10³/µL","p":"CBC","s":"Leukocytes","src":"Koterba 24-2","a":["eos","eos#","eosinophil","eosinophils"],"dp":2,"r":{"12h":[0.0,0.0],"1d":[0.0,0.02],"3d":[0.0,0.22],"1w":[0.0,0.09],"2w":[0.0,0.1],"3w":[0.0,0.16],"1mo":[0.0,0.12],"2mo":[0.0,0.28],"3mo":[0.0,0.55],"4mo":[0.0,0.99],"5mo":[0.0,0.58],"6mo":[0.0,0.55],"9mo":[0.0,0.7],"12mo":[0.0,0.78],"ad":[0.0,1.0]}},{"n":"Basophils","u":"×10³/µL","p":"CBC","s":"Leukocytes","src":"Koterba 24-2","a":["baso","baso#","basos","basophil","basophils"],"dp":2,"r":{"12h":[0.0,0.02],"1d":[0.0,0.03],"3d":[0.0,0.12],"1w":[0.0,0.18],"2w":[0.0,0.1],"3w":[0.0,0.09],"1mo":[0.0,0.08],"2mo":[0.0,0.1],"3mo":[0.0,0.07],"4mo":[0.0,0.07],"5mo":[0.0,0.06],"6mo":[0.0,0.06],"9mo":[0.0,0.07],"12mo":[0.0,0.09],"ad":[0.0,0.4]}},{"n":"Platelets","u":"×10³/µL","p":"CBC","s":"Other haematology","src":"Koterba 24-3","a":["plt","plts","platelet","platelets","platelet count"],"dp":0,"r":{"12h":[105.0,446.0],"1d":[129.0,409.0],"3d":[105.0,353.0],"1w":[111.0,387.0],"2w":[133.0,457.0],"3w":[134.0,442.0],"1mo":[136.0,468.0],"2mo":[152.0,456.0],"3mo":[200.0,376.0],"4mo":[140.0,388.0],"5mo":[132.0,376.0],"6mo":[128.0,368.0],"9mo":[105.0,337.0],"12mo":[120.0,316.0],"ad":[100.0,350.0]}},{"n":"Total plasma protein","u":"g/dL","p":"CBC","s":"Other haematology","src":"Koterba 24-3","a":["pp","tpp","plasma protein","total plasma protein","tp refractometer"],"dp":1,"r":{"1h":[4.4,5.9],"12h":[5.1,7.6],"1d":[5.2,8.0],"3d":[5.3,7.9],"5d":[5.4,7.6],"1w":[5.2,7.5],"2w":[5.2,7.2],"3w":[5.2,6.8],"1mo":[5.1,7.1],"2mo":[5.2,6.8],"3mo":[5.5,7.1],"4mo":[5.9,7.5],"5mo":[6.1,7.3],"6mo":[5.9,7.1],"9mo":[5.6,6.8],"12mo":[5.4,7.0],"ad":[6.2,8.0]}},{"n":"Fibrinogen","u":"mg/dL","p":"CBC","s":"Other haematology","src":"Koterba 24-3","a":["fib","fibrinogen","fibr"],"dp":0,"r":{"1h":[100.0,500.0],"12h":[100.0,350.0],"1d":[100.0,400.0],"3d":[150.0,500.0],"5d":[100.0,500.0],"1w":[150.0,450.0],"2w":[150.0,600.0],"3w":[150.0,600.0],"1mo":[200.0,700.0],"2mo":[150.0,650.0],"3mo":[100.0,800.0],"4mo":[250.0,800.0],"5mo":[300.0,800.0],"6mo":[200.0,550.0],"9mo":[200.0,550.0],"12mo":[200.0,550.0],"ad":[100.0,600.0]}},{"n":"Haptoglobin","u":"mg/dL","p":"CBC","s":"Other haematology","src":"Koterba 24-3","a":["hapto","haptoglobin"],"dp":0,"r":{"12h":[8.0,120.0],"1d":[0.0,136.0],"3d":[8.0,162.0],"1w":[0.0,143.0],"2w":[0.0,202.0],"3w":[11.0,184.0],"1mo":[0.0,214.0],"2mo":[15.0,214.0],"3mo":[23.0,187.0],"4mo":[53.0,182.0],"5mo":[32.0,198.0],"6mo":[0.0,125.0],"9mo":[16.0,127.0],"12mo":[0.0,179.0],"ad":[19.0,177.0]}},{"n":"Icterus index","u":"units","p":"CBC","s":"Other haematology","src":"Koterba 24-3","a":["icterus index","icteric index","ict ind"],"dp":0,"r":{"1h":[20.0,100.0],"12h":[15.0,50.0],"1d":[10.0,75.0],"3d":[10.0,50.0],"5d":[15.0,50.0],"1w":[5.0,25.0],"2w":[5.0,25.0],"3w":[5.0,20.0],"1mo":[5.0,20.0],"2mo":[5.0,25.0],"3mo":[5.0,25.0],"4mo":[5.0,20.0],"5mo":[5.0,20.0],"6mo":[5.0,20.0],"9mo":[5.0,20.0],"12mo":[5.0,20.0],"ad":[5.0,20.0]}},{"n":"Total protein (serum)","u":"g/dL","p":"Chemistry","s":"Proteins","src":"Koterba 27-5","a":["tp","total protein","tsp","serum total protein"],"dp":1,"r":{"12h":[4.0,7.9],"1d":[4.3,8.1],"3d":[4.4,7.6],"1w":[4.4,6.8],"2w":[4.8,6.7],"3w":[4.7,6.5],"1mo":[5.0,6.7],"2mo":[5.2,6.5],"3mo":[5.5,7.0],"4mo":[5.7,7.3],"5mo":[6.0,6.9],"6mo":[6.0,6.9],"9mo":[5.6,6.7],"12mo":[5.8,6.6],"ad":[5.5,7.9]}},{"n":"Albumin","u":"g/dL","p":"Chemistry","s":"Proteins","src":"Koterba 27-5","a":["alb","albumin"],"dp":1,"r":{"12h":[2.7,3.9],"1d":[2.5,3.6],"3d":[2.8,3.7],"1w":[2.7,3.4],"2w":[2.6,3.3],"3w":[2.6,3.2],"1mo":[2.7,3.4],"2mo":[2.7,3.5],"3mo":[2.8,3.5],"4mo":[2.8,3.7],"5mo":[2.9,3.4],"6mo":[3.0,3.5],"9mo":[3.0,3.6],"12mo":[3.1,3.8],"ad":[2.8,4.8]}},{"n":"Total globulin","u":"g/dL","p":"Chemistry","s":"Proteins","src":"Koterba 27-5","a":["glob","globulin","total globulin","globulins"],"dp":1,"r":{"12h":[1.1,4.8],"1d":[1.5,4.6],"3d":[1.6,4.5],"1w":[1.6,3.9],"2w":[2.0,3.5],"3w":[1.7,3.6],"1mo":[1.8,3.7],"2mo":[1.9,3.8],"3mo":[2.6,4.1],"4mo":[2.7,3.9],"5mo":[2.7,4.0],"6mo":[2.8,3.7],"9mo":[2.2,3.1],"12mo":[2.2,3.5],"ad":[1.9,3.8]}},{"n":"Albumin : globulin","u":"ratio","p":"Chemistry","s":"Proteins","src":"Koterba 27-5","a":["a/g","a:g","ag ratio","albumin globulin ratio","a/g ratio"],"dp":1,"r":{"12h":[0.7,2.8],"1d":[0.6,1.9],"3d":[0.7,2.1],"1w":[0.7,1.8],"2w":[0.7,1.7],"3w":[0.8,1.8],"1mo":[0.8,1.5],"2mo":[0.7,1.6],"3mo":[0.7,1.7],"4mo":[0.7,1.3],"5mo":[0.8,1.2],"6mo":[0.8,1.4],"9mo":[1.0,1.6],"12mo":[1.0,1.6],"ad":[0.7,1.9]}},{"n":"ALP","u":"IU/L","p":"Chemistry","s":"Enzymes","src":"Koterba 27-2","a":["alp","alkp","skal","alkaline phosphatase","sap total"],"dp":0,"r":{"12h":[152.0,2835.0],"1d":[861.0,2671.0],"3d":[283.0,1462.0],"5d":[156.0,1294.0],"1w":[137.0,1169.0],"2w":[182.0,859.0],"3w":[146.0,752.0],"1mo":[210.0,866.0],"2mo":[201.0,741.0],"3mo":[206.0,458.0],"4mo":[124.0,222.0],"5mo":[105.0,239.0],"6mo":[155.0,226.0],"9mo":[158.0,232.0],"ad":[64.0,214.0]}},{"n":"GGT","u":"IU/L","p":"Chemistry","s":"Enzymes","src":"Koterba 27-2","a":["ggt","gamma gt","gamma glutamyl transferase"],"dp":0,"r":{"12h":[13.0,39.0],"1d":[18.0,43.0],"3d":[9.0,40.0],"5d":[8.0,89.0],"1w":[14.0,164.0],"2w":[16.0,169.0],"3w":[16.0,132.0],"1mo":[17.0,99.0],"2mo":[8.0,38.0],"3mo":[0.0,27.0],"4mo":[0.0,27.0],"5mo":[0.0,30.0],"6mo":[0.0,26.0],"9mo":[0.0,26.0],"ad":[5.0,28.0]}},{"n":"SDH","u":"IU/L","p":"Chemistry","s":"Enzymes","src":"Koterba 27-2","a":["sdh","sorbitol dehydrogenase"],"dp":1,"r":{"12h":[0.2,4.8],"1d":[0.6,4.6],"3d":[0.6,3.7],"5d":[0.8,5.3],"1w":[0.8,8.2],"2w":[0.6,4.3],"3w":[1.0,8.4],"1mo":[1.2,5.9],"2mo":[1.1,4.6],"3mo":[1.1,3.9],"4mo":[1.5,4.4],"5mo":[1.3,4.8],"6mo":[0.3,3.3],"9mo":[0.3,3.3],"ad":[0.5,3.0]}},{"n":"AST","u":"IU/L","p":"Chemistry","s":"Enzymes","src":"Koterba 27-2","a":["ast","sgot","aspartate aminotransferase","aspartate transaminase"],"dp":0,"r":{"12h":[97.0,315.0],"1d":[146.0,340.0],"3d":[80.0,580.0],"1w":[237.0,620.0],"2w":[240.0,540.0],"3w":[226.0,540.0],"1mo":[252.0,440.0],"2mo":[282.0,484.0],"3mo":[282.0,480.0],"4mo":[280.0,520.0],"5mo":[225.0,420.0],"6mo":[300.0,620.0],"9mo":[246.0,728.0],"12mo":[283.0,720.0],"ad":[149.0,267.0]}},{"n":"ALT","u":"IU/L","p":"Chemistry","s":"Enzymes","src":"Koterba 27-2","a":["alt","sgpt","alanine aminotransferase","alanine transaminase"],"dp":0,"r":{"12h":[0.0,47.0],"1d":[0.0,49.0],"3d":[0.0,52.0],"1w":[4.0,50.0],"2w":[1.0,9.0],"3w":[0.0,45.0],"1mo":[5.0,47.0],"2mo":[7.0,57.0],"3mo":[8.0,65.0],"4mo":[8.0,65.0],"5mo":[0.0,65.0],"6mo":[7.0,20.0],"9mo":[4.0,27.0],"12mo":[5.0,20.0],"ad":[4.0,10.0]}},{"n":"CK","u":"IU/L","p":"Chemistry","s":"Enzymes","src":"Koterba 27-2","a":["ck","cpk","creatine kinase","creatinine kinase"],"dp":0,"r":{"12h":[65.0,380.0],"1d":[40.0,909.0],"3d":[21.0,97.0],"5d":[29.0,208.0],"1w":[52.0,143.0],"2w":[46.0,208.0],"3w":[44.0,210.0],"1mo":[81.0,585.0],"2mo":[50.0,170.0],"3mo":[57.0,204.0],"4mo":[60.0,266.0],"5mo":[60.0,125.0],"6mo":[97.0,396.0],"9mo":[97.0,396.0],"ad":[69.0,272.0]}},{"n":"Sodium","u":"mEq/L","p":"Chemistry","s":"Electrolytes","src":"Koterba 27-3","a":["na","na+","s/na","sodium"],"dp":0,"r":{"12h":[133.0,163.0],"1d":[123.0,159.0],"3d":[123.0,161.0],"1w":[130.0,154.0],"2w":[135.0,151.0],"3w":[136.0,152.0],"1mo":[136.0,154.0],"2mo":[136.0,160.0],"3mo":[140.0,156.0],"4mo":[135.0,159.0],"5mo":[133.0,157.0],"6mo":[133.0,153.0],"9mo":[138.0,148.0],"12mo":[134.0,158.0],"ad":[131.0,147.0]}},{"n":"Potassium","u":"mEq/L","p":"Chemistry","s":"Electrolytes","src":"Koterba 27-3","a":["k","k+","s/k","potassium"],"dp":1,"r":{"12h":[3.4,5.4],"1d":[3.6,5.6],"3d":[3.4,6.2],"1w":[3.8,5.8],"2w":[3.8,5.4],"3w":[3.6,5.6],"1mo":[3.8,5.4],"2mo":[3.8,5.8],"3mo":[3.4,5.8],"4mo":[3.8,5.8],"5mo":[3.1,5.9],"6mo":[2.8,5.6],"9mo":[2.7,4.7],"12mo":[2.2,5.4],"ad":[3.2,5.2]}},{"n":"Chloride","u":"mEq/L","p":"Chemistry","s":"Electrolytes","src":"Koterba 27-3","a":["cl","cl-","s/cl","chloride"],"dp":0,"r":{"12h":[93.0,117.0],"1d":[90.0,114.0],"3d":[90.0,112.0],"1w":[94.0,110.0],"2w":[97.0,109.0],"3w":[93.0,115.0],"1mo":[97.0,109.0],"2mo":[93.0,117.0],"3mo":[102.0,110.0],"4mo":[94.0,116.0],"5mo":[100.0,114.0],"6mo":[98.0,112.0],"9mo":[96.0,108.0],"12mo":[99.0,109.0],"ad":[95.0,107.0]}},{"n":"Carbon dioxide (TCO₂)","u":"mEq/L","p":"Chemistry","s":"Electrolytes","src":"Koterba 27-3","a":["tco2","co2","hco3","hco3-","bicarb","bicarbonate","carbon dioxide","total co2"],"dp":0,"r":{"12h":[20.0,30.0],"1d":[21.0,33.0],"3d":[16.0,40.0],"1w":[24.0,32.0],"2w":[19.0,33.0],"3w":[21.0,33.0],"1mo":[22.0,32.0],"2mo":[22.0,32.0],"3mo":[24.0,30.0],"4mo":[23.0,31.0],"5mo":[22.0,32.0],"6mo":[22.0,30.0],"9mo":[24.0,32.0],"12mo":[27.0,31.0],"ad":[22.0,30.0]}},{"n":"Phosphorus","u":"mg/dL","p":"Chemistry","s":"Electrolytes","src":"Koterba 27-3","a":["phos","p","po4","hpo4","phosphorus","phosphate"],"dp":1,"r":{"12h":[3.1,6.3],"1d":[3.8,7.4],"3d":[3.8,9.0],"1w":[5.4,9.4],"2w":[6.0,9.6],"3w":[6.8,8.4],"1mo":[4.9,9.3],"2mo":[6.0,8.8],"3mo":[6.3,8.3],"4mo":[4.9,8.5],"5mo":[4.7,7.9],"6mo":[4.8,7.6],"9mo":[4.6,7.4],"12mo":[5.2,6.8],"ad":[3.1,5.9]}},{"n":"Calcium (total)","u":"mg/dL","p":"Chemistry","s":"Electrolytes","src":"Koterba 27-3","a":["ca","ca2+","calcium","total calcium","tca"],"dp":1,"r":{"12h":[10.8,14.8],"1d":[9.7,13.7],"3d":[7.7,16.5],"1w":[11.3,13.7],"2w":[11.2,13.6],"3w":[11.3,13.3],"1mo":[11.0,13.4],"2mo":[11.7,12.9],"3mo":[11.2,13.2],"4mo":[10.7,13.9],"5mo":[10.4,13.2],"6mo":[10.2,13.4],"9mo":[10.8,13.2],"12mo":[11.3,14.1],"ad":[10.8,13.2]}},{"n":"Magnesium","u":"mg/dL","p":"Chemistry","s":"Electrolytes","src":"Koterba 27-3","a":["mg","mg2+","magnesium"],"dp":1,"r":{"12h":[0.7,2.3],"1d":[0.6,4.2],"3d":[1.2,3.0],"5d":[0.2,4.2],"1w":[1.4,2.6],"2w":[1.0,3.2],"3w":[-0.7,5.3],"1mo":[1.0,3.0],"2mo":[1.2,2.8],"3mo":[1.6,2.8],"4mo":[1.7,3.1],"5mo":[1.8,3.0],"6mo":[1.7,3.1],"9mo":[1.9,2.7],"ad":[1.6,2.8]}},{"n":"Anion gap","u":"mEq/L","p":"Chemistry","s":"Electrolytes","src":"Koterba 27-3","a":["an gap","anion gap"],"dp":0,"r":{"12h":[9.0,33.0],"1d":[8.0,24.0],"3d":[19.0,27.0],"1w":[9.0,25.0],"2w":[12.0,24.0],"3w":[10.0,26.0],"1mo":[13.0,25.0],"2mo":[11.0,31.0],"3mo":[12.0,28.0],"4mo":[13.0,29.0],"5mo":[6.0,26.0],"6mo":[9.0,25.0],"9mo":[8.0,24.0],"12mo":[5.0,29.0],"ad":[10.0,26.0]}},{"n":"Glucose","u":"mg/dL","p":"Chemistry","s":"Renal / metabolic","src":"Koterba 27-4","a":["glu","gluc","glucose","bg"],"dp":0,"r":{"12h":[108.0,190.0],"1d":[121.0,233.0],"3d":[101.0,226.0],"1w":[121.0,192.0],"2w":[137.0,205.0],"3w":[130.0,240.0],"1mo":[130.0,216.0],"2mo":[119.0,204.0],"3mo":[88.0,179.0],"4mo":[113.0,196.0],"5mo":[95.0,210.0],"6mo":[110.0,210.0],"9mo":[104.0,207.0],"12mo":[105.0,165.0],"ad":[57.0,96.0]}},{"n":"Blood urea nitrogen","u":"mg/dL","p":"Chemistry","s":"Renal / metabolic","src":"Koterba 27-4","a":["bun","urea","urea nitrogen","blood urea nitrogen"],"dp":0,"r":{"12h":[12.0,27.0],"1d":[9.0,40.0],"3d":[2.0,29.0],"1w":[4.0,20.0],"2w":[6.0,13.0],"3w":[6.0,14.0],"1mo":[6.0,21.0],"2mo":[6.0,11.0],"3mo":[7.0,20.0],"4mo":[9.0,25.0],"5mo":[11.0,33.0],"6mo":[15.0,30.0],"9mo":[16.0,26.0],"12mo":[15.0,24.0],"ad":[12.0,24.0]}},{"n":"Creatinine","u":"mg/dL","p":"Chemistry","s":"Renal / metabolic","src":"Koterba 27-4","a":["creat","crea","cre","creatinine"],"dp":1,"r":{"12h":[1.7,4.2],"1d":[1.2,4.3],"3d":[0.4,2.1],"1w":[1.0,1.7],"2w":[0.9,1.8],"3w":[0.6,2.0],"1mo":[1.1,1.8],"2mo":[1.1,2.1],"3mo":[0.7,2.2],"4mo":[1.3,2.1],"5mo":[1.2,2.1],"6mo":[1.2,2.1],"9mo":[1.1,2.2],"12mo":[1.3,2.1],"ad":[0.9,2.0]}},{"n":"Total bilirubin","u":"mg/dL","p":"Chemistry","s":"Hepatobiliary / lipids","src":"Koterba 27-4","a":["tbil","t-bil","tbili","total bilirubin","t bili"],"dp":1,"r":{"12h":[0.9,2.8],"1d":[1.3,4.5],"3d":[0.5,3.9],"5d":[1.2,3.6],"1w":[0.8,3.0],"2w":[0.7,2.2],"3w":[0.5,1.6],"1mo":[0.5,1.7],"2mo":[0.5,2.0],"3mo":[0.4,2.0],"4mo":[0.3,1.0],"5mo":[0.3,1.8],"6mo":[0.3,1.3],"9mo":[0.3,1.1],"12mo":[0.4,1.4],"ad":[0.5,1.8]}},{"n":"Conjugated bilirubin","u":"mg/dL","p":"Chemistry","s":"Hepatobiliary / lipids","src":"Koterba 27-4","a":["dbil","d-bil","dbili","direct bilirubin","conjugated bilirubin"],"dp":1,"r":{"12h":[0.3,0.6],"1d":[0.3,0.7],"3d":[0.2,0.8],"5d":[0.1,0.7],"1w":[0.3,0.7],"2w":[0.3,0.6],"3w":[0.2,0.5],"1mo":[0.1,0.6],"2mo":[0.2,0.5],"3mo":[0.1,0.7],"4mo":[0.1,0.6],"5mo":[0.1,0.7],"6mo":[0.1,0.7],"9mo":[0.1,0.7],"12mo":[0.1,1.0],"ad":[0.2,0.7]}},{"n":"Unconjugated bilirubin","u":"mg/dL","p":"Chemistry","s":"Hepatobiliary / lipids","src":"Koterba 27-4","a":["ibil","indirect bilirubin","unconjugated bilirubin"],"dp":1,"r":{"12h":[0.8,2.5],"1d":[1.0,3.8],"3d":[0.2,3.3],"5d":[0.8,2.8],"1w":[0.5,2.3],"2w":[0.5,1.6],"3w":[0.2,1.1],"1mo":[0.4,1.2],"2mo":[0.3,1.5],"3mo":[0.4,1.4],"4mo":[0.2,0.4],"5mo":[0.1,1.1],"6mo":[0.1,0.6],"9mo":[0.2,0.6],"12mo":[0.2,0.6],"ad":[0.3,1.0]}},{"n":"Cholesterol","u":"mg/dL","p":"Chemistry","s":"Hepatobiliary / lipids","src":"Koterba 27-4","a":["chol","cholesterol"],"dp":0,"r":{"12h":[111.0,432.0],"1d":[110.0,562.0],"3d":[142.0,350.0],"5d":[127.0,361.0],"1w":[139.0,445.0],"2w":[164.0,287.0],"3w":[74.0,276.0],"1mo":[83.0,233.0],"2mo":[98.0,242.0],"3mo":[110.0,226.0],"4mo":[91.0,207.0],"5mo":[51.0,137.0],"6mo":[83.0,173.0],"9mo":[11.0,187.0],"ad":[58.0,109.0]}},{"n":"Triglyceride","u":"mg/dL","p":"Chemistry","s":"Hepatobiliary / lipids","src":"Koterba 27-4","a":["trig","trigs","triglyceride","triglycerides"],"dp":0,"r":{"12h":[24.0,88.0],"1d":[30.0,193.0],"3d":[63.0,342.0],"5d":[52.0,340.0],"1w":[30.0,239.0],"2w":[39.0,200.0],"3w":[34.0,124.0],"1mo":[45.0,155.0],"2mo":[10.0,148.0],"3mo":[28.0,151.0],"4mo":[14.0,148.0],"5mo":[14.0,57.0],"6mo":[35.0,76.0],"9mo":[38.0,86.0],"ad":[6.0,44.0]}}],"supp":[{"n":"Segmented neutrophils %","u":"% of WBC","r":[58,85],"a":["seg%","segs%","neut%","neutrophil%","segmented neutrophils %"],"dp":0},{"n":"Lymphocytes %","u":"% of WBC","r":[14,37],"a":["lymph%","lymphs%","lymphocytes %"],"dp":0},{"n":"Monocytes %","u":"% of WBC","r":[1,5],"a":["mono%","monos%","monocytes %"],"dp":0},{"n":"Eosinophils %","u":"% of WBC","r":[1,2],"a":["eos%","eosinophils %"],"dp":0},{"n":"Immunoglobulin G (IgG)","u":"mg/dL","r":[690,1860],"a":["igg","immunoglobulin g"],"dp":0},{"n":"Serum amyloid A","u":"mg/L","r":[0,26],"a":["saa","serum amyloid a","amyloid a"],"dp":0},{"n":"Lactate dehydrogenase","u":"IU/L","r":[615,1110],"a":["ld","ldh","lactate dehydrogenase"],"dp":0},{"n":"Glutamate dehydrogenase","u":"IU/L","r":[8,43],"a":["gldh","glutamate dehydrogenase"],"dp":0},{"n":"Serum alkaline phosphatase","u":"IU/L","r":[2424,4544],"a":["sap","serum alkaline phosphatase"],"dp":0},{"n":"Intestinal alkaline phosphatase","u":"IU/L","r":[528,1200],"a":["iap","intestinal alkaline phosphatase"],"dp":0},{"n":"Bile acids","u":"µmol/L","r":[0,8.0],"a":["bile acids","bacids","tba"],"dp":0},{"n":"Troponin I","u":"ng/mL","r":[0.18,0.79],"a":["ctni","troponin","troponin i"],"dp":2},{"n":"Plasma viscosity","u":"mPa","r":[1.34,1.59],"a":["pv","plasma viscosity"],"dp":2},{"n":"Alpha-1 globulin","u":"g/dL","r":[0.05,0.15],"a":["alpha 1 globulin","a1 glob","alpha-1 globulin"],"dp":2},{"n":"Alpha-2 globulin","u":"g/dL","r":[0.4,0.56],"a":["alpha 2 globulin","a2 glob","alpha-2 globulin"],"dp":2},{"n":"Beta-1 globulin","u":"g/dL","r":[0.31,0.72],"a":["beta 1 globulin","b1 glob","beta-1 globulin"],"dp":2},{"n":"Beta-2 globulin","u":"g/dL","r":[0.13,0.6],"a":["beta 2 globulin","b2 glob","beta-2 globulin"],"dp":2},{"n":"Gamma globulin","u":"g/dL","r":[0.48,1.01],"a":["gamma globulin","g glob"],"dp":2},{"n":"Fractional urinary clearance, PO₄","u":"%","r":[0.02,0.53],"a":["fe po4","fractional excretion po4","fractional urinary clearance po4"],"dp":2}]};
+const NEONATE = ['1h','12h','1d'];
+const NO_LOW_FLAG = {'Magnesium':['3w'], 'Cholesterol':['9mo']};
+let age = '12h';
+
+const norm = s => s.toLowerCase().replace(/[\u2013\u2014]/g,'-').replace(/[^a-z0-9%+/. -]/g,'').replace(/\s+/g,' ').trim();
+const fmt = (v,dp) => Number(v).toFixed(dp);
+const ivl = (r,dp) => r[0]===r[1] ? fmt(r[0],dp) : fmt(r[0],dp)+' – '+fmt(r[1],dp);
+
+function buildAges(){
+  const bar = document.getElementById('agebar');
+  DATA.ages.forEach(a=>{
+    const b=document.createElement('button');
+    b.className='agebtn'; b.textContent=a.l; b.dataset.k=a.k;
+    b.setAttribute('aria-pressed', a.k===age ? 'true':'false');
+    b.onclick=()=>{age=a.k;render();};
+    bar.appendChild(b);
+  });
+}
+
+function rowsFor(panel){
+  let html='<tr><th>Analyte</th><th>Units</th><th style="text-align:right">Interval</th></tr>';
+  let sec=null;
+  DATA.analytes.filter(a=>a.p===panel).forEach(a=>{
+    if(a.s!==sec){sec=a.s;html+='<tr class="sec"><td colspan="3">'+sec+'</td></tr>';}
+    const r=a.r[age];
+    html+='<tr><td>'+a.n+'</td><td class="unit">'+a.u+'</td><td class="val">'
+        + (r ? ivl(r,a.dp) : '<span class="na">not reported</span>') + '</td></tr>';
+  });
+  return html;
+}
+
+function render(){
+  document.querySelectorAll('.agebtn').forEach(b=>
+    b.setAttribute('aria-pressed', b.dataset.k===age ? 'true':'false'));
+  document.getElementById('tblCBC').innerHTML = rowsFor('CBC');
+  document.getElementById('tblCHEM').innerHTML = rowsFor('Chemistry');
+  const neo = NEONATE.includes(age);
+  document.getElementById('suppCard').style.display = neo ? '' : 'none';
+  document.getElementById('neoflag').innerHTML = neo
+    ? '<span class="neonate-flag">Under 36 hours — the Rossdales neonatal supplement applies, including IgG</span>' : '';
+  if(neo){
+    let h='<tr><th>Analyte</th><th>Units</th><th style="text-align:right">Interval</th></tr>';
+    DATA.supp.forEach(s=>{h+='<tr><td>'+s.n+'</td><td class="unit">'+s.u+'</td><td class="val">'
+      +ivl(s.r,s.dp)+'</td></tr>';});
+    document.getElementById('tblSUPP').innerHTML=h;
+  }
+  document.getElementById('results').innerHTML='';
+}
+
+function lookupTable(){
+  const t=[];
+  DATA.analytes.forEach(a=>{ const r=a.r[age]; if(r) a.a.forEach(al=>t.push({al:norm(al),n:a.n,u:a.u,dp:a.dp,r:r})); });
+  if(NEONATE.includes(age))
+    DATA.supp.forEach(s=>s.a.forEach(al=>t.push({al:norm(al),n:s.n,u:s.u,dp:s.dp,r:s.r})));
+  t.sort((x,y)=>y.al.length-x.al.length);
+  return t;
+}
+
+function check(){
+  const tbl=lookupTable();
+  const lines=document.getElementById('input').value.split(/\r?\n/);
+  const flags=[]; const unmatched=[]; let matched=0;
+  lines.forEach(raw=>{
+    const line=raw.trim(); if(!line) return;
+    const n=norm(line);
+    const hit=tbl.find(e=> n===e.al || (n.startsWith(e.al) && n[e.al.length]===' '));
+    if(!hit){ if(/\d/.test(line)) unmatched.push(line.split(/\s{2,}|\t|:/)[0].trim()); return; }
+    const m=n.slice(hit.al.length).match(/-?\d+(\.\d+)?/);
+    if(!m) return;
+    const v=parseFloat(m[0]); matched++;
+    const [lo,hi]=hit.r;
+    const noLow=(NO_LOW_FLAG[hit.n]||[]).includes(age);
+    if(v>hi) flags.push({n:hit.n,v:v,d:'h',lo:lo,hi:hi,u:hit.u,dp:hit.dp,
+                         soft:(v-hi)<=0.1*(hi-lo)});
+    else if(v<lo && !noLow) flags.push({n:hit.n,v:v,d:'l',lo:lo,hi:hi,u:hit.u,dp:hit.dp,
+                         soft:(lo-v)<=0.1*(hi-lo)});
+  });
+  const out=document.getElementById('results');
+  if(!matched){ out.innerHTML='<p class="unmatched">No analytes recognised. Put the analyte name '
+    +'first on each line, then the value — for example <code>HCT 26</code>.</p>'; return; }
+  let h='';
+  if(!flags.length) h='<p class="allclear">All '+matched+' recognised value'
+    +(matched===1?'':'s')+' fall within the reference interval for this age.</p>';
+  flags.forEach(f=>{
+    h+='<div class="flag '+f.d+'"><span class="nm">'+f.n+'</span>'
+     + '<span class="hl">'+fmt(f.v,f.dp)+' '+(f.d==='h'?'H':'L')+'</span>'
+     + '<span class="ref">('+ivl([f.lo,f.hi],f.dp)+' '+f.u+')</span>'
+     + (f.soft?'<span class="soft">borderline</span>':'') + '</div>';
+  });
+  if(unmatched.length) h+='<p class="unmatched">Not checked (no published foal interval, or the '
+    +'name was not recognised): '+unmatched.slice(0,14).join(', ')+'</p>';
+  out.innerHTML=h;
+}
+
+document.getElementById('run').onclick=check;
+document.getElementById('clear').onclick=()=>{document.getElementById('input').value='';
+  document.getElementById('results').innerHTML='';};
+document.getElementById('demo').onclick=()=>{
+  document.getElementById('input').value=
+    'HCT      26 %\nHGB      8.9 g/dL\nWBC      3.8\nSeg#     2.10\nLymph#   0.90\n'
+   +'PLT      88\nTP       4.2\nALB      2.4\nGLU      58\nCREAT    4.9\nBUN      31\n'
+   +'AST      880\nGGT      31\nNa       132\nK        5.9\nIgG      210';
+  check();
+};
+
+buildAges(); render();
+</script>
+</body>
+</html>
