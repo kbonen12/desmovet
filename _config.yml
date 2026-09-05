@@ -26,6 +26,7 @@ defaults:
 # Keep working files out of the published site.
 exclude:
   - README.md
+  - navle/README.md
   - LICENSE
   - "*.zip"
   - .DS_Store
