@@ -7,7 +7,8 @@
      data-bar="off"        skip the top bar (the page already has the desmoVet nav)
      data-footer="info"    only the tool row (Sources / Last updated / Report), placed
                            above the page's own <footer>
-   To add a tool, add an entry to TOOLS. To credit sources, fill in its `sources`. */
+   To add a tool, add an entry to TOOLS. To credit sources, fill in its `sources`;
+   while it is null the Sources line is simply not shown. */
 (function () {
   var TOOLS = {
     anesthesia: { name: 'Small Animal Anesthesia Calculator', path: 'anesthesia/index.html', sources: null },
@@ -25,7 +26,6 @@
   };
   var REPO = 'kbonen12/desmovet';
   var EMAIL = 'admin@desmovet.com';
-  var NO_SOURCES = 'Being added. Until then, check every dose and value against a current formulary or textbook.';
 
   var me = document.currentScript || document.querySelector('script[src*="dv-chrome.js"]');
   var key = me && me.getAttribute('data-tool');
@@ -50,7 +50,7 @@
     var toolRow =
       '<div class="dv-tool">' +
         '<div>' +
-          '<div class="dv-k">Sources</div><div class="dv-v">' + (tool.sources || NO_SOURCES) + '</div>' +
+          (tool.sources ? '<div class="dv-k">Sources</div><div class="dv-v">' + tool.sources + '</div>' : '') +
           '<div class="dv-meta"><div id="dv-updated" hidden><span class="dv-k" style="display:inline">Last updated</span> <span class="dv-v" id="dv-updated-date"></span></div></div>' +
         '</div>' +
         '<div><a class="dv-report" href="' + mail + '">⚑ Report an error</a>' +
