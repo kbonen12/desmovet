@@ -2087,7 +2087,7 @@ const DRUGS=[
  {n:"Clopidogrel",g:"raas",cls:"Antiplatelet (P2Y12 ADP-receptor antagonist)",moa:"Irreversibly blocks the platelet P2Y12 ADP receptor, reducing platelet aggregation.",use:"Thromboprophylaxis in dogs with protein-losing glomerular disease, which are hypercoagulable from urinary antithrombin loss.",watch:"Bleeding risk, vomiting and hyporexia; tablets are very bitter for cats."},
  // Diuretics & tubular drugs
  {n:"Furosemide",g:"diur",fam:"loop",cls:"Loop diuretic",moa:"Blocks the Na⁺-K⁺-2Cl⁻ cotransporter (NKCC2) in the thick ascending limb.",use:"CHF and pulmonary edema; hypercalcemia (after rehydration); a trial in volume-replete oliguric AKI.",watch:"Hypokalemia, hypochloremic metabolic alkalosis, dehydration with prerenal azotemia, hypomagnesemia; ototoxicity at high IV doses."},
- {n:"Torsemide",g:"diur",fam:"loop",cls:"Loop diuretic (long-acting)",moa:"Blocks NKCC2 in the thick ascending limb, with a longer action and greater potency than furosemide.",use:"Chronic or refractory CHF in dogs, given once or twice daily.",watch:"Same problems as furosemide but stronger: azotemia, dehydration and hypokalemia. Recheck renal values after starting."},
+ {n:"Torsemide",g:"diur",fam:"loop",cls:"Loop diuretic (long-acting)",moa:"A long-acting, high-potency blocker of NKCC2 in the thick ascending limb.",use:"Chronic or refractory CHF in dogs, given once or twice daily.",watch:"The usual loop-diuretic risks, but more pronounced: azotemia, dehydration and hypokalemia. Recheck renal values after starting."},
  {n:"Hydrochlorothiazide",g:"diur",cls:"Thiazide diuretic",moa:"Blocks the Na⁺-Cl⁻ cotransporter (NCC) in the distal convoluted tubule.",use:"Preventing recurrent calcium oxalate uroliths in dogs by lowering urinary calcium; paradoxically reduces urine volume in nephrogenic DI.",watch:"Hypokalemia, mild hypercalcemia and dehydration."},
  {n:"Spironolactone",g:"diur",cls:"Aldosterone antagonist (K⁺-sparing diuretic)",moa:"Blocks the mineralocorticoid (aldosterone) receptor in the collecting duct, so Na⁺ is lost and K⁺ is retained.",use:"Add-on therapy in canine CHF; ascites from liver disease.",watch:"Hyperkalemia (especially combined with an ACEi or ARB); ulcerative facial dermatitis has been reported in cats."},
  {n:"Mannitol",g:"diur",cls:"Osmotic diuretic",moa:"Freely filtered but not reabsorbed, so it holds water in the PCT and descending limb by osmosis.",use:"Raised intracranial pressure and acute glaucoma; its use in oliguric AKI is controversial.",watch:"Contraindicated in fluid overload or anuria, because it expands plasma volume first. Causes dehydration and electrolyte shifts."},
@@ -2096,7 +2096,7 @@ const DRUGS=[
  {n:"Desmopressin (DDAVP)",g:"diur",cls:"Synthetic ADH (V2 receptor agonist)",moa:"Activates V2 receptors on collecting-duct principal cells, inserting aquaporin-2 so water is reabsorbed.",use:"Treating central diabetes insipidus; a response trial separates central from nephrogenic DI.",watch:"Hyponatremia (water intoxication) if the patient keeps drinking heavily; no effect in nephrogenic DI."},
  // CKD supportive care
  {n:"Aluminum hydroxide",g:"ckd",fam:"pbind",cls:"Intestinal phosphate binder",moa:"Binds dietary phosphate in the gut so it is lost in feces rather than absorbed.",use:"Hyperphosphatemia in CKD when a renal diet alone does not reach the IRIS phosphate target.",watch:"Must be mixed into every meal to work; constipation; aluminum accumulation at high doses."},
- {n:"Lanthanum carbonate",g:"ckd",fam:"pbind",cls:"Intestinal phosphate binder (calcium- and aluminum-free)",moa:"Lanthanum binds dietary phosphate in the gut into an insoluble complex that is excreted.",use:"Hyperphosphatemia in CKD, especially when calcium-based binders cause hypercalcemia.",watch:"Must be given with food; vomiting and constipation."},
+ {n:"Lanthanum carbonate",g:"ckd",fam:"pbind",cls:"Intestinal phosphate binder (calcium- and aluminum-free)",moa:"A rare-earth metal salt that binds dietary phosphate in the gut into an insoluble complex; free of calcium and aluminum.",use:"Hyperphosphatemia in CKD, especially when calcium-based binders cause hypercalcemia.",watch:"Must be given with food; vomiting and constipation."},
  {n:"Calcitriol",g:"ckd",cls:"Active vitamin D (1,25-dihydroxycholecalciferol)",moa:"Activates vitamin D receptors, increasing calcium absorption and directly suppressing PTH secretion.",use:"Renal secondary hyperparathyroidism in dogs with CKD, once phosphate is controlled.",watch:"Hypercalcemia and hyperphosphatemia causing soft-tissue mineralization. Monitor ionized calcium and phosphate."},
  {n:"Darbepoetin",g:"ckd",cls:"Erythropoiesis-stimulating agent (ESA)",moa:"A long-acting erythropoietin analog that stimulates red cell production in the bone marrow.",use:"Non-regenerative anemia of CKD that is affecting quality of life.",watch:"Hypertension, iron deficiency (supplement iron) and seizures. It is less likely than human epoetin alfa to trigger anti-EPO antibodies and pure red cell aplasia."},
  {n:"Potassium gluconate",g:"ckd",cls:"Oral potassium supplement",moa:"Replaces potassium lost in the urine.",use:"Hypokalemia in cats with CKD (weakness, cervical ventroflexion, poor appetite).",watch:"Recheck K⁺; GI upset; hyperkalemia if renal excretion is very poor."},
@@ -2106,7 +2106,7 @@ const DRUGS=[
  {n:"Capromorelin",g:"ckd",cls:"Ghrelin receptor agonist",moa:"Mimics ghrelin at the growth hormone secretagogue receptor, triggering hunger.",use:"Weight loss in cats with CKD (licensed); appetite stimulation in dogs.",watch:"Hypersalivation and vomiting; can raise blood glucose, so use with caution in diabetics."},
  // Emergency, toxicology & nephrotoxins
  {n:"Calcium gluconate (10%)",g:"emerg",cls:"Calcium salt (cardioprotectant)",moa:"Raises the threshold potential, restoring the gap from the resting membrane potential, so the heart is less excitable in hyperkalemia.",use:"Hyperkalemia with ECG changes (blocked cat, Addisonian crisis, uroabdomen); hypocalcemia.",watch:"It does NOT lower K⁺. Give slowly IV with ECG monitoring and stop if bradycardia develops. Don't mix with bicarbonate."},
- {n:"Regular insulin + dextrose",g:"emerg",cls:"K⁺-shifting therapy",moa:"Insulin stimulates Na⁺/K⁺-ATPase, moving K⁺ into cells; dextrose prevents hypoglycemia.",use:"Moderate to severe hyperkalemia while the underlying cause (e.g., obstruction) is corrected.",watch:"Hypoglycemia for hours afterwards: check glucose every 1–2 h and add dextrose to fluids. K⁺ is moved into cells, not removed from the body."},
+ {n:"Regular insulin + dextrose",g:"emerg",cls:"K⁺-shifting therapy",moa:"A hormone that stimulates Na⁺/K⁺-ATPase, moving K⁺ into cells; the glucose given with it prevents hypoglycemia.",use:"Moderate to severe hyperkalemia while the underlying cause (e.g., obstruction) is corrected.",watch:"Hypoglycemia for hours afterwards: check glucose every 1–2 h and add dextrose to fluids. K⁺ is moved into cells, not removed from the body."},
  {n:"Sodium bicarbonate",g:"emerg",cls:"Alkalinizing agent",moa:"Buffers H⁺ and raises blood pH; as H⁺ leaves cells, K⁺ moves in.",use:"Severe metabolic acidosis; an adjunct for hyperkalemia.",watch:"Lowers ionized calcium, causes hypernatremia, and can cause paradoxical CSF acidosis. It precipitates with calcium in the same line."},
  {n:"Fomepizole",g:"emerg",cls:"Alcohol dehydrogenase inhibitor",moa:"Competitively blocks alcohol dehydrogenase, so ethylene glycol is not converted to its toxic metabolites (glycolate, oxalate).",use:"Ethylene glycol toxicosis, started early (within about 8 h in dogs and 3 h in cats).",watch:"Cats need a much higher dose than dogs. It doesn't help once the EG has already been metabolized and the patient is azotemic."},
  {n:"Doxycycline",g:"emerg",fam:"abx30",cls:"Tetracycline antibiotic",moa:"Binds the 30S ribosomal subunit and blocks tRNA attachment, stopping bacterial protein synthesis (bacteriostatic).",use:"Leptospirosis in dogs: clears both the bacteremia and the renal carrier state (14-day course).",watch:"In cats, follow tablets with water or food to prevent esophagitis and strictures; GI upset."},
@@ -2130,7 +2130,7 @@ function drugPick(d,n,rnd,ok){
   const same=drugShuffle(pool.filter(x=>x.g===d.g),rnd),other=drugShuffle(pool.filter(x=>x.g!==d.g),rnd);
   return same.concat(other).slice(0,n);
 }
-function drugFamNames(d){return d.fam?DRUGS.filter(x=>x.fam===d.fam).map(x=>x.n).join(' or '):d.n;}
+function drugAnswer(d){const fam=d.fam?DRUGS.filter(x=>x.fam===d.fam&&x!==d).map(x=>x.n):[];return `${d.n} (${d.cls})`+(fam.length?`<br><span style="font-size:.85em;opacity:.8">Same family: ${fam.join(', ')}</span>`:'');}
 function drugCards(list){
   const cards=[];
   list.forEach(d=>{
@@ -2138,7 +2138,7 @@ function drugCards(list){
     cards.push({q:`<b>${d.n}</b>: mechanism of action?`,a:d.moa,hint:d.cls});
     cards.push({q:`<b>${d.n}</b>: why use it?`,a:d.use,hint:d.cls});
     cards.push({q:`<b>${d.n}</b>: what do you watch for?`,a:d.watch,hint:d.cls});
-    cards.push({q:`Name the drug: <i>${d.moa}</i>`,a:`${drugFamNames(d)} (${d.cls})`,hint:DRUG_GROUPS[d.g][0]});
+    cards.push({q:`Name the drug: <i>${d.moa}</i>`,a:drugAnswer(d),hint:DRUG_GROUPS[d.g][0]});
     if(d.pearl)cards.push({q:`<b>${d.n}</b>: clinical pearl?`,a:d.pearl,hint:d.cls});
   });
   return cards;
@@ -2161,7 +2161,7 @@ function drugQuestions(list){
     FC_DECKS['drug_'+g]={name:short,drug:true,cards:drugCards(list)};
     MCQ_BANKS['drug_'+g]={name:short,drug:true,shuffle:true,questions:drugQuestions(list)};
   });
-  FC_DECKS.drug_moa={name:'All drugs: MOA only',drug:true,shuffle:true,cards:DRUGS.flatMap(d=>[{q:`<b>${d.n}</b>: mechanism of action?`,a:d.moa,hint:d.cls},{q:`Name the drug: <i>${d.moa}</i>`,a:`${drugFamNames(d)} (${d.cls})`,hint:DRUG_GROUPS[d.g][0]}])};
+  FC_DECKS.drug_moa={name:'All drugs: MOA only',drug:true,shuffle:true,cards:DRUGS.flatMap(d=>[{q:`<b>${d.n}</b>: mechanism of action?`,a:d.moa,hint:d.cls},{q:`Name the drug: <i>${d.moa}</i>`,a:drugAnswer(d),hint:DRUG_GROUPS[d.g][0]}])};
   MCQ_BANKS.drug_all={name:'All drugs mixed',drug:true,shuffle:true,questions:drugQuestions(DRUGS)};
   REF.drugs=`<div class="sh"><h2>Renal pharmacology</h2><p>Every drug in the tutor in one place: what it is, how it works, why we use it, and what to watch for. Drill these with the 💊 flashcard decks and quiz banks.</p></div>
   <div class="fit-actions" style="margin:-6px 0 14px"><button class="fit-btn primary" onclick="setMode('flashcards');fcDeck('drug_moa')">🃏 Drill MOAs (flashcards)</button><button class="fit-btn" onclick="setMode('quiz');mcqDeck('drug_all')">✏️ Drug quiz (mixed)</button></div>`+
