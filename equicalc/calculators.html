@@ -383,6 +383,8 @@
   document.documentElement.setAttribute('data-theme', v);
 })();
 </script>
+<link rel="stylesheet" href="/assets/dv-chrome.css">
+<script src="/assets/dv-chrome.js" data-tool="equicalc" defer></script>
 </head>
 <body>
   
@@ -397,7 +399,6 @@
   </div>
   <div style="margin-left:auto;display:flex;gap:18px;align-items:center;">
     <a href="index.html" style="font-size:12.5px;color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Home</a>
-    <a href="../" style="font-size:12.5px;color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">desmoVet</a>
     <button class="theme-btn" onclick="toggleTheme()" aria-label="Switch between light and dark mode"><span id="theme-icon">☾</span><span id="theme-word">Night</span></button>
   </div>
 </header>

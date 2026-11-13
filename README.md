@@ -31,7 +31,7 @@ desmoVet also runs [free peer-tutoring matching](https://desmovet.com/tutoring.h
 
 ## Clinical content
 
-Doses, intervals and cutoffs come from published veterinary sources and current consensus guidelines (for example IRIS and ACVIM). The foal reference ranges, NAVLE hub and Renal Tutor list their sources on the page, and source notes are being added to the other tools. If you find an error, please report it to **admin@desmovet.com**.
+Doses, intervals and cutoffs come from published veterinary sources and current consensus guidelines (for example IRIS and ACVIM). Every tool's footer shows its sources; the anesthesia calculator, EquiCalc, and the cardio and neuro tutors are still having theirs added. If you find an error, please report it to **admin@desmovet.com**.
 
 These are study and calculation aids. They do not replace clinical judgment, a current formulary, or specialist advice. Verify every dose before using it in a patient.
 
@@ -49,6 +49,16 @@ tutoring*.html, academic-integrity-policy.html   peer tutoring
 _posts/, _layouts/, articles/                    articles (Jekyll)
 _drafts/how-these-articles-work.md               template for writing an article
 sitemap.xml, robots.txt, 404.html, og-image.png  site plumbing
+assets/dv-chrome.css, assets/dv-chrome.js        shared desmoVet bar + tool footer
+```
+
+### Shared bar and footer
+
+Every tool page loads `assets/dv-chrome.js`, which adds the desmoVet bar at the top and a footer with **Sources**, **Last updated** (read live from the latest GitHub commit touching that tool) and **Report an error** (a pre-filled email). To credit a tool's sources, fill in its `sources` entry in the `TOOLS` list at the top of that file. To add a new tool, add an entry there and put these two lines in the page's `<head>`:
+
+```html
+<link rel="stylesheet" href="/assets/dv-chrome.css">
+<script src="/assets/dv-chrome.js" data-tool="yourkey" defer></script>
 ```
 
 ## About
