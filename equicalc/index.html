@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EquiCalc — Equine Veterinary Calculator Hub</title>
+<title>EquiCalc — Equine Veterinary Calculators | desmoVet</title>
+<meta name="description" content="Equine drug and fluid calculators: glucose and GIR, TPN, fluid deficits, CRIs, induction protocols, and standing sedation.">
+<link rel="canonical" href="https://desmovet.com/equicalc/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="desmoVet">
+<meta property="og:title" content="EquiCalc — Equine Veterinary Calculators | desmoVet">
+<meta property="og:description" content="Equine drug and fluid calculators: glucose and GIR, TPN, fluid deficits, CRIs, induction protocols, and standing sedation.">
+<meta property="og:url" content="https://desmovet.com/equicalc/">
+<meta property="og:image" content="https://desmovet.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://desmovet.com/og-image.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -475,6 +487,14 @@
   @media (max-width: 480px) {
     .module-grid { grid-template-columns: 1fr; }
   }
+
+  @media (max-width: 600px) {
+    .header-sub{display:none}
+    #theme-word{display:none}
+    .nav-links{gap:14px!important}
+    .nav-links a[href="index.html"]{display:none}
+    header > div[style*="margin-left:auto"]{gap:12px!important}
+  }
 </style>
 <script>
 (function () {
@@ -484,23 +504,15 @@
   document.documentElement.setAttribute('data-theme', v);
 })();
 </script>
+<link rel="stylesheet" href="/assets/dv-chrome.css">
+<script src="/assets/dv-chrome.js" data-tool="equicalc" defer></script>
 </head>
 <body>
-<a href="https://desmovet.com" target="_blank" rel="noopener"
-   style="position:fixed;top:110px;left:14px;z-index:9999;
-          font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-          font-size:12px;font-weight:600;color:#1f2f42;
-          background:#ffffff;border:1px solid #d8d8d8;border-radius:20px;
-          padding:6px 14px;text-decoration:none;
-          box-shadow:0 4px 12px rgba(0,0,0,0.12);">
-  ← desmoVet
-</a>
 <nav>
   <a href="#" class="nav-logo"><div class="logo-mark">🐴</div><span style="letter-spacing:-0.5px"><span style="color:var(--text)">Equi</span><span style="color:var(--accent)">Calc</span></span></a>
   <div class="nav-links" style="display:flex;gap:24px;align-items:center;">
     <a href="index.html" style="font-size:12.5px;color:var(--muted);text-decoration:none;">Home</a>
     <a href="calculators.html" style="font-size:12.5px;color:var(--muted);text-decoration:none;">Calculators</a>
-    <a href="about.html" style="font-size:12.5px;color:var(--muted);text-decoration:none;">About</a>
     <button class="theme-btn" onclick="toggleTheme()" aria-label="Switch between light and dark mode"><span id="theme-icon">☾</span><span id="theme-word">Night</span></button>
   </div>
 </nav>
@@ -689,5 +701,6 @@ function toggleTheme() {
 }
 applyThemeLabel();
 </script>
+<script data-goatcounter="https://desmovet.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

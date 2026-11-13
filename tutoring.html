@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Peer Tutoring — desmoVet</title>
+<link rel="canonical" href="https://desmovet.com/tutoring.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="desmoVet">
+<meta property="og:title" content="Peer Tutoring — desmoVet">
+<meta property="og:description" content="One-on-one peer tutoring for 1st and 2nd year veterinary students. Anatomy, physiology, pharmacology, anesthesia, clinical sciences, and large animal medicine.">
+<meta property="og:url" content="https://desmovet.com/tutoring.html">
+<meta property="og:image" content="https://desmovet.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://desmovet.com/og-image.png">
 <meta name="description" content="One-on-one peer tutoring for 1st and 2nd year veterinary students. Anatomy, physiology, pharmacology, anesthesia, clinical sciences, and large animal medicine.">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -214,6 +225,11 @@
     section{padding:44px 0;}
     .btn{display:block;text-align:center;}
     .navlinks{gap:16px;font-size:0.85rem;}
+  }
+  @media (max-width:640px){
+    nav .wrap{gap:14px}
+    .navlinks{min-width:0;overflow-x:auto;white-space:nowrap;gap:14px!important;scrollbar-width:none}
+    .navlinks::-webkit-scrollbar{display:none}
   }
 </style>
 </head>
@@ -621,5 +637,6 @@
 
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 
+<script data-goatcounter="https://desmovet.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

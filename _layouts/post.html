@@ -12,6 +12,10 @@
 <meta property="og:title" content="{{ page.title }}">
 <meta property="og:type" content="article">
 <meta property="og:url" content="{{ page.url | absolute_url }}">
+<link rel="canonical" href="{{ page.url | absolute_url }}">
+<meta property="og:site_name" content="desmoVet">
+<meta property="og:image" content="{{ page.image | default: '/og-image.png' | absolute_url }}">
+<meta name="twitter:card" content="summary_large_image">
 {% if page.description %}<meta property="og:description" content="{{ page.description }}">{% endif %}
 <style>
   :root{
@@ -157,5 +161,6 @@
 
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 
+<script data-goatcounter="https://desmovet.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

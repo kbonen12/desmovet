@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EquiCalc — Field Drug Calculator</title>
+<title>EquiCalc Field Drug Calculator | desmoVet</title>
+<meta name="description" content="EquiCalc field calculators for equine practice: GIR, maintenance fluids, TPN, CRIs, anesthesia, sedation, and resuscitation.">
+<link rel="canonical" href="https://desmovet.com/equicalc/calculators.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="desmoVet">
+<meta property="og:title" content="EquiCalc Field Drug Calculator | desmoVet">
+<meta property="og:description" content="EquiCalc field calculators for equine practice: GIR, maintenance fluids, TPN, CRIs, anesthesia, sedation, and resuscitation.">
+<meta property="og:url" content="https://desmovet.com/equicalc/calculators.html">
+<meta property="og:image" content="https://desmovet.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://desmovet.com/og-image.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -355,6 +367,13 @@
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    .header-sub{display:none}
+    #theme-word{display:none}
+    .nav-links{gap:14px!important}
+    header > div[style*="margin-left:auto"]{gap:12px!important}
+  }
 </style>
 <script>
 (function () {
@@ -364,18 +383,11 @@
   document.documentElement.setAttribute('data-theme', v);
 })();
 </script>
+<link rel="stylesheet" href="/assets/dv-chrome.css">
+<script src="/assets/dv-chrome.js" data-tool="equicalc" defer></script>
 </head>
 <body>
   
-<a href="https://desmovet.com" target="_blank" rel="noopener"
-   style="position:fixed;top:142px;left:14px;z-index:9999;
-          font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-          font-size:12px;font-weight:600;color:#1f2f42;
-          background:#ffffff;border:1px solid #d8d8d8;border-radius:20px;
-          padding:6px 14px;text-decoration:none;
-          box-shadow:0 4px 12px rgba(0,0,0,0.12);">
-  ← desmoVet
-</a>
 <header>
   <div class="logo-mark">🐴</div>
   <div>
@@ -387,7 +399,6 @@
   </div>
   <div style="margin-left:auto;display:flex;gap:18px;align-items:center;">
     <a href="index.html" style="font-size:12.5px;color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Home</a>
-    <a href="about.html" style="font-size:12.5px;color:var(--muted);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">About</a>
     <button class="theme-btn" onclick="toggleTheme()" aria-label="Switch between light and dark mode"><span id="theme-icon">☾</span><span id="theme-word">Night</span></button>
   </div>
 </header>
@@ -1579,5 +1590,6 @@ function calcDob() {
 routeFromHash();
 applyThemeLabel();
 </script>
+<script data-goatcounter="https://desmovet.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
