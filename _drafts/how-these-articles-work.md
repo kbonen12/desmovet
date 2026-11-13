@@ -5,8 +5,9 @@ author: "Kyle B."
 tags: [meta]
 ---
 
-This post exists so there's a working example to copy. Duplicate the file, rename it,
-change the lines at the top, and write.
+This template lives in `_drafts/`, which Jekyll never publishes, so it won't show up on the
+site. To write an article, copy it into `_posts/` with a dated filename (below), change the
+lines at the top, and write.
 
 ## Adding a new article
 
@@ -77,6 +78,3 @@ good build, so the site stays up, but nothing new publishes until the error is f
 GitHub emails you when a build fails. Nothing in a post file can cause this; it's only
 a risk if `_config.yml` is edited.
 
----
-
-Delete this file whenever you like — the Articles page handles being empty.

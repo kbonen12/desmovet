@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cardio Physiology — Interactive Tutor</title>
+<title>Cardiology Physiology — Interactive Tutor | desmoVet</title>
+<meta name="description" content="Interactive veterinary cardiac physiology tutor: core principles, pressure and flow, the cardiac cycle, interactive graphs, and quizzes.">
+<link rel="canonical" href="https://desmovet.com/cardio-tutor.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="desmoVet">
+<meta property="og:title" content="Cardiology Physiology — Interactive Tutor | desmoVet">
+<meta property="og:description" content="Interactive veterinary cardiac physiology tutor: core principles, pressure and flow, the cardiac cycle, interactive graphs, and quizzes.">
+<meta property="og:url" content="https://desmovet.com/cardio-tutor.html">
+<meta property="og:image" content="https://desmovet.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://desmovet.com/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -363,6 +375,12 @@
   .module-icon { font-size: 26px; }
   .module-label { font-size: 13px; font-weight: 600; color: var(--text); }
   .module-desc { font-size: 11px; color: var(--text-faint); line-height: 1.5; }
+@media (max-width: 640px) {
+  .header-inner { padding: 0 .9rem; }
+  .logo span { display: none; }
+  .nav-btn { white-space: nowrap; }
+  .hero { flex-direction: column; align-items: flex-start; padding: 1.5rem; gap: 1rem; }
+}
 </style>
 </head>
 <body>
@@ -376,7 +394,10 @@
       <span id="header-step-label" style="font-size:13px;font-weight:600;color:var(--text-muted)"></span>
       <div style="display:flex;gap:4px" id="header-dots"></div>
     </div>
-    <button class="nav-btn" onclick="showSection('home')" style="font-size:13px">← Overview</button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="nav-btn" onclick="showSection('home')" style="font-size:13px">← Overview</button>
+      <a class="nav-btn" href="index.html" style="font-size:13px;text-decoration:none">desmoVet home</a>
+    </div>
   </div>
 </header>
 
@@ -5062,5 +5083,6 @@ window.radioQuizAnswer = radioQuizAnswer;
 window.radioQuizNext = radioQuizNext;
 
 </script>
+<script data-goatcounter="https://desmovet.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

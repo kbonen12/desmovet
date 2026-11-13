@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>desmoVet — Science. Connection. Compassion.</title>
+<title>desmoVet — Free veterinary tools for students and new grads</title>
+<meta name="description" content="Free, interactive tools for veterinary students and new grads: small animal anesthesia and equine calculators, a NAVLE study hub, lab-report helpers, and cardiology, neurology and nephrology tutors.">
+<link rel="canonical" href="https://desmovet.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="desmoVet">
+<meta property="og:title" content="desmoVet — Free veterinary tools for students and new grads">
+<meta property="og:description" content="Free, interactive tools for veterinary students and new grads: small animal anesthesia and equine calculators, a NAVLE study hub, lab-report helpers, and cardiology, neurology and nephrology tutors.">
+<meta property="og:url" content="https://desmovet.com/">
+<meta property="og:image" content="https://desmovet.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://desmovet.com/og-image.png">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
@@ -48,6 +60,9 @@
   .logo-banner img.lockup{max-width:260px;width:60vw;height:auto;display:block;margin:0 auto;}
   .hero .wrap{padding-top:32px;}
   .tagline{font-size:1.15rem;color:var(--sub);max-width:580px;margin:0 auto 30px;font-style:italic;}
+  .hero-h1{font-size:1.9rem;line-height:1.25;font-weight:700;max-width:640px;margin:0 auto 12px;letter-spacing:-0.01em;}
+  .hero-sub{font-size:1.02rem;color:var(--sub);opacity:.85;max-width:600px;margin:0 auto 28px;}
+  @media (max-width:640px){.hero-h1{font-size:1.45rem;}}
   .quicklinks{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;}
   .quicklink{
     background:var(--panel);border:1px solid var(--line);
@@ -179,7 +194,6 @@
     <div class="navlinks">
       <a href="#name">The Name</a>
       <a href="#tools">Tools</a>
-      <a href="articles/">Articles</a>
       <a href="tutoring.html" class="tutoring">Tutoring</a>
       <a href="#story">About</a>
     </div>
@@ -191,7 +205,8 @@
     <img class="lockup" src="desmovet-banner2.jpg" alt="desmoVet — Science. Connection. Compassion.">
   </div>
   <div class="wrap">
-    <p class="tagline">The connections at the heart of veterinary medicine.</p>
+    <h1 class="hero-h1">Free, interactive tools for veterinary students and new grads.</h1>
+    <p class="hero-sub">Clinical calculators, board prep, and interactive tutors. Built by a vet student who uses them. Free, no account, and the tools run entirely in your browser.</p>
     <div class="quicklinks">
       <a class="quicklink" href="anesthesia/">💉 Anesthesia Calc <span class="sub">→</span></a>
       <a class="quicklink" href="equicalc/">🐴 EquiCalc <span class="sub">→</span></a>
@@ -201,7 +216,6 @@
       <a class="quicklink" href="cardio-tutor.html">❤️ Cardio Tutor <span class="sub">→</span></a>
       <a class="quicklink" href="neuro-tutor.html">🧠 Neuro Tutor <span class="sub">→</span></a>
       <a class="quicklink" href="renal-tutor.html">🫘 Renal Tutor <span class="sub">→</span></a>
-      <a class="quicklink" href="articles/">📝 Articles <span class="sub">→</span></a>
       <a class="quicklink accent" href="tutoring.html">🎓 Peer Tutoring <span class="sub">→</span></a>
     </div>
   </div>
@@ -289,9 +303,10 @@
       <div class="tutoring-copy">
         <div class="tutoring-eyebrow">Veterinary students helping veterinary students</div>
         <div class="tutoring-title">One-on-one and small group tutoring, from students a few years ahead of you.</div>
-        <p class="tutoring-desc">Group sessions from $15 per person, one-on-one at $35/hour.
-          Anatomy, physiology, pharmacology, anesthesia, clinical sciences, and large animal
-          medicine. Every paid session helps fund the free tools above.</p>
+        <p class="tutoring-desc">Free matching with upper-year DVM students who have already
+          learned the material. Anatomy, physiology, pharmacology, anesthesia, clinical sciences,
+          and large animal medicine. Tutors set their own rates, and you'll know the rate before
+          you agree to anything.</p>
       </div>
       <span class="tutoring-cta">Learn more →</span>
     </a>
@@ -305,8 +320,8 @@
       <div class="avatar"><img src="kyle-photo.jpg" alt="Kyle B."></div>
       <div class="story-body">
         <div class="story-name">Kyle B.</div>
-        <div class="story-title">Doctor of Veterinary Medicine Student</div>
-        <p>I'm a DVM student at Colorado State University with a growing focus on the business and technology side of veterinary medicine. Alongside clinical training, I've built and shipped two live tools already in use by veterinarians and students — a small animal anesthesia calculator and EquiCalc, a full equine calculator hub — with two more in development for veterinary education.</p>
+        <div class="story-title">DVM Candidate · Colorado State University</div>
+        <p>I'm a DVM student at Colorado State University with a growing focus on the business and technology side of veterinary medicine. Alongside clinical training, I've built and shipped eight free tools for veterinarians and students: calculators for small animal anesthesia and equine medicine, a NAVLE study hub, two lab-report helpers, and interactive tutors for cardiology, neurology, and nephrology.</p>
         <p>I'm drawn to the intersection of clinical practice and industry: where technology, product thinking, and veterinary medicine meet. My interest isn't just in practicing medicine one exam room at a time — it's in helping build the tools, systems, and companies that make veterinary care faster, safer, and more accessible at scale.</p>
         <div class="tags">
           <span class="tag">Colorado State University</span>
@@ -349,5 +364,6 @@
 
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 
+<script data-goatcounter="https://desmovet.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

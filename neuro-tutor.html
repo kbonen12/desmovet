@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vet Neurology — Interactive Learning Guide</title>
+<title>Veterinary Neurology — Interactive Tutor | desmoVet</title>
+<meta name="description" content="Interactive veterinary neurology guide: spinal cord localization, UMN/LMN reasoning, vestibular disease, anti-seizure drugs, flashcards, and cases.">
+<link rel="canonical" href="https://desmovet.com/neuro-tutor.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="desmoVet">
+<meta property="og:title" content="Veterinary Neurology — Interactive Tutor | desmoVet">
+<meta property="og:description" content="Interactive veterinary neurology guide: spinal cord localization, UMN/LMN reasoning, vestibular disease, anti-seizure drugs, flashcards, and cases.">
+<meta property="og:url" content="https://desmovet.com/neuro-tutor.html">
+<meta property="og:image" content="https://desmovet.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://desmovet.com/og-image.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -442,6 +454,14 @@ tr:hover td{background:var(--surface2)}
   .loss-chain{flex-direction:column}
   .loss-step{border-right:none;border-bottom:1px solid var(--border)}
   .loss-step:last-child{border-bottom:none}
+}
+@media(max-width:700px){
+  .topbar{padding:0 .75rem;gap:8px}
+  .topbar-brand{display:none}
+  .mode-tabs{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;flex:1;min-width:0}
+  .mode-tabs::-webkit-scrollbar{display:none}
+  .mtab{white-space:nowrap;padding:6px 10px}
+  .score-pill{display:none}
 }
 </style>
 </head>
@@ -2072,5 +2092,6 @@ function caseBack(){if(caseState.step>0){caseState.step--;renderCases();}}
 // ═══════════════════════════════════════════════════════
 render();
 </script>
+<script data-goatcounter="https://desmovet.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

@@ -9,6 +9,14 @@ description: Writing on veterinary medicine, clinical tooling, and the places th
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Articles — desmoVet</title>
 <meta name="description" content="{{ page.description }}">
+<link rel="canonical" href="https://desmovet.com/articles/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="desmoVet">
+<meta property="og:title" content="Articles — desmoVet">
+<meta property="og:description" content="{{ page.description }}">
+<meta property="og:url" content="https://desmovet.com/articles/">
+<meta property="og:image" content="https://desmovet.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
@@ -116,9 +124,8 @@ description: Writing on veterinary medicine, clinical tooling, and the places th
     </div>
     {%- else %}
     <div class="empty">
-      <p>No articles yet.</p>
-      <p>To add one, drop a Markdown file into the <code>_posts</code> folder named
-      <code>YYYY-MM-DD-some-title.md</code>, then commit and push.</p>
+      <p>The first articles are on the way.</p>
+      <p>In the meantime, the <a href="/#tools">tools</a> are all free to use.</p>
     </div>
     {%- endif %}
   </div>
@@ -135,5 +142,6 @@ description: Writing on veterinary medicine, clinical tooling, and the places th
 
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 
+<script data-goatcounter="https://desmovet.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

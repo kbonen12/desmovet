@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Small Animal Anesthesia Calculator</title>
+<title>Small Animal Anesthesia Calculator — desmoVet</title>
+<meta name="description" content="Small animal anesthesia calculator: drug doses, CRIs, the Kitty Magic combination, and a printable anesthetic protocol sheet.">
+<link rel="canonical" href="https://desmovet.com/anesthesia/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="desmoVet">
+<meta property="og:title" content="Small Animal Anesthesia Calculator — desmoVet">
+<meta property="og:description" content="Small animal anesthesia calculator: drug doses, CRIs, the Kitty Magic combination, and a printable anesthetic protocol sheet.">
+<meta property="og:url" content="https://desmovet.com/anesthesia/">
+<meta property="og:image" content="https://desmovet.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://desmovet.com/og-image.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -535,21 +547,22 @@ input[type=number]:focus, select:focus {
   .qr-grid { grid-template-columns: 110px 1fr; }
   #drug-search { width: 180px; }
 }
+.home-link { display:inline-block; font-size:12px; font-weight:600; color:rgba(255,255,255,.75); text-decoration:none; margin-bottom:6px; }
+.home-link:hover { color:#fff; }
+@media (max-width: 700px) {
+  .tab-nav { padding: 0 8px; }
+  .tab-nav-inner { overflow-x: auto; scrollbar-width: none; }
+  .tab-nav-inner::-webkit-scrollbar { display: none; }
+  .tab-btn { flex-shrink: 0; white-space: nowrap; }
+  .calc-table { display: block; overflow-x: auto; }
+}
 </style>
 </head>
 <body>
-  <a href="https://desmovet.com" target="_blank" rel="noopener"
-   style="position:fixed;top:14px;left:14px;z-index:9999;
-          font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-          font-size:12px;font-weight:600;color:#1f2f42;
-          background:#ffffff;border:1px solid #d8d8d8;border-radius:20px;
-          padding:6px 14px;text-decoration:none;
-          box-shadow:0 4px 12px rgba(0,0,0,0.12);">
-  ← desmoVet
-</a>
 <header class="site-header">
   <div class="header-inner">
     <div class="header-brand">
+      <a href="../" class="home-link">← desmoVet</a>
       <h1>Small Animal Anesthesia Calculator</h1>
       <p>Dose · CRI · Kitty Magic</p>
     </div>
@@ -1535,5 +1548,6 @@ recalcKitty();
 // Set today's date
 document.getElementById("pb-date").value = new Date().toLocaleDateString("en-US");
 </script>
+<script data-goatcounter="https://desmovet.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
