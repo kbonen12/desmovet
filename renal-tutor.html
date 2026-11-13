@@ -480,6 +480,45 @@ tr:hover td{background:var(--surface2)}
 .k-readout{font-family:'DM Serif Display',serif;font-size:34px;color:var(--accent)}
 .disclaimer{font-size:11.5px;color:var(--text-hint);margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border-light);line-height:1.6;max-width:820px}
 .src-list{font-size:12px;color:var(--text-muted);padding-left:18px;line-height:1.7}
+.nm-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start}
+.nm-side{max-height:720px;overflow-y:auto}
+.nm-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
+.nm-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;border:1px solid var(--border-light);background:var(--surface);cursor:pointer;font-size:12px;font-family:'Instrument Sans',sans-serif;color:var(--text-muted)}
+.nm-chip:hover{background:var(--surface2)}
+.nm-chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.nm-dot{display:inline-block;width:10px;height:10px;border-radius:50%;flex-shrink:0;vertical-align:-1px;margin-right:2px}
+.nm-head{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.nm-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.nm-tab{padding:5px 10px;border-radius:var(--r);border:1px solid var(--border-light);background:var(--surface);cursor:pointer;font-size:12px;font-family:'Instrument Sans',sans-serif;color:var(--text-muted)}
+.nm-tab:hover{background:var(--surface2)}
+.nm-tab.on{background:var(--accent-light);border-color:var(--accent-mid);color:var(--accent);font-weight:600}
+.nm-title{font-family:'DM Serif Display',serif;font-size:20px;line-height:1.2}
+.nm-osm{font-family:'DM Mono',monospace;font-size:11px;color:#b06a2a;margin-top:3px}
+.nm-step{font-size:12.5px;line-height:1.55;padding:8px 10px;border:1px solid var(--border-light);border-radius:var(--r);margin-bottom:6px;cursor:pointer;background:var(--surface);transition:all .15s}
+.nm-step:hover{border-color:var(--accent-mid)}
+.nm-step.on{background:var(--accent-light);border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.nm-num{color:var(--accent);font-size:14px;margin-right:5px}
+.nm-info{font-size:12.5px;line-height:1.55;background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--r);padding:8px 10px;margin-bottom:8px}
+.nm-hint{font-size:11.5px;color:var(--text-hint);margin-top:6px}
+.nm-legend{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:11.5px;color:var(--text-muted);padding:6px 6px 2px}
+.nm-mini{font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);cursor:pointer;font-family:'Instrument Sans',sans-serif;color:var(--text-muted)}
+.nm-el{transition:opacity .3s}
+.nm-dim{opacity:.1}
+.nm-mseg{cursor:pointer;transition:opacity .3s}
+.nm-mseg:hover{filter:brightness(1.12)}
+.nm-nfp{font-family:'DM Mono',monospace;font-size:13px;padding:10px 12px;background:var(--success-bg);border:1px solid var(--success-border);color:var(--success);border-radius:var(--r);margin:8px 4px 4px}
+.nm-nfp.neg{background:var(--danger-bg);border-color:var(--danger-border);color:var(--danger)}
+.nm-rrow{display:flex;align-items:stretch;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.nm-rbox{flex:1 1 150px;border:1.5px solid var(--border-light);border-radius:var(--r);padding:9px 11px;background:var(--surface);font-size:12.5px;opacity:.55;transition:all .25s}
+.nm-rbox b{display:block;font-size:13px}
+.nm-rbox span{color:var(--text-muted);font-size:11.5px}
+.nm-rbox em{display:block;font-size:10.5px;color:var(--accent);font-style:normal;margin-top:3px}
+.nm-rbox.on{opacity:1;border-color:var(--accent-mid);background:var(--accent-light)}
+.nm-rarrow{align-self:center;color:var(--border);font-size:18px}
+.nm-rarrow.on{color:var(--accent)}
+.nm-reff{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px;margin-bottom:8px}
+.nm-tgf{font-size:12.5px;line-height:1.55;padding:9px 12px;border-left:3px solid var(--warn-border);background:var(--warn-bg);border-radius:var(--r);margin-bottom:10px}
+@media(max-width:1000px){.nm-grid{grid-template-columns:1fr}.nm-side{max-height:none}}
 @media(max-width:900px){.lever-wrap{grid-template-columns:1fr}.arrow-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){
   .topbar{padding:0 .75rem;gap:8px}
@@ -530,7 +569,7 @@ tr:hover td{background:var(--surface2)}
 // ═══════════════════════════════════════════════════════
 const TOPICS=[
   ['physiology','◐','GFR & physiology','GFR lever'],
-  ['nephron','≋','Nephron & diuretics','Nephron explorer'],
+  ['nephron','≋','Nephron molecule map','Nephron molecule map'],
   ['azotemia','⇄','Azotemia','Azotemia localizer'],
   ['ua','◌','Urinalysis','USG + sediment'],
   ['ckd','▤','CKD & IRIS staging','IRIS staging calculator'],
@@ -582,6 +621,7 @@ function renderHome(){
   const nQ=Object.values(MCQ_BANKS).reduce((a,b)=>a+b.questions.length,0);
   const nF=Object.values(FC_DECKS).reduce((a,b)=>a+b.cards.length,0);
   const cards=[
+    ['nephron','≋','Nephron molecule map','Animated cell-by-cell map: which transporters move which molecules, and where ADH, aldosterone, PTH and diuretics act. Follow one molecule along the whole nephron.'],
     ['ckd','▤','IRIS staging calculator','Creatinine, SDMA, UPC, and blood pressure in, stage, substage, and stage-specific management out.'],
     ['azotemia','⇄','Azotemia localizer','Pre-renal, renal, or post-renal? Works through USG, hydration, and the extra-renal reasons urine stays dilute.'],
     ['obstruction','⊗','Hyperkalemia ECG','Drag serum K⁺ and watch the ECG change: peaked T waves, then lost P waves, then a sine wave. Shows the treatment for each level.'],
@@ -638,7 +678,7 @@ const TOOL_RENDER={
   obstruction:()=>renderKTool(), uroabdomen:()=>renderUroabdTool(), largeanimal:()=>renderLATool(),
 };
 const TOOL_INIT={
-  physiology:()=>gfrUpdate(), nephron:()=>nephSelect(nephSel), azotemia:()=>azoUpdate(), ua:()=>usgUpdate(),
+  physiology:()=>gfrUpdate(), nephron:()=>nmInit(), azotemia:()=>azoUpdate(), ua:()=>usgUpdate(),
   ckd:()=>irisUpdate(), aki:()=>akiUpdate(), obstruction:()=>kUpdate(), uroabdomen:()=>uaUpdate(),
 };
 function renderTool(t){return TOOL_RENDER[t]?TOOL_RENDER[t]():'';}
@@ -704,25 +744,170 @@ function gfrUpdate(presetNote){
 }
 
 // ═══════════════════════════════════════════════════════
-// TOOL 2 — NEPHRON & DIURETICS
+// TOOL 2 — NEPHRON MOLECULE MAP
 // ═══════════════════════════════════════════════════════
-const NEPHRON=[
-  {k:'glom',name:'Glomerulus',na:'Filters ~20% of RPF',trans:'Size- and charge-selective barrier: fenestrated endothelium, GBM, and podocyte slit diaphragm',horm:'Ang II (efferent arteriole), prostaglandins (afferent)',drug:'No diuretic acts here. ACEi/ARBs lower P<sub>GC</sub>.',clin:'Glomerular disease (immune-complex GN, amyloidosis) causes proteinuria with an inactive sediment, plus hypoalbuminemia, hypercoagulability (antithrombin loss), and hypertension.'},
-  {k:'pct',name:'Proximal convoluted tubule',na:'~65–70% of filtered Na⁺ and water',trans:'SGLT2 (glucose), NHE3, carbonic anhydrase, Na/K-ATPase; reabsorbs all filtered glucose and amino acids and most HCO₃⁻; PTH reduces phosphate reabsorption here',horm:'Ang II (stimulates NHE3); PTH (phosphaturia)',drug:'<strong>Acetazolamide</strong> (carbonic anhydrase inhibitor), a weak diuretic that causes metabolic acidosis. <strong>Mannitol</strong> (osmotic, PCT and descending limb). <strong>SGLT2 inhibitors</strong> (bexagliflozin, velagliflozin) for feline diabetes.',clin:'Renal glucose threshold is ~180–220 mg/dL in dogs and ~250–300 mg/dL in cats. Glucosuria with normoglycemia means a proximal tubular defect: Fanconi syndrome (Basenjis, jerky treats) or acute tubular injury.'},
-  {k:'tdl',name:'Thin descending limb',na:'Water out, solute stays',trans:'Permeable to water (aquaporin-1), relatively impermeable to NaCl',horm:'None of note',drug:'None',clin:'Tubular fluid becomes concentrated as it descends into the hypertonic medulla, which is part of the countercurrent multiplier.'},
-  {k:'tal',name:'Thick ascending limb (TAL)',na:'~25% of filtered Na⁺',trans:'NKCC2 (Na⁺-K⁺-2Cl⁻); ROMK recycles K⁺ and creates a lumen-positive potential that drives paracellular Ca²⁺ and Mg²⁺ reabsorption; impermeable to water (the diluting segment)',horm:'ADH (increases NKCC2 activity in some species)',drug:'<strong>Furosemide, torsemide</strong> (loop diuretics), the most potent diuretics.',clin:'Loop diuretics cause hypokalemia, hypochloremic metabolic alkalosis, hypocalcemia (calciuresis, which is why they help in hypercalcemia once the patient is volume-replete), hypomagnesemia, and volume contraction. Ototoxicity is possible at high IV doses.'},
-  {k:'md',name:'Macula densa / JGA',na:'Sensor, not a transporter',trans:'Senses NaCl delivery to the distal TAL',horm:'Renin released from juxtaglomerular cells in response to ↓NaCl, ↓afferent pressure, and β₁ stimulation',drug:'β-blockers reduce renin. Loop diuretics block NKCC2 in the macula densa, so renin rises.',clin:'Tubuloglomerular feedback: high distal NaCl delivery → afferent constriction → GFR falls back toward normal.'},
-  {k:'dct',name:'Distal convoluted tubule',na:'~5–8% of filtered Na⁺',trans:'NCC (Na⁺-Cl⁻ cotransporter); PTH-stimulated active Ca²⁺ reabsorption (TRPV5)',horm:'PTH, aldosterone (late DCT)',drug:'<strong>Hydrochlorothiazide, chlorothiazide</strong> (thiazides)',clin:'Thiazides lower urinary calcium, so they are used to help prevent recurrent calcium oxalate uroliths in dogs. They can cause hypokalemia and mild hypercalcemia, and paradoxically reduce urine volume in nephrogenic DI.'},
-  {k:'cd',name:'Collecting duct',na:'~2–5% of filtered Na⁺, but this is where final tuning happens',trans:'Principal cells: ENaC (Na⁺ in) and ROMK (K⁺ out) under aldosterone; aquaporin-2 inserted via the ADH V₂ receptor. Intercalated cells: type A secretes H⁺, type B secretes HCO₃⁻.',horm:'Aldosterone, ADH, ANP/BNP (natriuresis)',drug:'<strong>Spironolactone</strong> (aldosterone antagonist), <strong>amiloride, triamterene</strong> (ENaC blockers). All are K⁺-sparing. Desmopressin acts at V₂.',clin:'Hypoadrenocorticism (no aldosterone) causes hyponatremia, hyperkalemia, and medullary washout, so USG is often &lt;1.030 despite pre-renal azotemia. Central DI (no ADH) and nephrogenic DI (no response to ADH) both produce hyposthenuria.'},
-];
-let nephSel='pct';
+const MOL={Na:['Na⁺','#2f8f46'],K:['K⁺','#7b4fa8'],Cl:['Cl⁻','#0f7c80'],H2O:['H₂O','#1f6fd1'],HCO3:['HCO₃⁻','#b5485f'],H:['H⁺','#c0392b'],Glc:['Glucose','#c98500'],AA:['Amino acids','#8d6e63'],Ca:['Ca²⁺','#e07b00'],Pi:['Phosphate','#5d6d7e'],Mg:['Mg²⁺','#607d3b'],CO2:['CO₂','#7f8c8d']};
+const MOL_DOT={Glc:'Glc',AA:'AA',Pi:'Pi'};
+const NM_MOLMAP={
+  Na:{pct:'~65–70%: SGLT2, Na⁺–AA, NHE3, NaPi cotransport',tal:'~25%: NKCC2 + paracellular',dct:'~5–8%: NCC (thiazide target)',principal:'~2–5%: ENaC, tuned by aldosterone'},
+  K:{pct:'~65%: paracellular (solvent drag)',tal:'~25%: NKCC2 + paracellular',principal:'Secreted via ROMK (main source of urinary K⁺), driven by aldosterone',aic:'Reabsorbed via H⁺/K⁺-ATPase in hypokalemia'},
+  Cl:{pct:'Paracellular, follows Na⁺',tal:'NKCC2 in, ClC-Kb out',dct:'NCC',bic:'Pendrin (swapped for HCO₃⁻)'},
+  H2O:{pct:'~65%: AQP1, isosmotic',dloh:'~15%: AQP1 into the hypertonic medulla',tal:'0%: impermeable (the diluting segment)',dct:'~0%: impermeable',principal:'Variable: AQP2, only with ADH'},
+  HCO3:{pct:'~80–90% reclaimed: NHE3 + CA IV/CA II + NBCe1',aic:'NEW HCO₃⁻ generated and added to blood (AE1)',bic:'Secreted into urine (pendrin) in alkalosis'},
+  H:{pct:'Secreted by NHE3 to reclaim HCO₃⁻',aic:'Secreted by H⁺-ATPase and H⁺/K⁺-ATPase (net acid excretion)',bic:'Returned to blood'},
+  Glc:{pct:'~100% until the renal threshold: SGLT2 → GLUT2'},
+  AA:{pct:'~100%: Na⁺-coupled transporters'},
+  Ca:{pct:'~65%: paracellular',tal:'~25%: paracellular, driven by the lumen-positive voltage',dct:'~5–10%: TRPV5, regulated by PTH'},
+  Pi:{pct:'~80%: NaPi-IIa, inhibited by PTH and FGF-23'},
+  Mg:{pct:'~15%',tal:'~60–70%: paracellular',dct:'~5–10%: TRPM6'},
+  CO2:{pct:'Diffuses in after luminal CA IV acts',aic:'From blood, the substrate for CA II',bic:'From blood, the substrate for CA II'},
+};
+const NM_ORDER=[['glom','Glomerulus'],['pct','PCT'],['dloh','Descending limb'],['tal','Thick ascending limb'],['raas','Macula densa / RAAS'],['dct','DCT'],['principal','CD principal cell'],['aic','CD α-intercalated'],['bic','CD β-intercalated']];
+const NM_SEGS={
+ pct:{name:'Proximal convoluted tubule',osm:'Tubular fluid ~300 mOsm/kg (isosmotic)',summary:'The bulk reabsorber: ~65–70% of filtered Na⁺, water, K⁺ and Ca²⁺, ~80–90% of HCO₃⁻, ~80% of phosphate, and essentially all glucose and amino acids.',
+  carriers:[
+   {id:'sglt2',m:'a',y:52,k:'co',l:'SGLT2',f:[['Na','in'],['Glc','in']],drug:'SGLT2 inhibitors (bexagliflozin, velagliflozin) cause glucosuria'},
+   {id:'naaa',m:'a',y:100,k:'co',l:'Na⁺–AA',f:[['Na','in'],['AA','in']]},
+   {id:'nhe3',m:'a',y:148,k:'ex',l:'NHE3',f:[['Na','in'],['H','out']],info:'Stimulated by angiotensin II'},
+   {id:'co2d',m:'a',y:196,k:'diff',l:'diffusion',f:[['CO2','in']]},
+   {id:'aqp1a',m:'a',y:240,k:'ch',l:'AQP1',f:[['H2O','in']]},
+   {id:'napi',m:'a',y:290,k:'co',l:'NaPi-IIa',f:[['Na','in'],['Pi','in']],info:'Removed from the membrane by PTH and FGF-23'},
+   {id:'glut2',m:'b',y:52,k:'uni',l:'GLUT2',f:[['Glc','in']]},
+   {id:'aab',m:'b',y:100,k:'uni',l:'AA carrier',f:[['AA','in']]},
+   {id:'nbc',m:'b',y:148,k:'co',l:'NBCe1',f:[['HCO3','in'],['Na','in']],info:'Moves 3 HCO₃⁻ with 1 Na⁺'},
+   {id:'nka',m:'b',y:200,k:'pump',l:'Na⁺/K⁺-ATPase',f:[['Na','in'],['K','out']],info:'3 Na⁺ out to blood, 2 K⁺ in, uses ATP'},
+   {id:'aqp1b',m:'b',y:250,k:'ch',l:'AQP1',f:[['H2O','in']]},
+  ],
+  para:['K','Ca','Cl','H2O'],
+  notes:[
+   {id:'rxL',x:8,y:150,lines:['H⁺ + HCO₃⁻','→ H₂CO₃','→ CA IV →','CO₂ + H₂O'],c:'#b5485f',mols:'H HCO3 CO2'},
+   {id:'rxC',x:330,y:168,mid:1,lines:['CO₂ + H₂O','→ CA II →','H₂CO₃','→ H⁺ + HCO₃⁻'],c:'#b5485f',mols:'H HCO3 CO2'},
+  ],
+  signals:[{id:'pth',h:'PTH',y:300,rec:'PTH1R',segs:[[[462,300],[300,300],[215,292]]],labels:[{x:330,y:318,t:'↓ NaPi-IIa → phosphaturia'}],c:'#e07b00',mols:'Pi'}],
+  steps:[
+   {t:'The basolateral <b>Na⁺/K⁺-ATPase</b> pumps 3 Na⁺ into blood and 2 K⁺ into the cell. Low intracellular Na⁺ is the gradient that powers almost every apical transporter.',hl:['nka']},
+   {t:'<b>SGLT2</b> moves glucose in together with Na⁺, and glucose leaves through <b>GLUT2</b>. About 100% is reclaimed until the transport maximum is exceeded (renal threshold ~180–220 mg/dL in dogs, ~250–300 mg/dL in cats).',hl:['sglt2','glut2']},
+   {t:'Amino acids ride in with Na⁺ the same way, and essentially all of them are reclaimed.',hl:['naaa','aab']},
+   {t:'<b>NHE3</b> swaps Na⁺ in for H⁺ out. Angiotensin II turns NHE3 up.',hl:['nhe3']},
+   {t:'In the lumen, secreted H⁺ combines with filtered HCO₃⁻ to form H₂CO₃. Brush-border <b>carbonic anhydrase IV</b> splits it into CO₂ + H₂O, and the CO₂ diffuses into the cell.',hl:['rxL','co2d']},
+   {t:'Cytoplasmic <b>CA II</b> rebuilds H₂CO₃, which gives H⁺ (recycled to NHE3) and HCO₃⁻. The HCO₃⁻ leaves through <b>NBCe1</b>. Net result: ~80–90% of filtered HCO₃⁻ is reclaimed. Acetazolamide blocks CA, causing bicarbonaturia and metabolic acidosis.',hl:['rxC','nbc']},
+   {t:'Water follows the solute through <b>AQP1</b> and between cells, so the fluid stays isosmotic. Solvent drag carries K⁺, Ca²⁺ and Cl⁻ <b>paracellularly</b> (~65% of each).',hl:['aqp1a','aqp1b','para']},
+   {t:'<b>NaPi-IIa</b> reclaims ~80% of phosphate. <b>PTH</b> (and FGF-23) pull NaPi-IIa out of the membrane, causing phosphaturia. PTH also activates 1α-hydroxylase here to make calcitriol.',hl:['napi','pth']},
+  ]},
+ dloh:{name:'Thin descending limb',osm:'Fluid concentrates: ~300 → up to ~1,200 mOsm/kg (human values; dogs exceed 2,000 and cats 3,000)',summary:'Water-permeable and relatively solute-impermeable. Water is drawn out into the hypertonic medulla, so tubular fluid concentrates on the way down.',
+  carriers:[
+   {id:'aqp1a',m:'a',y:110,k:'ch',l:'AQP1',f:[['H2O','in']]},
+   {id:'aqp1b',m:'b',y:110,k:'ch',l:'AQP1',f:[['H2O','in']]},
+   {id:'blk',m:'a',y:220,k:'block',l:'NaCl impermeable',f:[['Na','in'],['Cl','in']]},
+  ],
+  para:[],
+  notes:[{id:'osm',x:330,y:280,mid:1,lines:['Interstitium gets saltier','with depth (countercurrent','multiplier + urea recycling)'],c:'#7a4a0a'}],
+  signals:[],
+  steps:[
+   {t:'Water leaves through <b>AQP1</b> into the hypertonic medullary interstitium (~15% of filtered water).',hl:['aqp1a','aqp1b']},
+   {t:'The thin descending limb has <b>low permeability to NaCl</b>, so solute stays in. Tubular osmolality rises until it matches the interstitium at the hairpin.',hl:['blk']},
+   {t:'The gradient is built by the TAL pumping NaCl out (next segment) and by urea recycled from the inner medullary collecting duct. Species with longer loops reach higher maximum urine osmolality: about 1,200 mOsm/kg in humans, ~2,400+ in dogs, ~3,000+ in cats.',hl:['osm']},
+  ]},
+ tal:{name:'Thick ascending limb',osm:'Fluid dilutes to ~100 mOsm/kg (the diluting segment)',summary:'Reabsorbs ~25% of filtered Na⁺ through NKCC2 but no water. This builds the medullary gradient and dilutes the tubular fluid. Main site of Mg²⁺ reabsorption.',
+  carriers:[
+   {id:'nkcc2',m:'a',y:80,k:'co',l:'NKCC2',f:[['Na','in'],['K','in'],['Cl','in'],['Cl','in']],drug:'Furosemide and torsemide (loop diuretics)'},
+   {id:'romk',m:'a',y:175,k:'ch',l:'ROMK',f:[['K','out']]},
+   {id:'blkW',m:'a',y:255,k:'block',l:'no aquaporins',f:[['H2O','in']]},
+   {id:'nka',m:'b',y:80,k:'pump',l:'Na⁺/K⁺-ATPase',f:[['Na','in'],['K','out']]},
+   {id:'clc',m:'b',y:175,k:'ch',l:'ClC-Kb',f:[['Cl','in']]},
+  ],
+  para:['Na','Ca','Mg'],
+  notes:[{id:'volt',x:8,y:290,lines:['lumen ⊕ voltage','pushes cations','between cells'],c:'#7b4fa8',mols:'Ca Mg'}],
+  signals:[],
+  steps:[
+   {t:'<b>Na⁺/K⁺-ATPase</b> keeps intracellular Na⁺ low.',hl:['nka']},
+   {t:'<b>NKCC2</b> moves 1 Na⁺, 1 K⁺ and 2 Cl⁻ in together. It is the main ~25% Na⁺ reabsorption site and the target of <b>furosemide</b>. The macula densa uses this same transporter to sense NaCl.',hl:['nkcc2']},
+   {t:'Tubular fluid holds much less K⁺ than Na⁺, so K⁺ <b>recycles</b> back to the lumen through ROMK. That keeps NKCC2 running and makes the lumen voltage <b>positive</b>.',hl:['romk','volt']},
+   {t:'Cl⁻ leaves the cell through basolateral <b>ClC-Kb</b> channels.',hl:['clc']},
+   {t:'The positive lumen pushes <b>Ca²⁺, Mg²⁺ and Na⁺ paracellularly</b>. This is why loop diuretics cause calciuresis and Mg²⁺ wasting, and why they help in hypercalcemia once the patient is volume-replete.',hl:['para','volt']},
+   {t:'There are <b>no aquaporins</b>, so water stays in while solute leaves. Fluid exits at ~100 mOsm/kg, and the NaCl left in the interstitium drives the countercurrent multiplier.',hl:['blkW']},
+  ]},
+ dct:{name:'Distal convoluted tubule',osm:'Stays dilute (water-impermeable)',summary:'Reabsorbs ~5–8% of Na⁺ via NCC. This is where PTH actively regulates Ca²⁺ reabsorption.',
+  carriers:[
+   {id:'ncc',m:'a',y:62,k:'co',l:'NCC',f:[['Na','in'],['Cl','in']],drug:'Thiazides (hydrochlorothiazide)'},
+   {id:'trpv5',m:'a',y:165,k:'ch',l:'TRPV5',f:[['Ca','in']]},
+   {id:'trpm6',m:'a',y:255,k:'ch',l:'TRPM6',f:[['Mg','in']]},
+   {id:'nka',m:'b',y:62,k:'pump',l:'Na⁺/K⁺-ATPase',f:[['Na','in'],['K','out']]},
+   {id:'ncx',m:'b',y:140,k:'ex',l:'NCX1',f:[['Ca','in'],['Na','out']],info:'Moves 1 Ca²⁺ out for 3 Na⁺ in'},
+   {id:'pmca',m:'b',y:205,k:'pump',l:'PMCA',f:[['Ca','in']]},
+  ],
+  para:[],
+  notes:[{id:'calb',x:330,y:110,mid:1,lines:['calbindin-D28k','ferries Ca²⁺'],c:'#e07b00',mols:'Ca'}],
+  signals:[{id:'pth',h:'PTH',y:290,rec:'PTH1R',segs:[[[462,290],[340,290],[300,200],[212,168]]],labels:[{x:345,y:308,t:'Gs → cAMP → PKA'},{x:262,y:232,t:'↑ TRPV5'}],c:'#e07b00',mols:'Ca'}],
+  steps:[
+   {t:'<b>Na⁺/K⁺-ATPase</b> sets up the Na⁺ gradient.',hl:['nka']},
+   {t:'<b>NCC</b> moves Na⁺ and Cl⁻ in together (~5–8% of filtered Na⁺). Thiazides block it. The segment has no aquaporins, so the fluid stays dilute.',hl:['ncc']},
+   {t:'<b>PTH</b> binds PTH1R (a Gs-coupled receptor), which raises cAMP and activates PKA. PKA inserts more <b>TRPV5</b> channels in the apical membrane, so more Ca²⁺ enters.',hl:['pth','trpv5']},
+   {t:'<b>Calbindin-D28k</b> buffers Ca²⁺ as it crosses the cell. <b>NCX1</b> and <b>PMCA</b> push it out into blood.',hl:['calb','ncx','pmca']},
+   {t:'Thiazides lower intracellular Na⁺, which makes NCX1 work harder, so more Ca²⁺ is reabsorbed (hypocalciuria). This is why thiazides help prevent calcium oxalate uroliths in dogs.',hl:['ncc','ncx']},
+   {t:'<b>TRPM6</b> fine-tunes Mg²⁺ reabsorption.',hl:['trpm6']},
+  ]},
+ principal:{name:'Collecting duct: principal cell',osm:'Final urine: dilute without ADH, concentrated with ADH',summary:'Fine-tunes Na⁺ (aldosterone), secretes K⁺, and sets final urine concentration (ADH). Also found in the late DCT and connecting tubule.',
+  carriers:[
+   {id:'enac',m:'a',y:58,k:'ch',l:'ENaC',f:[['Na','in']],drug:'Amiloride, triamterene'},
+   {id:'romk',m:'a',y:140,k:'ch',l:'ROMK',f:[['K','out']]},
+   {id:'aqp2',m:'a',y:232,k:'ch',l:'AQP2',f:[['H2O','in']],info:'Only present in the membrane when ADH is acting'},
+   {id:'nka',m:'b',y:58,k:'pump',l:'Na⁺/K⁺-ATPase',f:[['Na','in'],['K','out']]},
+   {id:'aqp34',m:'b',y:232,k:'ch',l:'AQP3/4',f:[['H2O','in']]},
+  ],
+  para:[],
+  notes:[],
+  signals:[
+   {id:'aldo',h:'Aldo',y:108,rec:null,segs:[[[478,108],[372,108]],[[350,100],[214,64]],[[360,96],[440,66]],[[340,114],[214,138]]],labels:[{x:395,y:136,t:'MR (nuclear receptor)'},{x:395,y:149,t:'→ ↑ENaC ↑ROMK ↑pump'}],c:'#6b2d3e',mols:'Na K'},
+   {id:'adh',h:'ADH',y:295,rec:'V2',segs:[[[462,295],[340,295],[300,250],[214,236]]],labels:[{x:345,y:313,t:'Gs → cAMP → PKA'},{x:255,y:272,t:'AQP2 vesicles insert'}],c:'#1f6fd1',mols:'H2O'},
+  ],
+  steps:[
+   {t:'<b>Na⁺/K⁺-ATPase</b> keeps intracellular Na⁺ low.',hl:['nka']},
+   {t:'<b>ENaC</b> lets Na⁺ in down its gradient, which leaves the lumen <b>negative</b>. Amiloride and triamterene block ENaC.',hl:['enac']},
+   {t:'The negative lumen plus <b>ROMK</b> drives K⁺ secretion, the main source of urinary K⁺. Faster distal flow and more Na⁺ delivery (from loop or thiazide diuretics) increase K⁺ loss.',hl:['romk']},
+   {t:'<b>Aldosterone</b> (released in response to angiotensin II and hyperkalemia) crosses the membrane and binds the mineralocorticoid receptor, which increases ENaC, ROMK and Na⁺/K⁺-ATPase. Spironolactone blocks the receptor. Without aldosterone (hypoadrenocorticism), you get hyponatremia and hyperkalemia.',hl:['aldo','enac','romk','nka']},
+   {t:'<b>ADH</b> binds the V2 receptor (Gs), raising cAMP and activating PKA, which inserts <b>AQP2</b> into the apical membrane. Water leaves through AQP3/4 into the hypertonic medulla, concentrating the urine. No ADH (central DI) or no response to it (nephrogenic DI) produces hyposthenuria.',hl:['adh','aqp2','aqp34']},
+  ]},
+ aic:{name:'Collecting duct: α (type A) intercalated cell',osm:'Acidifies urine (down to ~pH 4.5)',summary:'Excretes H⁺ and adds new HCO₃⁻ to blood. Activated by acidemia and aldosterone.',
+  carriers:[
+   {id:'hatp',m:'a',y:85,k:'pump',l:'H⁺-ATPase',f:[['H','out']]},
+   {id:'hk',m:'a',y:180,k:'pump',l:'H⁺/K⁺-ATPase',f:[['H','out'],['K','in']]},
+   {id:'ae1',m:'b',y:130,k:'ex',l:'AE1',f:[['HCO3','in'],['Cl','out']]},
+   {id:'co2b',m:'b',y:240,k:'diff',l:'diffusion',f:[['CO2','out']]},
+  ],
+  para:[],
+  notes:[
+   {id:'rxC',x:330,y:150,mid:1,lines:['CO₂ + H₂O','→ CA II →','H⁺ + HCO₃⁻'],c:'#b5485f',mols:'H HCO3 CO2'},
+   {id:'buf',x:8,y:250,lines:['H⁺ buffered as','NH₄⁺ and H₂PO₄⁻','(titratable acid)'],c:'#c0392b',mols:'H'},
+  ],
+  signals:[],
+  steps:[
+   {t:'CO₂ from blood and H₂O are converted by <b>CA II</b> to H₂CO₃, which splits into H⁺ and HCO₃⁻.',hl:['co2b','rxC']},
+   {t:'H⁺ is pumped into the lumen by <b>H⁺-ATPase</b> and <b>H⁺/K⁺-ATPase</b>. The H⁺/K⁺-ATPase also reclaims K⁺, which matters in hypokalemia.',hl:['hatp','hk']},
+   {t:'HCO₃⁻ leaves through <b>AE1</b> (Cl⁻/HCO₃⁻ exchanger). This is <b>new</b> bicarbonate added to blood, which corrects acidemia. It is not filtered HCO₃⁻ being reclaimed.',hl:['ae1']},
+   {t:'Secreted H⁺ is buffered by ammonia (NH₃ → NH₄⁺) and phosphate (titratable acid). Without these buffers, urine pH would bottom out near 4.5 almost immediately. A defect in this cell causes distal (type 1) renal tubular acidosis.',hl:['buf']},
+  ]},
+ bic:{name:'Collecting duct: β (type B) intercalated cell',osm:'Alkalinizes urine',summary:'The mirror image of the α cell: secretes HCO₃⁻ into urine and returns H⁺ to blood. Upregulated in metabolic alkalosis.',
+  carriers:[
+   {id:'pend',m:'a',y:110,k:'ex',l:'Pendrin',f:[['HCO3','out'],['Cl','in']]},
+   {id:'hb',m:'b',y:110,k:'pump',l:'H⁺-ATPase',f:[['H','in']]},
+   {id:'co2b',m:'b',y:240,k:'diff',l:'diffusion',f:[['CO2','out']]},
+  ],
+  para:[],
+  notes:[{id:'rxC',x:330,y:170,mid:1,lines:['CO₂ + H₂O','→ CA II →','H⁺ + HCO₃⁻'],c:'#b5485f',mols:'H HCO3 CO2'}],
+  signals:[],
+  steps:[
+   {t:'As in the α cell, <b>CA II</b> converts CO₂ + H₂O into H⁺ and HCO₃⁻.',hl:['co2b','rxC']},
+   {t:'<b>Pendrin</b> on the <b>apical</b> side swaps HCO₃⁻ out for Cl⁻ in, so base is excreted in the urine.',hl:['pend']},
+   {t:'<b>H⁺-ATPase</b> on the <b>basolateral</b> side returns H⁺ to blood. The transporters sit on the opposite membranes from the α cell.',hl:['hb']},
+   {t:'β cells are upregulated in metabolic alkalosis. Pendrin also reclaims Cl⁻, which links acid–base balance to Cl⁻ and volume status.',hl:['pend','hb']},
+  ]},
+};
+let nm={view:'map',seg:null,step:null,mol:null,timer:null,info:null,paused:false,glom:{pgc:55,pbs:15,pigc:30},raas:{lowNaCl:true}};
 function renderNephronTool(){
-  return `<div class="sh"><h2>Nephron explorer</h2><p>Click a segment to see what it reabsorbs, which hormones act on it, which diuretic targets it, and why that matters clinically.</p></div>
-<div class="brain-layout">
-  <div class="brain-diagram"><div class="brain-region-list">${NEPHRON.map(s=>`<button class="brain-sel-btn" id="nb-${s.k}" onclick="nephSelect('${s.k}')"><span class="brain-sel-dot" style="background:var(--accent-mid)"></span>${s.name}</button>`).join('')}</div></div>
-  <div class="brain-panel" id="neph-panel"></div>
-</div>
-<div class="card"><div class="card-title">Diuretics at a glance</div><table>
+  return `<div class="sh"><h2>Nephron molecule map</h2><p>Which molecules move where, through which transporter, and which hormones and drugs act on them. Click a segment to zoom into its cell, use <b>▶ Play</b> to step through, or pick a molecule to follow it along the nephron.</p></div>
+<div id="nm-root"></div>
+<div class="card" style="margin-top:14px"><div class="card-title">Diuretics at a glance</div><table>
 <tr><th>Class</th><th>Example</th><th>Site</th><th>K⁺</th><th>Urinary Ca²⁺</th></tr>
 <tr><td>Carbonic anhydrase inhibitor</td><td>Acetazolamide</td><td>PCT</td><td><span class="badge b-danger">↓</span></td><td>↔</td></tr>
 <tr><td>Osmotic</td><td>Mannitol</td><td>PCT, descending limb</td><td><span class="badge b-warn">↓/↔</span></td><td>↔</td></tr>
@@ -731,12 +916,231 @@ function renderNephronTool(){
 <tr><td>K⁺-sparing</td><td>Spironolactone, amiloride</td><td>Collecting duct</td><td><span class="badge b-info">↑</span></td><td>↔</td></tr>
 </table></div>`;
 }
-function nephSelect(k){
-  nephSel=k;const s=NEPHRON.find(x=>x.k===k);
-  document.querySelectorAll('.brain-sel-btn').forEach(b=>{b.style.borderColor='';b.style.background='';});
-  const b=$('nb-'+k);if(b){b.style.borderColor='var(--accent-mid)';b.style.background='var(--accent-light)';}
-  $('neph-panel').innerHTML=`<div class="brain-panel-name">${s.name}</div><div class="brain-panel-sub">${s.na}</div>
-  ${[['Transporters / function',s.trans],['Hormones',s.horm],['Drugs acting here',s.drug],['Clinical pearl',s.clin]].map(([l,v])=>`<div class="brain-finding-row"><div class="brain-finding-label">${l}</div><div class="brain-finding-val">${v}</div></div>`).join('')}`;
+function nmInit(){nmDraw();}
+function nmStop(){if(nm.timer){clearInterval(nm.timer);nm.timer=null;}}
+function nmOpen(seg){nmStop();nm.view=seg==='map'?'map':'seg';nm.seg=seg==='map'?null:seg;nm.step=null;nm.info=null;nmDraw();const r=$('nm-root');if(r)r.scrollIntoView({block:'nearest'});}
+function nmMol(m){nmStop();nm.mol=(m===nm.mol||m==='all')?null:m;nm.step=null;nmDraw();}
+function nmDraw(){
+  const r=$('nm-root');if(!r){nmStop();return;}
+  if(nm.view==='map')r.innerHTML=nmMapHTML();
+  else if(nm.seg==='glom')r.innerHTML=nmShell(nmGlomHTML(),nmGlomSide());
+  else if(nm.seg==='raas')r.innerHTML=nmShell(nmRaasHTML(),nmRaasSide());
+  else r.innerHTML=nmShell(nmCellSVG(NM_SEGS[nm.seg]),nmSegSide(NM_SEGS[nm.seg]));
+  nmApplyHL();
+  if(nm.paused){const s=r.querySelector('svg.nm-anim');if(s)s.pauseAnimations();}
+}
+function nmChipRow(keys){
+  return `<div class="nm-chips"><span class="asm-filter-label">Follow a molecule:</span><button class="nm-chip${!nm.mol?' on':''}" onclick="nmMol('all')">All</button>${keys.map(k=>`<button class="nm-chip${nm.mol===k?' on':''}" style="--mc:${MOL[k][1]}" onclick="nmMol('${k}')"><span class="nm-dot" style="background:${MOL[k][1]}"></span>${MOL[k][0]}</button>`).join('')}</div>`;
+}
+function segMols(S){const s=new Set();S.carriers.forEach(c=>c.f.forEach(([m])=>s.add(m)));(S.para||[]).forEach(m=>s.add(m));return [...s];}
+const NM_D2M={principal:'cd',aic:'cd',bic:'cd',raas:'md'};
+function nmMapHTML(){
+  const molSegs=nm.mol?Object.keys(NM_MOLMAP[nm.mol]):null;
+  const mapOn=new Set(molSegs?molSegs.map(s=>NM_D2M[s]||s):[]);
+  const col={glom:'#b5485f',pct:'#2f8f46',dloh:'#1f6fd1',tal:'#0f7c80',md:'#6b2d3e',dct:'#e07b00',cd:'#7b4fa8'};
+  const P={pct:'M270,112 C235,150 150,108 138,148 S205,188 170,218',dloh:'M170,218 L170,470',tal:'M230,470 L230,150 C230,132 244,124 258,124',dct:'M284,126 C330,150 372,104 404,134 S448,186 474,156 C496,132 520,148 520,180',cd:'M520,180 L520,505',md:'M258,124 L284,126'};
+  const tgt={pct:'pct',dloh:'dloh',tal:'tal',dct:'dct',cd:'principal',md:'raas'};
+  const segPath=k=>{const dim=nm.mol&&!mapOn.has(k);return `<g class="nm-mseg" onclick="nmOpen('${tgt[k]}')" style="opacity:${dim?.18:1}"><path d="${P[k]}" stroke="transparent" stroke-width="30" fill="none"/><path d="${P[k]}" stroke="${col[k]}" stroke-width="${k==='md'?16:13}" fill="none" stroke-linecap="round"/><path d="${P[k]}" stroke="#fff" stroke-width="${k==='md'?0:5}" fill="none" stroke-linecap="round" opacity=".55"/></g>`;};
+  const gdim=nm.mol&&!mapOn.has('glom');
+  const lbl=(x,y,t,k,anchor)=>`<text x="${x}" y="${y}" font-size="12.5" font-weight="600" fill="${col[k]}" text-anchor="${anchor||'start'}" style="cursor:pointer;opacity:${nm.mol&&!mapOn.has(k)?.25:1}" onclick="nmOpen('${tgt[k]||k}')">${t}</text>`;
+  const svg=`<svg viewBox="0 0 640 520" width="100%" style="display:block;max-height:620px">
+  <defs><linearGradient id="nmMed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf3ea"/><stop offset="1" stop-color="#efc9a9"/></linearGradient></defs>
+  <rect x="0" y="0" width="640" height="200" fill="#faf7f1"/><rect x="0" y="200" width="640" height="320" fill="url(#nmMed)"/>
+  <line x1="0" y1="200" x2="640" y2="200" stroke="#d4cfc4" stroke-dasharray="4 4"/>
+  <text x="10" y="192" font-size="10" fill="#9c9590" font-family="DM Mono" letter-spacing="1">CORTEX</text><text x="10" y="216" font-size="10" fill="#9c9590" font-family="DM Mono" letter-spacing="1">MEDULLA</text>
+  ${[[300,205],[600,290],[900,380],[1200,470]].map(([v,y])=>`<text x="630" y="${y}" font-size="11" fill="#b06a2a" text-anchor="end" font-family="DM Mono">${v}</text>`).join('')}
+  <text x="630" y="510" font-size="9" fill="#b06a2a" text-anchor="end" font-family="DM Mono">mOsm/kg interstitium</text>
+  <g class="nm-mseg" onclick="nmOpen('glom')" style="opacity:${gdim?.18:1}">
+    <line x1="238" y1="18" x2="282" y2="66" stroke="#c0392b" stroke-width="7" stroke-linecap="round"/>
+    <line x1="318" y1="66" x2="362" y2="18" stroke="#7a3446" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="300" cy="94" r="38" fill="#fff" stroke="#9c9590" stroke-width="3"/>
+    <path d="M282,70 C262,86 270,110 290,104 C276,122 304,128 306,108 C318,126 336,110 320,98 C338,88 326,70 318,70" fill="none" stroke="#c0392b" stroke-width="3.5"/>
+    <circle cx="278" cy="62" r="4" fill="#6b2d3e"/><circle cx="273" cy="56" r="4" fill="#6b2d3e"/>
+  </g>
+  ${['pct','dloh','tal','dct','cd'].map(segPath).join('')}
+  <path d="M170,470 C170,508 230,508 230,470" stroke="${col.dloh}" stroke-width="9" fill="none" opacity="${nm.mol&&!(mapOn.has('dloh')||mapOn.has('tal'))?.18:1}"/>
+  ${segPath('md')}
+  ${lbl(336,58,'Glomerulus','glom')}<text x="226" y="14" font-size="10" fill="#9c9590">afferent</text><text x="352" y="14" font-size="10" fill="#9c9590">efferent</text>
+  ${lbl(84,132,'PCT','pct')}
+  ${lbl(112,330,'Thin','dloh','end')}${lbl(112,345,'descending','dloh','end')}${lbl(112,360,'limb','dloh','end')}
+  ${lbl(244,330,'Thick','tal')}${lbl(244,345,'ascending','tal')}${lbl(244,360,'limb','tal')}
+  ${lbl(200,44,'Macula densa','md','end')}${lbl(200,58,'+ JG cells','md','end')}<line x1="204" y1="54" x2="262" y2="120" stroke="#6b2d3e" stroke-width="1" opacity=".5"/>
+  ${lbl(396,104,'DCT','dct')}
+  ${lbl(536,300,'Collecting','cd')}${lbl(536,315,'duct','cd')}
+  <text x="536" y="334" font-size="10" fill="#7b4fa8" style="cursor:pointer" onclick="nmOpen('principal')">• principal cell</text>
+  <text x="536" y="349" font-size="10" fill="#7b4fa8" style="cursor:pointer" onclick="nmOpen('aic')">• α-intercalated</text>
+  <text x="536" y="364" font-size="10" fill="#7b4fa8" style="cursor:pointer" onclick="nmOpen('bic')">• β-intercalated</text>
+  <text x="520" y="516" font-size="10" fill="#7b4fa8" text-anchor="middle">→ urine</text>
+  </svg>`;
+  let side;
+  if(nm.mol){
+    side=`<div class="card-title"><span class="nm-dot" style="background:${MOL[nm.mol][1]}"></span> Where ${MOL[nm.mol][0]} is handled</div>`+
+      NM_ORDER.filter(([k])=>NM_MOLMAP[nm.mol][k]).map(([k,n])=>`<div class="nm-step" onclick="nmOpen('${k}')"><b>${n}</b><br>${NM_MOLMAP[nm.mol][k]}</div>`).join('');
+  } else {
+    side=`<div class="card-title">Segments</div>`+NM_ORDER.map(([k,n])=>`<div class="nm-step" onclick="nmOpen('${k}')"><b>${n}</b>${NM_SEGS[k]?`<br><span style="color:var(--text-muted)">${NM_SEGS[k].summary.split('.')[0]}.</span>`:k==='glom'?'<br><span style="color:var(--text-muted)">Starling forces and the filtration barrier.</span>':'<br><span style="color:var(--text-muted)">NaCl sensing, renin, and the angiotensin–aldosterone cascade.</span>'}</div>`).join('');
+  }
+  return nmChipRow(Object.keys(NM_MOLMAP))+`<div class="nm-grid"><div class="card" style="padding:8px">${svg}<div class="nm-hint">Click any segment, label, or cell type to zoom in.</div></div><div class="card nm-side">${side}</div></div>`;
+}
+function nmShell(main,side){
+  const tabs=NM_ORDER.map(([k,n])=>`<button class="nm-tab${nm.seg===k?' on':''}" onclick="nmOpen('${k}')">${n}</button>`).join('');
+  return `<div class="nm-head"><button class="fit-btn" onclick="nmOpen('map')">← Whole nephron</button><div class="nm-tabs">${tabs}</div></div>`+
+   (NM_SEGS[nm.seg]?nmChipRow(segMols(NM_SEGS[nm.seg])):'')+
+   `<div class="nm-grid"><div class="card" style="padding:8px">${main}</div><div class="card nm-side">${side}</div></div>`;
+}
+// ---- cell view ----
+const AX=190,BX=470;
+function nmCellSVG(S){
+  const marks=new Set();const mk=c=>{marks.add(c);return `url(#nmah${c.slice(1)})`;};
+  let b='';
+  b+=`<rect x="0" y="0" width="${AX}" height="400" fill="#fbf6e3"/><rect x="${BX}" y="0" width="${680-BX}" height="400" fill="#fcf1f1"/>
+  <rect x="604" y="30" width="66" height="300" rx="33" fill="#f3d3d8" stroke="#d99aa6"/><text x="637" y="185" font-size="9.5" fill="#a3485c" text-anchor="middle" transform="rotate(-90 637 185)">peritubular capillary</text>
+  <rect x="${AX}" y="22" width="${BX-AX}" height="306" rx="16" fill="#fff8f9" stroke="#9a4b5f" stroke-width="2.5"/>
+  <rect x="${AX}" y="372" width="${BX-AX}" height="60" rx="16" fill="#fff8f9" stroke="#9a4b5f" stroke-width="2.5"/>
+  <rect x="${AX-3}" y="326" width="8" height="7" fill="#6b6560"/><rect x="${AX-3}" y="367" width="8" height="7" fill="#6b6560"/>
+  <text x="8" y="16" font-size="10" font-weight="600" fill="#9c7a2a" letter-spacing="1">LUMEN (filtrate)</text>
+  <text x="672" y="16" font-size="10" font-weight="600" fill="#a3485c" letter-spacing="1" text-anchor="end">INTERSTITIUM → BLOOD</text>
+  <text x="${AX}" y="398" font-size="8.5" fill="#9c9590" text-anchor="middle">apical</text><text x="${BX}" y="398" font-size="8.5" fill="#9c9590" text-anchor="middle">basolateral</text>
+  <text x="330" y="40" font-size="10" fill="#9c9590" text-anchor="middle" letter-spacing="1">TUBULE CELL</text>`;
+  const dot=(mol,path,dur,delay)=>`<g><circle r="10" fill="${MOL[mol][1]}" stroke="#fff" stroke-width="1.5"/><text font-size="${(MOL_DOT[mol]||MOL[mol][0]).length>3?6.2:7.5}" fill="#fff" text-anchor="middle" dy="2.6" font-weight="700">${MOL_DOT[mol]||MOL[mol][0]}</text><animateMotion dur="${dur}s" begin="${delay}s" repeatCount="indefinite" path="${path}"/></g>`;
+  const pathFor=(m,dir,y,block)=>{
+    if(block)return `M108,${y} L${AX-6},${y}`;
+    if(m==='a')return dir==='in'?`M108,${y} L262,${y}`:`M262,${y} L108,${y}`;
+    return dir==='in'?`M398,${y} L566,${y}`:`M566,${y} L398,${y}`;
+  };
+  S.carriers.forEach((c,ci)=>{
+    const n=c.f.length,gap=13,mx=c.m==='a'?AX:BX;
+    const mols=c.f.map(f=>f[0]).join(' ');
+    let g=`<g class="nm-el" data-k="${c.id} ${mols}" style="cursor:pointer" onclick="nmInfo('${c.id}')">`;
+    c.f.forEach(([mol,dir],i)=>{
+      const y=c.y+(i-(n-1)/2)*gap,col=MOL[mol][1],p=pathFor(c.m,dir,y,c.k==='block');
+      g+=`<path d="${p}" stroke="${col}" stroke-width="2" fill="none" ${c.k==='diff'?'stroke-dasharray="5 4"':''} marker-end="${c.k==='block'?'':mk(col)}" opacity=".7"/>`;
+      g+=dot(mol,p,c.k==='block'?1.6:2.8,-((ci*0.7+i*0.45)%2.8).toFixed(2));
+    });
+    const h=Math.max(24,n*gap+10);
+    if(c.k==='pump')g+=`<circle cx="${mx}" cy="${c.y}" r="${Math.max(13,h/2)}" fill="#fff" stroke="#6b2d3e" stroke-width="2.2"/><text x="${mx}" y="${c.y+3}" font-size="7.5" text-anchor="middle" fill="#6b2d3e" font-weight="700">ATP</text>`;
+    else if(c.k==='ch')g+=`<rect x="${mx-9}" y="${c.y-h/2}" width="6" height="${h}" rx="2" fill="#6b2d3e"/><rect x="${mx+3}" y="${c.y-h/2}" width="6" height="${h}" rx="2" fill="#6b2d3e"/>`;
+    else if(c.k==='block')g+=`<g stroke="#c0392b" stroke-width="3"><line x1="${mx-8}" y1="${c.y-12}" x2="${mx+8}" y2="${c.y+12}"/><line x1="${mx+8}" y1="${c.y-12}" x2="${mx-8}" y2="${c.y+12}"/></g>`;
+    else if(c.k!=='diff')g+=`<rect x="${mx-9}" y="${c.y-h/2}" width="18" height="${h}" rx="7" fill="#fff" stroke="#6b2d3e" stroke-width="2.2"/>`;
+    const ly=c.y-h/2-6;
+    g+=`<text x="${mx}" y="${c.k==='diff'?c.y-10:ly}" font-size="${c.k==='diff'||c.k==='block'?8.5:9.5}" font-weight="${c.k==='diff'?400:700}" fill="${c.k==='block'?'#c0392b':'#4a1d2a'}" text-anchor="middle" font-style="${c.k==='diff'?'italic':'normal'}">${c.l}</text>`;
+    if(c.drug)g+=`<text x="${mx-24}" y="${ly}" font-size="8" fill="#c0392b" text-anchor="end">✕ ${c.drug.split(' (')[0].split(',')[0]}</text>`;
+    b+=g+'</g>';
+  });
+  if(S.para&&S.para.length){
+    const p=`M108,350 L566,350`;
+    b+=`<g class="nm-el" data-k="para ${S.para.join(' ')}"><path d="${p}" stroke="#9c9590" stroke-width="1.5" stroke-dasharray="3 4" fill="none" marker-end="${mk('#9c9590')}"/>${S.para.map((m,i)=>dot(m,p,4.2,-(i*4.2/S.para.length).toFixed(2))).join('')}<text x="330" y="365" font-size="8.5" fill="#6b6560" text-anchor="middle" font-style="italic">paracellular (tight junction): ${S.para.map(m=>MOL[m][0]).join(', ')}</text></g>`;
+  }
+  (S.notes||[]).forEach(nt=>{
+    b+=`<g class="nm-el" data-k="${nt.id} ${nt.mols||''}">${nt.lines.map((l,i)=>`<text x="${nt.x}" y="${nt.y+i*13}" font-size="10" font-weight="600" fill="${nt.c}" text-anchor="${nt.mid?'middle':'start'}">${l}</text>`).join('')}</g>`;
+  });
+  (S.signals||[]).forEach(s=>{
+    let g=`<g class="nm-el" data-k="${s.id} ${s.mols||''}">`;
+    g+=`<circle cx="640" cy="${s.y}" r="17" fill="${s.c}"/><text x="640" y="${s.y+3.5}" font-size="9" fill="#fff" text-anchor="middle" font-weight="700">${s.h}</text>`;
+    if(s.rec){g+=`<line x1="622" y1="${s.y}" x2="${BX+12}" y2="${s.y}" stroke="${s.c}" stroke-width="2.2" marker-end="${mk(s.c)}"/>
+      <path d="M${BX-2},${s.y} l-10,0 M${BX-12},${s.y} l-6,-7 M${BX-12},${s.y} l-6,7" stroke="${s.c}" stroke-width="3" fill="none"/><text x="${BX+6}" y="${s.y-12}" font-size="8.5" fill="${s.c}" font-weight="700">${s.rec}</text>`;}
+    else g+=`<line x1="622" y1="${s.y}" x2="${BX+8}" y2="${s.y}" stroke="${s.c}" stroke-width="2.2"/>`;
+    s.segs.forEach(seg=>{g+=`<polyline points="${seg.map(p=>p.join(',')).join(' ')}" stroke="${s.c}" stroke-width="1.8" stroke-dasharray="5 3" fill="none" marker-end="${mk(s.c)}"/>`;});
+    s.labels.forEach(l=>{g+=`<text x="${l.x}" y="${l.y}" font-size="9.5" fill="${s.c}" font-weight="600" text-anchor="middle">${l.t}</text>`;});
+    b+=g+'</g>';
+  });
+  const defs=[...marks].map(c=>`<marker id="nmah${c.slice(1)}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${c}"/></marker>`).join('');
+  return `<svg class="nm-anim" viewBox="0 0 680 405" width="100%" style="display:block"><defs>${defs}</defs>${b}</svg>
+  <div class="nm-legend">${segMols(S).map(m=>`<span><span class="nm-dot" style="background:${MOL[m][1]}"></span>${MOL[m][0]}</span>`).join('')}<span style="margin-left:auto"><button class="nm-mini" onclick="nmPause()">${nm.paused?'▶ Resume motion':'❚❚ Pause motion'}</button></span></div>`;
+}
+function nmSegSide(S){
+  const circ='①②③④⑤⑥⑦⑧⑨';
+  let info='';
+  if(nm.info){const c=S.carriers.find(x=>x.id===nm.info);if(c){
+    const moves=c.f.map(([m,d])=>`${MOL[m][0]} ${c.k==='block'?'blocked':d==='in'?(c.m==='a'?'lumen → cell':'cell → blood'):(c.m==='a'?'cell → lumen':'blood → cell')}`).join(' · ');
+    info=`<div class="nm-info"><b>${c.l}</b> <span style="color:var(--text-hint)">(${c.m==='a'?'apical':'basolateral'})</span><br>${moves}${c.info?`<br>${c.info}`:''}${c.drug?`<br><span style="color:var(--danger)">Blocked by: ${c.drug}</span>`:''}</div>`;}}
+  return `<div class="nm-title">${S.name}</div><div class="nm-osm">${S.osm}</div><p style="font-size:12.5px;color:var(--text-muted);margin:6px 0 10px">${S.summary}</p>
+  <div style="display:flex;gap:6px;margin-bottom:8px"><button class="fit-btn primary" onclick="nmPlay()">${nm.timer?'❚❚ Stop':'▶ Play steps'}</button>${nm.step!==null||nm.mol?`<button class="fit-btn" onclick="nmClear()">Show all</button>`:''}</div>
+  ${info}
+  ${S.steps.map((s,i)=>`<div class="nm-step${nm.step===i?' on':''}" onclick="nmSetStep(${i})"><span class="nm-num">${circ[i]}</span>${s.t}</div>`).join('')}
+  <div class="nm-hint" style="margin-top:6px">Tip: click a transporter in the diagram for details.</div>`;
+}
+function nmSetStep(i){nm.step=(nm.step===i?null:i);nm.mol=null;nmDraw();}
+function nmClear(){nmStop();nm.step=null;nm.mol=null;nmDraw();}
+function nmInfo(id){nm.info=id;nmDraw();}
+function nmPause(){nm.paused=!nm.paused;nmDraw();}
+function nmPlay(){
+  if(nm.timer){nmStop();nmDraw();return;}
+  const S=NM_SEGS[nm.seg];nm.mol=null;nm.step=0;
+  nm.timer=setInterval(()=>{if(!$('nm-root')||nm.view!=='seg'){nmStop();return;}nm.step=(nm.step+1)%S.steps.length;nmDraw();},4200);
+  nmDraw();
+}
+function nmApplyHL(){
+  const r=$('nm-root');if(!r||nm.view==='map'||!NM_SEGS[nm.seg])return;
+  const S=NM_SEGS[nm.seg];let keys=null;
+  if(nm.step!==null)keys=new Set(S.steps[nm.step].hl);else if(nm.mol)keys=new Set([nm.mol]);
+  r.querySelectorAll('.nm-el').forEach(el=>{const k=el.dataset.k.split(' ');el.classList.toggle('nm-dim',!!keys&&!k.some(x=>keys.has(x)));});
+}
+// ---- glomerulus (Starling) ----
+const GLOM_PRESETS=[['Normal',55,15,30],['Afferent constriction (NSAID in hypovolemia)',42,15,30],['Efferent constriction (Ang II)',62,15,31],['Urethral obstruction',55,32,30],['Hypoalbuminemia',55,15,20],['Hemoconcentration',55,15,37]];
+function nmGlomHTML(){
+  const g=nm.glom,nfp=(g.pgc-g.pbs)-(g.pigc-0);
+  const sub=(a,b)=>`${a}<tspan baseline-shift="sub" font-size="8">${b}</tspan>`;
+  const A=(x,y1,len,up,c,lab,desc,val,ly)=>{const y2=up?y1-len:y1+len;return `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${c}" stroke-width="${3+val/15}" marker-end="url(#gah${c.slice(1)})"/><text x="${x+12}" y="${ly}" font-size="12" font-weight="700" fill="${c}">${lab}</text><text x="${x+12}" y="${ly+13}" font-size="9.5" fill="${c}">${desc}</text><text x="${x+12}" y="${ly+26}" font-size="10.5" fill="${c}" font-family="DM Mono">${val} mmHg</text>`;};
+  const fdur=nfp>0?Math.max(0.9,6/nfp):0;
+  const fil=nfp>0?['H2O','Na','Glc','HCO3','K','Cl'].map((m,i)=>{const x=[40,175,330,370,490,600][i];return `<g><circle r="9" fill="${MOL[m][1]}"/><text font-size="${(MOL_DOT[m]||MOL[m][0]).length>3?6:7.5}" fill="#fff" text-anchor="middle" dy="2.5" font-weight="700">${MOL_DOT[m]||MOL[m][0]}</text><animateMotion dur="${fdur.toFixed(2)}s" begin="-${(i*0.37).toFixed(2)}s" repeatCount="indefinite" path="M${x},90 L${x+18},250"/></g>`;}).join(''):'';
+  const markers=['#1f6fd1','#b5485f','#7a4a0a','#9c9590'].map(c=>`<marker id="gah${c.slice(1)}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="14" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="${c}"/></marker>`).join('');
+  return `<svg class="nm-anim" viewBox="0 0 640 300" width="100%" style="display:block"><defs>${markers}</defs>
+  <rect x="10" y="20" width="620" height="110" rx="50" fill="#f6d9de" stroke="#b5485f" stroke-width="2"/>
+  <text x="30" y="44" font-size="10" font-weight="600" fill="#a3485c" letter-spacing="1">GLOMERULAR CAPILLARY</text>
+  ${[120,330,520].map(x=>`<ellipse cx="${x}" cy="105" rx="16" ry="7" fill="#c0392b" opacity=".55"/>`).join('')}
+  <g><circle r="13" fill="#d08a00" opacity=".9"/><text font-size="6.5" fill="#fff" text-anchor="middle" dy="2.3" font-weight="700">Alb</text><animateMotion dur="2.4s" repeatCount="indefinite" path="M590,70 L596,118 L590,70"/></g>
+  <rect x="10" y="134" width="620" height="4" fill="#9c9590"/><rect x="10" y="140" width="620" height="3" fill="#6b6560"/>
+  ${Array.from({length:40},(_,i)=>`<rect x="${14+i*15.5}" y="145" width="8" height="5" rx="2" fill="#9a4b5f"/>`).join('')}
+  <text x="636" y="160" font-size="8.5" fill="#6b6560" text-anchor="end">endothelium · GBM · podocyte foot processes</text>
+  <rect x="10" y="166" width="620" height="120" rx="14" fill="#fbf6e3" stroke="#d4cfc4"/>
+  <text x="30" y="280" font-size="10" font-weight="600" fill="#9c7a2a" letter-spacing="1">BOWMAN'S SPACE → PCT</text>
+  ${fil}
+  ${A(100,48,g.pgc*1.45,false,'#1f6fd1',sub('P','GC'),'pushes fluid out',g.pgc,62)}
+  ${A(260,262,g.pigc*1.6,true,'#b5485f',sub('π','GC'),'pulls fluid back',g.pigc,196)}
+  ${A(420,262,g.pbs*1.6,true,'#7a4a0a',sub('P','BS'),'pushes back',g.pbs,196)}
+  <text x="545" y="208" font-size="12" font-weight="700" fill="#9c9590">${sub('π','BS')} ≈ 0</text><text x="545" y="221" font-size="9.5" fill="#9c9590">no protein filtered</text>
+  </svg>
+  <div class="nm-nfp ${nfp>0?'':'neg'}">NFP = (P<sub>GC</sub> − P<sub>BS</sub>) − (π<sub>GC</sub> − π<sub>BS</sub>) = (${g.pgc} − ${g.pbs}) − (${g.pigc} − 0) = <b>${nfp>0?'+':''}${nfp} mmHg</b> ${nfp>0?'→ filtration':'→ no net filtration'}</div>`;
+}
+function nmGlomSide(){
+  const g=nm.glom,sl=(k,l,min,max)=>`<div class="field" style="margin-bottom:8px"><label>${l}: <span style="font-family:'DM Mono',monospace;color:var(--accent)">${g[k]}</span></label><input type="range" class="range" min="${min}" max="${max}" value="${g[k]}" oninput="nm.glom.${k}=+this.value;nmDraw()"></div>`;
+  return `<div class="nm-title">Glomerulus</div><div class="nm-osm">Filtrate ~300 mOsm/kg, essentially protein-free plasma</div>
+  <p style="font-size:12.5px;color:var(--text-muted);margin:6px 0 10px">Filtration is driven by Starling forces. Move the sliders or pick a scenario. Textbook-style values are shown.</p>
+  ${sl('pgc','P<sub>GC</sub> (capillary hydrostatic)',30,75)}${sl('pbs','P<sub>BS</sub> (Bowman\'s hydrostatic)',5,40)}${sl('pigc','π<sub>GC</sub> (capillary oncotic)',15,45)}
+  <div class="preset-row">${GLOM_PRESETS.map((p,i)=>`<button class="asm-filter-btn" onclick="nm.glom={pgc:${p[1]},pbs:${p[2]},pigc:${p[3]}};nmDraw()">${p[0]}</button>`).join('')}</div>
+  <div class="nm-step"><b>Freely filtered:</b> water, Na⁺, K⁺, Cl⁻, HCO₃⁻, glucose, amino acids, urea, creatinine, phosphate, and the unbound fraction of Ca²⁺ and Mg²⁺.</div>
+  <div class="nm-step"><b>Held back:</b> cells and albumin (~69 kDa, negatively charged; the barrier is size- and charge-selective). Protein-bound drugs and the ~40% of Ca²⁺ bound to albumin are not filtered.</div>
+  <div class="nm-step"><b>Along the capillary</b>, π<sub>GC</sub> rises as protein-free fluid leaves, so NFP falls toward zero by the efferent end. Higher plasma flow delays that point, which is why RPF affects GFR.</div>`;
+}
+// ---- macula densa / RAAS ----
+const RAAS_STIM=[['lowNaCl','↓ NaCl delivered to the macula densa'],['lowBP','↓ renal perfusion pressure (JG baroreceptor)'],['symp','↑ sympathetic (β₁) tone'],['highNaCl','↑ NaCl delivered to the macula densa']];
+function nmRaasHTML(){
+  const s=nm.raas,on=s.lowNaCl||s.lowBP||s.symp,tgf=s.highNaCl&&!on;
+  const box=(t,sub,act,click)=>`<div class="nm-rbox${act?' on':''}"${click?` onclick="nmOpen('${click}')" style="cursor:pointer"`:''}><b>${t}</b>${sub?`<span>${sub}</span>`:''}${click?'<em>open cell →</em>':''}</div>`;
+  const ar=act=>`<div class="nm-rarrow${act?' on':''}">→</div>`;
+  return `<div class="nm-chips" style="margin:4px 0 12px">${RAAS_STIM.map(([k,l])=>`<button class="nm-chip${s[k]?' on':''}" onclick="nmRaas('${k}')">${l}</button>`).join('')}</div>
+  <div class="nm-rrow">${box('Macula densa','senses NaCl via NKCC2',s.lowNaCl||s.highNaCl)}${ar(on)}${box('JG (granular) cells','in the afferent arteriole wall',on)}${ar(on)}${box(on?'Renin ↑':tgf?'Renin ↓':'Renin','released into blood',on)}</div>
+  ${tgf?`<div class="nm-tgf"><b>Tubuloglomerular feedback:</b> high NaCl at the macula densa triggers ATP/adenosine release (A1 receptor), which constricts the <b>afferent</b> arteriole. GFR falls back toward normal and renin is suppressed.</div>`:''}
+  ${s.lowNaCl?`<div class="nm-tgf" style="border-color:var(--accent-mid)">Low NaCl at the macula densa triggers COX-2 (PGE₂) and nNOS (NO) signaling, which releases renin and dilates the afferent arteriole. <b>NSAIDs</b> blunt this. <b>Furosemide</b> blocks macula densa NKCC2, so the cell "sees" low NaCl and renin rises.</div>`:''}
+  <div class="nm-rrow">${box('Liver','angiotensinogen',on)}${ar(on)}${box('Angiotensin I','renin cleaves angiotensinogen',on)}${ar(on)}${box('Angiotensin II','ACE (pulmonary endothelium); blocked by ACEi',on)}</div>
+  <div class="nm-reff">
+   ${box('Efferent arteriole constriction','preserves GFR (AT1; blocked by ARBs)',on,'glom')}
+   ${box('PCT: NHE3 ↑','more Na⁺ and HCO₃⁻ reabsorbed',on,'pct')}
+   ${box('Adrenal zona glomerulosa → aldosterone','ENaC, ROMK, Na⁺/K⁺-ATPase ↑ (hyperkalemia also triggers it directly)',on,'principal')}
+   ${box('Posterior pituitary → ADH','AQP2 insertion, water retained',on,'principal')}
+   ${box('Thirst ↑','more water intake',on)}
+   ${box('Systemic vasoconstriction','↑ blood pressure',on)}
+  </div>
+  <div class="nm-hint">Net effect: Na⁺ and water are retained, K⁺ is excreted, and blood pressure and GFR are defended. β-blockers lower renin release. ACEi and ARBs lower Ang II effects. Spironolactone blocks aldosterone at the mineralocorticoid receptor.</div>`;
+}
+function nmRaas(k){const s=nm.raas;s[k]=!s[k];if(k==='highNaCl'&&s[k])s.lowNaCl=false;if(k==='lowNaCl'&&s[k])s.highNaCl=false;nmDraw();}
+function nmRaasSide(){
+  return `<div class="nm-title">Macula densa, JGA & RAAS</div><div class="nm-osm">The kidney's own blood pressure and volume sensor</div>
+  <p style="font-size:12.5px;color:var(--text-muted);margin:6px 0 10px">Toggle the stimuli to see what fires. Click the effect boxes to jump to the cell where each hormone acts.</p>
+  <div class="nm-step"><b>Macula densa cells</b> line the end of the thick ascending limb where it touches its own glomerulus. They sense tubular <b>NaCl</b> through NKCC2.</div>
+  <div class="nm-step"><b>Juxtaglomerular (granular) cells</b> in the afferent arteriole release <b>renin</b> in response to three triggers: <b>↓</b> NaCl at the macula densa, <b>↓</b> perfusion pressure (they are baroreceptors), and β₁ sympathetic stimulation.</div>
+  <div class="nm-step"><b>High</b> NaCl delivery does the opposite: renin is suppressed and tubuloglomerular feedback constricts the afferent arteriole.</div>
+  <div class="nm-step">Ang II has a short half-life. ACE is the same enzyme as kininase II, which is why ACEi raise bradykinin.</div>`;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1454,7 +1858,7 @@ function caseBack(){if(caseState.step>0){caseState.step--;renderCases();}}
 // ═══════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════
-renderSidebar();render();
+(function(){const h=(location.hash||'').slice(1);if(TOPICS.some(t=>t[0]===h)){topic=h;setMode('tools');}else{renderSidebar();render();}})();
 </script>
 </body>
 </html>
