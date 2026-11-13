@@ -1123,7 +1123,7 @@ function nmMapHTML(){
   <radialGradient id="nmBS" cx=".5" cy=".5" r=".5"><stop offset=".6" stop-color="#fdf9ec"/><stop offset="1" stop-color="#f3ead0"/></radialGradient></defs>
   <rect x="0" y="0" width="640" height="205" fill="#faf7f1"/><rect x="0" y="205" width="640" height="315" fill="url(#nmMed)"/>
   <text x="8" y="190" font-size="10" fill="#9c9590" font-family="DM Mono" letter-spacing="1">CORTEX</text><text x="8" y="256" font-size="10" fill="#9c9590" font-family="DM Mono" letter-spacing="1">MEDULLA</text>
-  ${[[300,250],[600,330],[900,410],[1200,480]].map(([v,y])=>`<text x="632" y="${y}" font-size="11" fill="#b06a2a" text-anchor="end" font-family="DM Mono">${v}</text>`).join('')}
+  ${[[300,250],[600,330],[900,410],[1200,480]].map(([v,y])=>`<line x1="0" y1="${y-4}" x2="${v>999?592:598}" y2="${y-4}" stroke="#b06a2a" stroke-width="1.2" stroke-dasharray="6 5" opacity=".5"/><text x="632" y="${y}" font-size="11" fill="#b06a2a" text-anchor="end" font-family="DM Mono">${v}</text>`).join('')}
   <text x="632" y="264" font-size="8.5" fill="#b06a2a" text-anchor="end" font-family="DM Mono">mOsm/kg</text>
   <!-- vessels (behind tubules) -->
   <g style="opacity:${vdim}" class="nm-mseg" onclick="nmVinfo('ptc')"><path d="M336,70 H548 V202 H92 V142 H336 Z" fill="transparent"/>${ptc}${nm.vinfo==='ptc'?'<path d="M336,70 H548 V202 H92 V142 H336 Z" fill="#f5c400" opacity=".15"/>':''}</g>
@@ -1150,8 +1150,7 @@ function nmMapHTML(){
     L(340,72,'JG cells',null,'start',9.5,'#4a1d2a',"nmOpen('raas')")+L(340,104,'macula densa','md','start',9.5)+`<line x1="338" y1="69" x2="313" y2="68" stroke="#4a1d2a" stroke-width=".8" opacity=".6"/>`+
     L(108,96,'PCT','pct','end')+L(128,330,'Thin','dloh','end')+L(128,345,'descending','dloh','end')+L(128,360,'limb','dloh','end')+
     L(334,330,'Thick','tal')+L(334,345,'ascending','tal')+L(334,360,'limb','tal')+
-    L(420,26,'DCT','dct')+L(572,300,'Collecting','cd')+L(572,315,'duct','cd')+
-    `<text x="572" y="334" font-size="10" fill="#7b4fa8" style="cursor:pointer" onclick="nmOpen('principal')">• principal</text><text x="572" y="349" font-size="10" fill="#7b4fa8" style="cursor:pointer" onclick="nmOpen('aic')">• α-intercalated</text><text x="572" y="364" font-size="10" fill="#7b4fa8" style="cursor:pointer" onclick="nmOpen('bic')">• β-intercalated</text>`+
+    L(420,26,'DCT','dct')+L(548,268,'Collecting duct','cd','end')+L(548,283,'principal •',null,'end',10,'#7b4fa8',"nmOpen('principal')")+L(548,297,'α-intercalated •',null,'end',10,'#7b4fa8',"nmOpen('aic')")+L(548,311,'β-intercalated •',null,'end',10,'#7b4fa8',"nmOpen('bic')")+
     L(42,120,'interlobular a. & v.',null,'middle',9.5,'#a3485c',"nmVinfo('ilA')").replace('<text','<text transform="rotate(-90 42 120)"')+
     L(380,205,'arcuate artery',null,'start',9,'#c0392b',"nmVinfo('arcA')")+L(380,243,'arcuate vein',null,'start',9,'#3d6fb6',"nmVinfo('arcV')")+
     L(546,92,'peritubular',null,'end',9,'#b0566b',"nmVinfo('ptc')")+L(546,103,'capillaries',null,'end',9,'#b0566b',"nmVinfo('ptc')")+
