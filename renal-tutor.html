@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vet Nephrology — Interactive Renal Tutor | desmoVet</title>
-<meta name="description" content="Interactive veterinary nephrology tutor: IRIS CKD staging and AKI grading calculators, azotemia localizer, hyperkalemia ECG, urolith finder, and large animal renal disease.">
+<meta name="description" content="Interactive veterinary nephrology tutor: animated nephron molecule map, IRIS CKD staging calculator, hyperkalemia ECG, urolith finder, and large animal renal disease.">
 <link rel="icon" href="favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -571,13 +571,13 @@ tr:hover td{background:var(--surface2)}
 const TOPICS=[
   ['physiology','◐','GFR & physiology','GFR lever'],
   ['nephron','≋','Nephron molecule map','Nephron molecule map'],
-  ['azotemia','⇄','Azotemia','Azotemia localizer'],
+  ['azotemia','⇄','Azotemia',null],
   ['ua','◌','Urinalysis','USG + sediment'],
   ['ckd','▤','CKD & IRIS staging','IRIS staging calculator'],
-  ['aki','⚠','AKI & nephrotoxins','IRIS AKI grader'],
+  ['aki','⚠','AKI & nephrotoxins',null],
   ['uroliths','◆','Uroliths','Urolith finder'],
   ['obstruction','⊗','Obstruction & K⁺','Hyperkalemia ECG'],
-  ['uroabdomen','◍','Uroabdomen','Fluid:serum ratio calc'],
+  ['uroabdomen','◍','Uroabdomen',null],
   ['largeanimal','🐄','Large animal','Large animal fill-in'],
 ];
 let mode='home', topic='physiology';
@@ -590,24 +590,27 @@ const num=id=>{const el=$(id);if(!el||el.value==='')return null;const v=parseFlo
 // NAVIGATION
 // ═══════════════════════════════════════════════════════
 function renderSidebar(){
-  $('sidebar').innerHTML=`<div class="nav-label">Topics</div>`+TOPICS.map(([k,ic,lb])=>
+  const list=mode==='tools'?TOPICS.filter(t=>t[3]):TOPICS;
+  $('sidebar').innerHTML=`<div class="nav-label">${mode==='tools'?'Tools':'Topics'}</div>`+list.map(([k,ic,lb])=>
     `<button class="nav-btn${topic===k?' active':''}" onclick="showTopic('${k}')"><span class="nav-icon">${ic}</span>${lb}</button>`).join('');
 }
 function goHome(){setMode('home')}
 function setMode(m){
   mode=m;
   document.querySelectorAll('.mtab').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
+  if(m==='tools')toolTopicOK();
   $('sidebar').style.display=(m==='reference'||m==='tools')?'':'none';
   renderSidebar();render();window.scrollTo(0,0);
 }
 function showTopic(t){topic=t;renderSidebar();render();}
 function goTool(t){topic=t;setMode('tools');}
+function toolTopicOK(){if(!TOOL_RENDER[topic])topic=TOPICS.find(t=>t[3])[0];}
 function goRef(t){topic=t;setMode('reference');}
 function render(){
   const m=$('main');
   if(mode==='home') m.innerHTML=renderHome();
   else if(mode==='tools') m.innerHTML=renderTool(topic);
-  else if(mode==='reference') m.innerHTML=(REF[topic]||REF.physiology)+`<div style="margin-top:14px"><button class="fit-btn primary" onclick="goTool('${topic}')">Open the interactive tool →</button></div>`;
+  else if(mode==='reference') m.innerHTML=(REF[topic]||REF.physiology)+(TOOL_RENDER[topic]?`<div style="margin-top:14px"><button class="fit-btn primary" onclick="goTool('${topic}')">Open the interactive tool →</button></div>`:'');
   else if(mode==='flashcards'){renderFlashcards();return;}
   else if(mode==='quiz'){renderQuiz();return;}
   else if(mode==='match'){renderDnD();return;}
@@ -624,12 +627,9 @@ function renderHome(){
   const cards=[
     ['nephron','≋','Nephron molecule map','Animated cell-by-cell map: which transporters move which molecules, and where ADH, aldosterone, PTH and diuretics act. Follow one molecule along the whole nephron.'],
     ['ckd','▤','IRIS staging calculator','Creatinine, SDMA, UPC, and blood pressure in, stage, substage, and stage-specific management out.'],
-    ['azotemia','⇄','Azotemia localizer','Pre-renal, renal, or post-renal? Works through USG, hydration, and the extra-renal reasons urine stays dilute.'],
     ['obstruction','⊗','Hyperkalemia ECG','Drag serum K⁺ and watch the ECG change: peaked T waves, then lost P waves, then a sine wave. Shows the treatment for each level.'],
     ['physiology','◐','GFR lever','Constrict or dilate the afferent and efferent arterioles and see what happens to RPF, P<sub>GC</sub>, GFR, and FF. Includes the NSAID + ACEi case.'],
     ['uroliths','◆','Urolith finder','Filter dog and cat stones by urine pH, radiopacity, and whether diet can dissolve them.'],
-    ['aki','⚠','IRIS AKI grader','Grade I–V, oliguric subgrade, and when to think about dialysis.'],
-    ['uroabdomen','◍','Uroabdomen ratios','Abdominal fluid:serum creatinine and K⁺ ratios for dogs, cats, and foals.'],
     ['largeanimal','🐄','Large animal renal','Ruminant urolithiasis, foal uroperitoneum, equine CKD hypercalcemia, and nephrotoxic plants.'],
   ];
   return `
@@ -638,7 +638,7 @@ function renderHome(){
   <p>A day-one guide to kidneys and the urinary tract for vet students and new grads. It covers small and large animal patients, with interactive calculators, flashcards, board-style questions, and step-by-step cases.</p>
   <div class="home-stats">
     <div class="home-stat"><div class="n">${TOPICS.length}</div><div class="l">topics</div></div>
-    <div class="home-stat"><div class="n">${TOPICS.length}</div><div class="l">interactive tools</div></div>
+    <div class="home-stat"><div class="n">${TOPICS.filter(t=>t[3]).length}</div><div class="l">interactive tools</div></div>
     <div class="home-stat"><div class="n">${CASES.length}</div><div class="l">clinical cases</div></div>
     <div class="home-stat"><div class="n">${nQ}</div><div class="l">practice questions</div></div>
     <div class="home-stat"><div class="n">${nF}</div><div class="l">flashcards</div></div>
@@ -674,13 +674,13 @@ function renderHome(){
 // TOOL ROUTER
 // ═══════════════════════════════════════════════════════
 const TOOL_RENDER={
-  physiology:()=>renderGFRTool(), nephron:()=>renderNephronTool(), azotemia:()=>renderAzoTool(),
-  ua:()=>renderUATool(), ckd:()=>renderIRISTool(), aki:()=>renderAKITool(), uroliths:()=>renderStoneTool(),
-  obstruction:()=>renderKTool(), uroabdomen:()=>renderUroabdTool(), largeanimal:()=>renderLATool(),
+  physiology:()=>renderGFRTool(), nephron:()=>renderNephronTool(),
+  ua:()=>renderUATool(), ckd:()=>renderIRISTool(), uroliths:()=>renderStoneTool(),
+  obstruction:()=>renderKTool(), largeanimal:()=>renderLATool(),
 };
 const TOOL_INIT={
-  physiology:()=>gfrUpdate(), nephron:()=>nmInit(), azotemia:()=>azoUpdate(), ua:()=>usgUpdate(),
-  ckd:()=>irisUpdate(), aki:()=>akiUpdate(), obstruction:()=>kUpdate(), uroabdomen:()=>uaUpdate(),
+  physiology:()=>gfrUpdate(), nephron:()=>nmInit(), ua:()=>usgUpdate(),
+  ckd:()=>irisUpdate(), obstruction:()=>kUpdate(),
 };
 function renderTool(t){return TOOL_RENDER[t]?TOOL_RENDER[t]():'';}
 function segBtns(group,opts,cur,fn){return `<div class="seg">${opts.map(([v,l])=>`<button class="${cur===v?'on':''}" onclick="${fn}('${group}','${v}')">${l}</button>`).join('')}</div>`;}
@@ -1274,70 +1274,7 @@ function nmRaasSide(){
   <div class="nm-step">Ang II has a short half-life. ACE is the same enzyme as kininase II, which is why ACEi raise bradykinin.</div>`;
 }
 
-// ═══════════════════════════════════════════════════════
-// TOOL 3 — AZOTEMIA LOCALIZER
-// ═══════════════════════════════════════════════════════
 const USG_ADEQ={dog:1.030,cat:1.035,horse:1.025,cattle:1.025};
-const SPECIES_LBL={dog:'Dog',cat:'Cat',horse:'Horse',cattle:'Cattle / small ruminant'};
-let azo={sp:'dog'};
-const AZO_CONF=[
-  ['addison','Hypoadrenocorticism suspected (Na:K &lt;27, no stress leukogram)','medullary washout from Na⁺ loss'],
-  ['hca','Hypercalcemia','Ca²⁺ blocks ADH action and causes nephrogenic DI'],
-  ['drugs','Fluids, diuretics, glucocorticoids, or mannitol before sampling','iatrogenic dilution or diuresis'],
-  ['gluc','Glucosuria / diabetes mellitus','osmotic diuresis'],
-  ['endo','Pyometra, pyelonephritis, or E. coli endotoxemia','endotoxin blocks ADH action'],
-  ['liver','Hepatic failure / portosystemic shunt','low urea causes loss of the medullary gradient'],
-  ['hac','Hyperadrenocorticism','cortisol interferes with ADH release and action'],
-  ['lowna','Hyponatremia or a low-protein/low-salt diet','medullary solute washout'],
-];
-function renderAzoTool(){
-  return `<div class="sh"><h2>Azotemia localizer</h2><p>Enter what you know about an azotemic patient. The tool works through the same logic you would use on rounds.</p></div>
-<div class="card">
-  <div class="calc-grid">
-    <div class="field"><label>Species</label>${segBtns('sp',[['dog','Dog'],['cat','Cat'],['horse','Horse'],['cattle','Ruminant']],azo.sp,'azoSet')}</div>
-    <div class="field"><label>USG (pre-fluid)</label><input type="number" id="azo-usg" step="0.001" min="1.000" max="1.080" placeholder="e.g. 1.018" oninput="azoUpdate()"></div>
-    <div class="field"><label>Hydration</label><select id="azo-hyd" onchange="azoUpdate()"><option value="dehy">Clinically dehydrated</option><option value="norm">Euhydrated</option></select></div>
-  </div>
-  <div class="card-title" style="margin-top:6px">Post-renal clues</div>
-  <label class="chk"><input type="checkbox" id="azo-obs" onchange="azoUpdate()">Stranguria/anuria with a large, firm, painful bladder (urethral obstruction)</label>
-  <label class="chk"><input type="checkbox" id="azo-rup" onchange="azoUpdate()">Free abdominal fluid, small/absent bladder, or trauma (suspect uroabdomen)</label>
-  <div class="card-title" style="margin-top:10px">Extra-renal reasons urine may be dilute</div>
-  ${AZO_CONF.map(([k,l])=>`<label class="chk"><input type="checkbox" id="azo-${k}" onchange="azoUpdate()">${l}</label>`).join('')}
-</div>
-<div class="result-card" id="azo-result"></div>
-<div class="card"><div class="card-title">BUN:creatinine notes</div><div style="font-size:13px;line-height:1.65">BUN rises <strong>disproportionately</strong> with GI hemorrhage, a recent high-protein meal, catabolism (fever, glucocorticoids, tetracyclines), and pre-renal states, because urea is partly reabsorbed when tubular flow is slow. BUN is <strong>relatively low</strong> with hepatic failure, PSS, PU/PD, and low-protein diets. <strong>Ruminants:</strong> urea is recycled to the rumen, so creatinine is the more reliable marker. <strong>Horses:</strong> a BUN:Cr ratio &gt;15:1 has traditionally pointed toward pre-renal or chronic disease and &lt;10:1 toward acute renal failure. Treat this as a soft clue only.</div></div>`;
-}
-function azoSet(g,v){azo[g]=v;const keep=$('azo-usg').value;$('main').innerHTML=renderAzoTool();$('azo-usg').value=keep;azoUpdate();}
-function azoUpdate(){
-  const usg=num('azo-usg'), thr=USG_ADEQ[azo.sp], hyd=$('azo-hyd').value;
-  const conf=AZO_CONF.filter(([k])=>$('azo-'+k)?.checked);
-  const obs=$('azo-obs').checked, rup=$('azo-rup').checked;
-  let title,sub,body=[];
-  if(obs||rup){
-    title='Post-renal azotemia';sub=obs?'Urethral obstruction':'Suspected uroabdomen';
-    body.push(obs?'Relieve the obstruction and check K⁺ and the ECG first. Post-renal azotemia usually resolves within 24–72 h of relief. If it does not, there is a concurrent renal component.':'Compare abdominal fluid creatinine and K⁺ with serum (use the Uroabdomen tool). Imaging with positive-contrast cystourethrography locates the leak.');
-    body.push('USG is unreliable for localizing in post-renal azotemia. Post-renal disease can also coexist with renal or pre-renal azotemia.');
-  } else if(usg===null){
-    title='Enter a USG';sub=`Adequate concentration for a ${SPECIES_LBL[azo.sp].toLowerCase()}: ≥${thr.toFixed(3)}`;
-    body.push('Use a sample collected <strong>before</strong> fluid therapy. The concentrating ability of an azotemic or dehydrated patient is the key test of the renal tubules.');
-  } else if(usg>=thr){
-    title='Pre-renal azotemia';sub=`USG ${usg.toFixed(3)} ≥ ${thr.toFixed(3)}: the tubules can still concentrate`;
-    body.push('Look for reduced renal perfusion: dehydration, hypovolemia, shock, heart failure, or hypoalbuminemia. Pre-renal azotemia should resolve within 24–48 h of restoring perfusion.');
-    if(azo.sp==='cat')body.push('<strong>Cat caveat:</strong> some cats with real CKD keep the ability to concentrate above 1.035. If azotemia persists after rehydration, the cat has renal disease.');
-    if(hyd==='norm')body.push('The patient is euhydrated, so consider occult hypovolemia, cardiac output problems, GI hemorrhage (BUN rises disproportionately), or a high-protein meal.');
-  } else if(conf.length){
-    title='Cannot confirm renal azotemia yet';sub=`USG ${usg.toFixed(3)} is below ${thr.toFixed(3)}, but there is an extra-renal reason the urine may be dilute`;
-    body.push('Inadequate concentration with azotemia normally means renal azotemia. Here, though, these factors can impair concentration even when the kidneys are structurally normal:');
-    body.push('<ul>'+conf.map(([,l,why])=>`<li>${l}: <em>${why}</em></li>`).join('')+'</ul>');
-    body.push('Correct the confounder, rehydrate, and reassess. Azotemia that resolves quickly points to pre-renal disease. Persistent azotemia confirms a renal component.');
-  } else {
-    title='Renal azotemia';sub=`USG ${usg.toFixed(3)} < ${thr.toFixed(3)} with azotemia, and no extra-renal explanation`;
-    body.push(`About two-thirds of nephrons have lost concentrating ability${usg<1.008?'. A USG &lt;1.008 (hyposthenuria) means the tubules are actively diluting, so also consider DI, psychogenic polydipsia, hypercalcemia, and pyelonephritis':''}.`);
-    body.push('Next, decide whether this is <strong>acute or chronic</strong>. Small irregular kidneys, non-regenerative anemia, weight loss, and long-standing PU/PD suggest CKD (stage it with the IRIS calculator once the patient is stable). Normal or large kidneys, active sediment or casts, glucosuria, hyperkalemia, and an acute history suggest AKI (use the AKI grader).');
-    if(hyd==='dehy')body.push('The patient is also dehydrated, so a pre-renal component is likely on top of the renal one. Expect partial improvement with fluids.');
-  }
-  $('azo-result').innerHTML=`<div class="result-head"><div class="rl">Localization</div><div class="rv">${title}</div><div class="rs">${sub}</div></div><div class="result-body">${body.map(b=>b.startsWith('<ul')?b:`<p style="margin-bottom:8px">${b}</p>`).join('')}</div>`;
-}
 
 // ═══════════════════════════════════════════════════════
 // TOOL 4 — URINALYSIS (USG + sediment fill-in)
@@ -1458,52 +1395,6 @@ function irisUpdate(){
 }
 
 // ═══════════════════════════════════════════════════════
-// TOOL 6 — IRIS AKI GRADER
-// ═══════════════════════════════════════════════════════
-function renderAKITool(){
-  return `<div class="sh"><h2>IRIS AKI grader</h2><p>AKI is graded on creatinine at diagnosis and during hospitalization, then subgraded on urine output and whether renal replacement therapy is needed.</p></div>
-<div class="card">
-  <div class="calc-grid">
-    <div class="field"><label>Creatinine (mg/dL)</label><input type="number" id="ak-cr" step="0.1" placeholder="e.g. 4.2" oninput="akiUpdate()"></div>
-    <div class="field"><label>Urine output (mL/kg/h, over 6 h)</label><input type="number" id="ak-uo" step="0.1" placeholder="optional" oninput="akiUpdate()"></div>
-  </div>
-  <label class="chk"><input type="checkbox" id="ak-rise" onchange="akiUpdate()">Creatinine has risen ≥0.3 mg/dL (≥26.4 µmol/L) within 48 h, or there is other documented evidence of AKI</label>
-  <label class="chk"><input type="checkbox" id="ak-rrt" onchange="akiUpdate()">Needs renal replacement therapy (dialysis)</label>
-</div>
-<div class="result-card" id="ak-result"></div>
-<div class="card" style="padding:0"><table>
-<tr><th>Grade</th><th>Creatinine mg/dL (µmol/L)</th><th>Description</th></tr>
-<tr><td><strong>I</strong></td><td>&lt;1.6 (&lt;140)</td><td>Non-azotemic AKI: documented injury, a progressive rise ≥0.3 mg/dL in 48 h, or measured oliguria</td></tr>
-<tr><td><strong>II</strong></td><td>1.7–2.5 (141–220)</td><td>Mild AKI: documented AKI with static or progressive azotemia</td></tr>
-<tr><td><strong>III</strong></td><td>2.6–5.0 (221–439)</td><td rowspan="3">Moderate to severe AKI, with increasing azotemia and functional renal failure</td></tr>
-<tr><td><strong>IV</strong></td><td>5.1–10.0 (440–880)</td></tr>
-<tr><td><strong>V</strong></td><td>&gt;10.0 (&gt;880)</td></tr>
-</table></div>`;
-}
-function akiUpdate(){
-  const cr=num('ak-cr'),uo=num('ak-uo'),rise=$('ak-rise').checked,rrt=$('ak-rrt').checked,out=$('ak-result');
-  if(cr===null){out.innerHTML=`<div class="result-head"><div class="rl">IRIS AKI grade</div><div class="rv">Enter creatinine</div><div class="rs">Dogs and cats</div></div>`;return;}
-  let g=cr<1.7?'I':cr<=2.5?'II':cr<=5.0?'III':cr<=10?'IV':'V';
-  const sub=[];
-  if(uo!==null)sub.push(uo<1?(uo<0.08?'Anuric (O)':'Oliguric (O)'):'Non-oliguric (NO)');
-  if(rrt)sub.push('RRT');
-  const notes=[];
-  if(g==='I'&&!rise&&!(uo!==null&&uo<1))notes.push('<div class="warn-box">Grade I needs documented evidence of AKI: a rise of ≥0.3 mg/dL within 48 h, measured oliguria, or historical, clinical, or imaging evidence. Without that, this creatinine may just be normal.</div>');
-  if(uo!==null&&uo<1)notes.push('<div class="warn-box"><strong>Oligo-anuria:</strong> first confirm the patient is volume-replete and not obstructed. Weigh every 6–12 h and watch for fluid overload (chemosis, serous nasal discharge, tachypnea, gain of more than 10% body weight). If UOP does not respond, a furosemide trial is reasonable. Refer early for dialysis.</div>');
-  if(uo!==null&&uo>2)notes.push('<div class="info-box">Polyuric phase (&gt;2 mL/kg/h): match fluids to ins and outs and monitor K⁺, Na⁺, and Mg²⁺ closely.</div>');
-  const dial=(g==='IV'||g==='V'||rrt||(uo!==null&&uo<0.5));
-  out.innerHTML=`<div class="result-head"><div class="rl">IRIS AKI grade</div><div class="rv">Grade ${g}${sub.length?' · '+sub.join(' · '):''}</div><div class="rs">Creatinine ${cr.toFixed(1)} mg/dL (${Math.round(cr*88.4)} µmol/L)</div></div>
-  <div class="result-body">${notes.join('')}
-  <div class="card-title">Next steps</div><ul>
-  <li><strong>Find the cause:</strong> nephrotoxins (ethylene glycol, lilies in cats, grapes/raisins in dogs, NSAIDs, aminoglycosides, amphotericin), infection (leptospirosis, pyelonephritis), ischemia (shock, anesthesia, thrombosis), and obstruction.</li>
-  <li>Start leptospirosis testing (PCR on blood and urine plus MAT) and empirical treatment in any dog with AKI of unknown cause. Doxycycline is the treatment of choice, or IV ampicillin/penicillin if the dog cannot take oral medication.</li>
-  <li>Correct dehydration over 4–6 h, then match maintenance and ongoing losses. Avoid volume overload, which is linked to worse outcomes.</li>
-  <li>Measure UOP (closed collection system or weighed litter), and monitor K⁺, acid–base, phosphate, BP, and body weight.</li>
-  ${dial?'<li><strong>Consider referral for dialysis</strong> if any of these are present: refractory hyperkalemia, fluid overload, oligoanuria unresponsive to therapy, severe or worsening azotemia, or a dialyzable toxin (ethylene glycol).</li>':''}
-  </ul></div>`;
-}
-
-// ═══════════════════════════════════════════════════════
 // TOOL 7 — UROLITH FINDER
 // ═══════════════════════════════════════════════════════
 const STONES=[
@@ -1589,39 +1480,6 @@ function kUpdate(){
 }
 
 // ═══════════════════════════════════════════════════════
-// TOOL 9 — UROABDOMEN RATIOS
-// ═══════════════════════════════════════════════════════
-let uaSp='dog';
-const UA_CUT={dog:{cr:2,k:1.4},cat:{cr:2,k:1.9},foal:{cr:2,k:null}};
-function renderUroabdTool(){
-  return `<div class="sh"><h2>Uroabdomen: fluid-to-serum ratios</h2><p>Compare abdominal fluid with peripheral blood drawn at the same time. Urine creatinine and K⁺ concentrate in the abdomen because they cannot cross back across the peritoneum as fast as urea does.</p></div>
-<div class="card"><div class="calc-grid">
-  <div class="field"><label>Species</label>${segBtns('sp',[['dog','Dog'],['cat','Cat'],['foal','Foal']],uaSp,'uaSet')}</div>
-  <div class="field"><label>Abdominal creatinine</label><input type="number" id="ua-acr" step="0.1" oninput="uaUpdate()" placeholder="mg/dL"></div>
-  <div class="field"><label>Serum creatinine</label><input type="number" id="ua-scr" step="0.1" oninput="uaUpdate()" placeholder="mg/dL"></div>
-  <div class="field"><label>Abdominal K⁺</label><input type="number" id="ua-ak" step="0.1" oninput="uaUpdate()" placeholder="mEq/L"></div>
-  <div class="field"><label>Serum K⁺</label><input type="number" id="ua-sk" step="0.1" oninput="uaUpdate()" placeholder="mEq/L"></div>
-</div></div>
-<div class="result-card" id="ua-result"></div>
-<div class="card"><div class="card-title">Cutoffs</div><table>
-<tr><th>Species</th><th>Creatinine ratio</th><th>K⁺ ratio</th><th>Classic picture</th></tr>
-<tr><td>Dog</td><td>≥2:1</td><td>≥1.4:1</td><td>Trauma (hit by car, pelvic fracture), often still able to urinate. Azotemia and hyperkalemia develop over 24–48 h.</td></tr>
-<tr><td>Cat</td><td>≥2:1</td><td>≥1.9:1</td><td>Trauma, or iatrogenic injury from cystocentesis, bladder expression, or urinary catheterization.</td></tr>
-<tr><td>Foal</td><td>≥2:1</td><td>—</td><td>A 2–4-day-old colt with stranguria and a distended abdomen. Labs show <strong>hyponatremia, hypochloremia, hyperkalemia, and azotemia</strong>.</td></tr>
-</table></div>`;
-}
-function uaSet(g,v){uaSp=v;const ids=['ua-acr','ua-scr','ua-ak','ua-sk'],keep=ids.map(i=>$(i).value);$('main').innerHTML=renderUroabdTool();ids.forEach((i,n)=>$(i).value=keep[n]);uaUpdate();}
-function uaUpdate(){
-  const acr=num('ua-acr'),scr=num('ua-scr'),ak=num('ua-ak'),sk=num('ua-sk'),c=UA_CUT[uaSp];
-  const rc=(acr&&scr)?acr/scr:null, rk=(ak&&sk)?ak/sk:null;
-  const pc=rc!==null&&rc>=c.cr, pk=rk!==null&&c.k&&rk>=c.k;
-  let v='Enter paired values',s='Abdominal fluid and serum, sampled at the same time';
-  if(rc!==null||rk!==null){v=(pc||pk)?'Consistent with uroabdomen':'Not supportive of uroabdomen';s=[rc!==null?`Creatinine ${rc.toFixed(2)}:1 (cutoff ${c.cr}:1)`:'',rk!==null?`K⁺ ${rk.toFixed(2)}:1${c.k?` (cutoff ${c.k}:1)`:''}`:''].filter(Boolean).join(' · ');}
-  $('ua-result').innerHTML=`<div class="result-head"><div class="rl">Interpretation</div><div class="rv">${v}</div><div class="rs">${s}</div></div><div class="result-body">
-  ${(pc||pk)?`<ul><li>Stabilize first. Uroabdomen is a <strong>metabolic emergency before it is a surgical one</strong>: treat hyperkalemia, drain the abdomen (peritoneal catheter), and divert urine (urinary catheter ± cystostomy tube).</li><li>Locate the leak with positive-contrast cystourethrography or CT.</li>${uaSp==='foal'?'<li>Foals: anesthesia with K⁺ &gt;5.5 mEq/L risks fatal arrhythmia. Drain the abdomen slowly and give 0.9% NaCl with dextrose. Check IgG and look for sepsis or omphalitis (urachal tears). Then perform surgical repair (cystorrhaphy).</li>':'<li>Repair surgically once the patient is metabolically stable. Some small bladder tears heal with catheter decompression alone.</li>'}</ul>`:'<p>A ratio below the cutoff does not completely rule out a leak. Repeat sampling and imaging are still worthwhile if your suspicion is high.</p>'}</div>`;
-}
-
-// ═══════════════════════════════════════════════════════
 // TOOL 10 — LARGE ANIMAL FILL-IN
 // ═══════════════════════════════════════════════════════
 const LA_ROWS=[
@@ -1681,12 +1539,36 @@ nephron:`<div class="sh"><h2>Nephron & diuretics</h2><p>Each tubule segment, the
 </table></div>
 <div class="g2"><div class="card"><div class="card-title">Furosemide pearls</div><p style="font-size:13px">It must be <strong>filtered and secreted</strong> into the tubular lumen to work, so its effect falls as GFR falls. It is used for CHF, oliguric AKI (a trial only, once the patient is volume-replete), and hypercalcemia (after rehydration). Side effects: hypokalemia, hypochloremic alkalosis, hypomagnesemia, dehydration, and prerenal azotemia.</p></div>
 <div class="card"><div class="card-title">Concentrating urine</div><p style="font-size:13px">The countercurrent multiplier (loop of Henle) builds the medullary gradient from NaCl and urea, and ADH then lets water leave the collecting duct. <strong>Medullary washout</strong> (Addison's, PU/PD of any cause, low urea in liver failure, aggressive diuresis) impairs concentration even when the nephrons are intact.</p></div></div>`,
-azotemia:`<div class="sh"><h2>Azotemia</h2><p>Azotemia means increased BUN and/or creatinine. Uremia is the clinical syndrome that results.</p></div>
+azotemia:`<div class="sh"><h2>Azotemia</h2><p>Azotemia means increased BUN and/or creatinine. Uremia is the clinical syndrome that results. Localize the azotemia before you treat it.</p></div>
 <div class="g3">
-<div class="card"><div class="card-title"><span class="badge b-info">Pre-renal</span></div><p style="font-size:13px">Reduced renal perfusion: dehydration, shock, CHF, hypoadrenocorticism. <strong>USG concentrated</strong> (unless there is a confounder). Resolves within 24–48 h of fluids.</p></div>
-<div class="card"><div class="card-title"><span class="badge b-danger">Renal</span></div><p style="font-size:13px">Loss of ≥75% of functional nephrons, from AKI or CKD. <strong>USG inadequate</strong> (dog &lt;1.030, cat &lt;1.035, horse and ruminant &lt;1.025) while the patient is azotemic.</p></div>
-<div class="card"><div class="card-title"><span class="badge b-warn">Post-renal</span></div><p style="font-size:13px">Obstruction (urethral stones, urethral plugs in cats, neoplasia) or rupture (uroabdomen). USG is variable. Hyperkalemia is common.</p></div></div>
-<div class="card"><div class="card-title">Extra-renal causes of impaired concentrating ability</div><p style="font-size:13px">Hypoadrenocorticism, hypercalcemia, diuretics or fluids, glucocorticoids and hyperadrenocorticism, diabetes mellitus (osmotic diuresis), pyometra and E. coli endotoxin, hepatic failure/PSS, hyponatremia, central or nephrogenic DI, and psychogenic polydipsia. An Addisonian dog with azotemia and a USG of 1.020 can look renal and still recover completely.</p></div>`,
+<div class="card"><div class="card-title"><span class="badge b-info">Pre-renal</span></div><p style="font-size:13px">Reduced renal perfusion: dehydration, shock, CHF, hypoalbuminemia, hypoadrenocorticism. <strong>USG concentrated</strong> (unless there is a confounder). Resolves within 24–48 h of restoring perfusion.</p></div>
+<div class="card"><div class="card-title"><span class="badge b-danger">Renal</span></div><p style="font-size:13px">Loss of ≥75% of functional nephrons, from AKI or CKD. <strong>USG inadequate</strong> while the patient is azotemic. About two-thirds of nephrons have already lost concentrating ability.</p></div>
+<div class="card"><div class="card-title"><span class="badge b-warn">Post-renal</span></div><p style="font-size:13px">Obstruction (urethral stones, urethral plugs in cats, neoplasia) or rupture (uroabdomen). USG is variable and not useful for localizing. Hyperkalemia is common. Usually resolves within 24–72 h of relief. If it does not, there is a concurrent renal component.</p></div></div>
+<div class="g2">
+<div class="card"><div class="card-title">Step 1: use a pre-fluid USG</div>
+<table><tr><th>Species</th><th>Adequately concentrated</th></tr>
+<tr><td>Dog</td><td>≥1.030</td></tr><tr><td>Cat</td><td>≥1.035</td></tr><tr><td>Horse</td><td>≥1.025</td></tr><tr><td>Cattle / small ruminant</td><td>≥1.025</td></tr></table>
+<p style="font-size:12.5px;color:var(--text-muted);margin-top:8px">The concentrating ability of an azotemic or dehydrated patient is the test of the tubules. Collect urine <strong>before</strong> fluids, because a sample taken during fluid therapy tells you nothing.</p></div>
+<div class="card"><div class="card-title">Step 2: interpret</div><ul style="font-size:13px;padding-left:18px;line-height:1.65">
+<li><strong>Azotemia + concentrated urine</strong> means pre-renal. <em>Cat caveat:</em> some cats with real CKD still concentrate above 1.035, so azotemia that persists after rehydration is renal.</li>
+<li><strong>Azotemia + inadequately concentrated urine</strong>, with no confounder, means renal. If the patient is also dehydrated, a pre-renal component sits on top, so expect partial improvement with fluids.</li>
+<li><strong>USG &lt;1.008 (hyposthenuria)</strong> means the tubules are actively diluting. Consider DI, psychogenic polydipsia, hypercalcemia, and pyelonephritis.</li>
+<li><strong>Obstruction or rupture</strong> means post-renal whatever the USG. Relieve it, and check K⁺ and the ECG first.</li></ul></div></div>
+<div class="card"><div class="card-title">Extra-renal reasons urine can be dilute in a pre-renal patient</div><table>
+<tr><th>Confounder</th><th>Why the urine is dilute</th></tr>
+<tr><td>Hypoadrenocorticism (Na:K &lt;27, no stress leukogram)</td><td>Na⁺ loss causes medullary washout</td></tr>
+<tr><td>Hypercalcemia</td><td>Ca²⁺ blocks ADH action, causing nephrogenic DI</td></tr>
+<tr><td>Fluids, diuretics, glucocorticoids, or mannitol before sampling</td><td>Iatrogenic dilution or diuresis</td></tr>
+<tr><td>Glucosuria / diabetes mellitus</td><td>Osmotic diuresis</td></tr>
+<tr><td>Pyometra, pyelonephritis, E. coli endotoxemia</td><td>Endotoxin blocks ADH action</td></tr>
+<tr><td>Hepatic failure / portosystemic shunt</td><td>Low urea causes loss of the medullary gradient</td></tr>
+<tr><td>Hyperadrenocorticism</td><td>Cortisol interferes with ADH release and action</td></tr>
+<tr><td>Hyponatremia, low-protein or low-salt diet</td><td>Medullary solute washout</td></tr>
+<tr><td>Central or nephrogenic DI, psychogenic polydipsia</td><td>No ADH, no response to it, or chronic washout</td></tr></table>
+<p style="font-size:12.5px;color:var(--text-muted);margin-top:8px">Correct the confounder, rehydrate, and reassess. Azotemia that resolves quickly was pre-renal. Persistent azotemia confirms a renal component. An Addisonian dog with azotemia and a USG of 1.020 can look renal and still recover completely.</p></div>
+<div class="g2">
+<div class="card"><div class="card-title">Step 3: acute or chronic?</div><p style="font-size:13px"><strong>Favors CKD:</strong> small, irregular kidneys; non-regenerative anemia; weight loss and poor body condition; long-standing PU/PD; renal secondary hyperparathyroidism. Stage it with IRIS once the patient is stable.<br><strong>Favors AKI:</strong> normal or enlarged, painful kidneys; active sediment or casts; glucosuria with normoglycemia; severe hyperkalemia; an acute history or known toxin exposure. Grade it with the IRIS AKI scheme.</p></div>
+<div class="card"><div class="card-title">BUN:creatinine notes</div><p style="font-size:13px">BUN rises <strong>disproportionately</strong> with GI hemorrhage, a recent high-protein meal, catabolism (fever, glucocorticoids, tetracyclines), and pre-renal states, because urea is partly reabsorbed when tubular flow is slow. BUN is <strong>relatively low</strong> with hepatic failure, PSS, PU/PD, and low-protein diets. <strong>Ruminants:</strong> urea is recycled to the rumen, so creatinine is the more reliable marker. <strong>Horses:</strong> a BUN:Cr ratio &gt;15:1 has traditionally pointed toward pre-renal or chronic disease and &lt;10:1 toward acute renal failure. Treat this as a soft clue only.</p></div></div>`,
 ua:`<div class="sh"><h2>Urinalysis</h2><p>Always interpret the dipstick together with the USG and sediment.</p></div>
 <div class="g2"><div class="card"><div class="card-title">Dipstick traps</div>
 <div class="kv"><span class="kv-key">USG</span><span>Use a refractometer. Dipstick USG pads are not valid for animals.</span></div>
@@ -1706,17 +1588,34 @@ ckd:`<div class="sh"><h2>CKD & IRIS staging</h2><p>CKD is structural or function
 <tr><td>&lt;140</td><td>Normotensive</td><td>Minimal</td></tr><tr><td>140–159</td><td>Prehypertensive</td><td>Low</td></tr><tr><td>160–179</td><td>Hypertensive</td><td>Moderate</td></tr><tr><td>≥180</td><td>Severely hypertensive</td><td>High</td></tr></table></div>
 <div class="info-box">Renal diets (phosphate and protein restriction, plus omega-3s) have the strongest evidence of any CKD intervention, including prolonged survival in cats from IRIS stage 2 onward.</div>`,
 aki:`<div class="sh"><h2>AKI & nephrotoxins</h2><p>An abrupt loss of function that is potentially reversible. The degree of azotemia does not predict whether the patient will recover.</p></div>
-<div class="card"><table>
+<div class="card"><div class="card-title">IRIS AKI grading (dogs and cats)</div><table>
+<tr><th>Grade</th><th>Creatinine mg/dL (µmol/L)</th><th>Description</th></tr>
+<tr><td><strong>I</strong></td><td>&lt;1.6 (&lt;140)</td><td>Non-azotemic AKI: documented injury, a progressive rise ≥0.3 mg/dL (≥26.4 µmol/L) within 48 h, or measured oliguria</td></tr>
+<tr><td><strong>II</strong></td><td>1.7–2.5 (141–220)</td><td>Mild AKI: documented AKI with static or progressive azotemia</td></tr>
+<tr><td><strong>III</strong></td><td>2.6–5.0 (221–439)</td><td rowspan="3">Moderate to severe AKI, with increasing azotemia and functional renal failure</td></tr>
+<tr><td><strong>IV</strong></td><td>5.1–10.0 (440–880)</td></tr>
+<tr><td><strong>V</strong></td><td>&gt;10.0 (&gt;880)</td></tr></table>
+<p style="font-size:12.5px;color:var(--text-muted);margin-top:8px">Each grade is subgraded as <strong>oliguric/anuric (O)</strong> or <strong>non-oliguric (NO)</strong>, and by whether renal replacement therapy (RRT) is needed. Oliguria is &lt;1 mL/kg/h of urine over 6 h in a volume-replete patient. Anuria is essentially no urine production. "Volume responsive" means UOP rises above 1 mL/kg/h over 6 h and/or creatinine falls to baseline over 48 h with fluids.</p></div>
+<div class="g2">
+<div class="card"><div class="card-title">Management priorities</div><ul style="font-size:13px;padding-left:18px;line-height:1.65">
+<li><strong>Find the cause:</strong> nephrotoxins, infection (leptospirosis, pyelonephritis), ischemia (shock, anesthesia, thrombosis), and obstruction.</li>
+<li><strong>Dogs with AKI of unknown cause:</strong> run leptospirosis PCR (blood and urine) plus MAT and start empirical treatment.</li>
+<li><strong>Fluids:</strong> correct dehydration over 4–6 h, then match maintenance plus ongoing losses. Volume overload is linked to worse outcomes, so weigh every 6–12 h and watch for chemosis, serous nasal discharge, tachypnea, or a gain of more than 10% body weight.</li>
+<li><strong>Measure UOP</strong> with a closed collection system or weighed litter, and monitor K⁺, acid–base, phosphate, and BP.</li>
+<li><strong>Oligo-anuria:</strong> confirm the patient is volume-replete and not obstructed. If so, a furosemide trial is reasonable. Mannitol is controversial.</li>
+<li><strong>Polyuric recovery (&gt;2 mL/kg/h):</strong> match fluids to ins and outs, and watch K⁺, Na⁺, and Mg²⁺.</li></ul></div>
+<div class="card"><div class="card-title">Refer for dialysis when there is</div><ul style="font-size:13px;padding-left:18px;line-height:1.65">
+<li>Refractory hyperkalemia</li><li>Fluid overload</li><li>Oligo-anuria unresponsive to therapy</li><li>Severe or worsening azotemia (grade IV–V)</li><li>A dialyzable toxin (ethylene glycol)</li></ul>
+<div class="sep"></div><div class="card-title">Phases of AKI</div><p style="font-size:13px">Initiation, then extension, then maintenance (often oliguric), then recovery (often polyuric). The maintenance phase can last weeks. Dialysis bridges patients through it while the tubules regenerate.</p></div></div>
+<div class="card"><div class="card-title">Nephrotoxins</div><table>
 <tr><th>Toxin</th><th>Species</th><th>Key points</th></tr>
 <tr><td><strong>Ethylene glycol</strong></td><td>Dogs, cats</td><td>Early CNS signs, then AKI at 24–72 h. High anion gap and osmolal gap, CaOx monohydrate crystals, hyperechoic renal cortices. <strong>Fomepizole</strong> (cats need a much higher dose than dogs) or ethanol. Start within about 3 h in cats and about 8 h in dogs. Hemodialysis removes EG.</td></tr>
 <tr><td><strong>Lilies</strong> (<em>Lilium</em>, <em>Hemerocallis</em>)</td><td>Cats only</td><td>Every part, including pollen and vase water. Vomiting, then oligo-anuric AKI within 24–72 h. Decontaminate and start aggressive IV fluids early, ideally within 18 h.</td></tr>
 <tr><td><strong>Grapes / raisins</strong></td><td>Dogs</td><td>Tartaric acid is the likely toxic principle (which explains the dose inconsistency). Induce emesis and give IV fluids for 48–72 h, with serial creatinine checks.</td></tr>
 <tr><td><strong>NSAIDs</strong></td><td>All</td><td>Afferent constriction and renal papillary necrosis. Higher risk with hypovolemia, anesthesia, or CKD.</td></tr>
 <tr><td><strong>Aminoglycosides</strong></td><td>All</td><td>Accumulate in PCT cells. Watch for <strong>granular casts</strong>, glucosuria, and rising GGT:creatinine before azotemia appears. Dose once daily and monitor trough levels.</td></tr>
-<tr><td><strong>Vitamin D (cholecalciferol rodenticide, calcipotriene)</strong></td><td>Dogs, cats</td><td>Hypercalcemia and hyperphosphatemia lead to soft-tissue mineralization and AKI.</td></tr>
-</table></div>
-<div class="g2"><div class="card"><div class="card-title">Leptospirosis (dogs)</div><p style="font-size:13px">AKI ± hepatopathy, pulmonary hemorrhage syndrome, and thrombocytopenia. Diagnose with blood and urine PCR plus paired MAT (a fourfold rise). Treat with <strong>doxycycline</strong> (5 mg/kg PO q12h for 14 days, per the ACVIM 2023 consensus), using IV ampicillin or penicillin first if the dog is vomiting. It is <strong>zoonotic</strong>, so use PPE and handle urine with care.</p></div>
-<div class="card"><div class="card-title">Phases of AKI</div><p style="font-size:13px">Initiation, then extension, then maintenance (often oliguric), then recovery (often polyuric). The maintenance phase can last weeks. Dialysis bridges patients through it while the tubules regenerate.</p></div></div>`,
+<tr><td><strong>Vitamin D (cholecalciferol rodenticide, calcipotriene)</strong></td><td>Dogs, cats</td><td>Hypercalcemia and hyperphosphatemia lead to soft-tissue mineralization and AKI.</td></tr></table></div>
+<div class="card"><div class="card-title">Leptospirosis (dogs)</div><p style="font-size:13px">AKI ± hepatopathy, pulmonary hemorrhage syndrome, and thrombocytopenia. Diagnose with blood and urine PCR plus paired MAT (a fourfold rise). Treat with <strong>doxycycline</strong> (5 mg/kg PO q12h for 14 days, per the ACVIM 2023 consensus), using IV ampicillin or penicillin first if the dog is vomiting. It is <strong>zoonotic</strong>, so use PPE and handle urine with care.</p></div>`,
 uroliths:`<div class="sh"><h2>Uroliths</h2><p>Dissolve what you can and remove what you cannot. Prevent recurrence in every patient.</p></div>
 <div class="card"><table>
 <tr><th>Stone</th><th>pH</th><th>X-ray</th><th>Dissolvable</th><th>Hallmark</th></tr>
@@ -1733,9 +1632,20 @@ obstruction:`<div class="sh"><h2>Urethral obstruction & hyperkalemia</h2><p>The 
 <div class="card"><div class="card-title">Relief</div><p style="font-size:13px">Sedation (e.g., an opioid plus midazolam, ± a low dose of ketamine or alfaxalone) and consider a coccygeal epidural. Perform decompressive cystocentesis while you prepare, then retrograde flushing and an indwelling catheter (usually for 24–72 h). Use a closed collection system.</p></div></div>
 <div class="card"><div class="card-title">After relief</div><p style="font-size:13px"><strong>Post-obstructive diuresis</strong> (UOP &gt;2 mL/kg/h) is common. Measure ins and outs every 4–6 h and adjust the fluid rate. Recheck K⁺ (hypokalemia often follows). Give analgesia and consider prazosin as a urethral relaxant (evidence is mixed). Feed wet food and enrich the environment for FIC. About 15–40% of cats re-obstruct. Perineal urethrostomy is for cats that obstruct repeatedly.</p></div>`,
 uroabdomen:`<div class="sh"><h2>Uroabdomen</h2><p>Urine in the peritoneal cavity. Usually caused by trauma in dogs and cats, and by bladder or urachal rupture in neonatal foals.</p></div>
+<div class="card"><div class="card-title">Diagnostic ratios: abdominal fluid vs serum, sampled at the same time</div><table>
+<tr><th>Species</th><th>Creatinine ratio</th><th>K⁺ ratio</th><th>Classic picture</th></tr>
+<tr><td>Dog</td><td>≥2:1</td><td>≥1.4:1</td><td>Trauma (hit by car, pelvic fracture), often still able to urinate. Azotemia and hyperkalemia develop over 24–48 h.</td></tr>
+<tr><td>Cat</td><td>≥2:1</td><td>≥1.9:1</td><td>Trauma, or iatrogenic injury from cystocentesis, bladder expression, or urinary catheterization.</td></tr>
+<tr><td>Foal</td><td>≥2:1</td><td>—</td><td>A 2–4-day-old colt with stranguria and a distended abdomen. Labs show <strong>hyponatremia, hypochloremia, hyperkalemia, and azotemia</strong>.</td></tr></table>
+<p style="font-size:12.5px;color:var(--text-muted);margin-top:8px">A ratio below the cutoff does not completely rule out a leak. If suspicion is high, repeat the sampling and image the urinary tract.</p></div>
+<div class="g2">
 <div class="card"><div class="card-title">Why the ratios work</div><p style="font-size:13px">Urea is small and equilibrates across the peritoneum quickly, so abdominal BUN quickly matches serum BUN. Creatinine and K⁺ cross more slowly, so they become concentrated in the abdominal fluid. That makes creatinine and K⁺ ratios the useful diagnostic tests, and BUN ratios unhelpful.</p></div>
-<div class="g2"><div class="card"><div class="card-title">Dog / cat</div><p style="font-size:13px">Creatinine ≥2:1 in both species. K⁺ ≥1.4:1 (dog) or ≥1.9:1 (cat). Some animals can still urinate, so this does not rule out a leak. Positive-contrast cystourethrography locates the tear.</p></div>
-<div class="card"><div class="card-title">Foal</div><p style="font-size:13px">Usually a colt 2–4 days old (dorsal bladder tear during foaling), or a septic foal with urachal necrosis. Labs: Na⁺ ↓, Cl⁻ ↓, K⁺ ↑, creatinine ↑. Peritoneal:serum creatinine ≥2:1. Correct K⁺ before anesthesia.</p></div></div>`,
+<div class="card"><div class="card-title">Management</div><ul style="font-size:13px;padding-left:18px;line-height:1.65">
+<li>It is a <strong>metabolic emergency before it is a surgical one</strong>. Treat hyperkalemia first (calcium gluconate, insulin + dextrose).</li>
+<li>Drain the abdomen (peritoneal catheter) and divert urine (urinary catheter ± cystostomy tube).</li>
+<li>Locate the leak with positive-contrast cystourethrography or CT.</li>
+<li>Repair surgically once the patient is metabolically stable. Some small bladder tears heal with catheter decompression alone.</li></ul></div></div>
+<div class="card"><div class="card-title">Foal uroperitoneum</div><p style="font-size:13px">Usually a colt 2–4 days old (dorsal bladder tear during foaling), or a septic foal with urachal necrosis. Peritoneal:serum creatinine is ≥2:1. Anesthesia with K⁺ &gt;5.5 mEq/L risks fatal arrhythmia, so drain the abdomen slowly and give 0.9% NaCl with dextrose (± insulin, plus calcium gluconate if there are ECG changes). Check IgG and look for sepsis or omphalitis, then perform cystorrhaphy.</p></div>`,
 largeanimal:`<div class="sh"><h2>Large animal nephrology</h2><p>Ruminant urolithiasis, equine renal disease, and nephrotoxic plants.</p></div>
 <div class="g2"><div class="card"><div class="card-title">Ruminant urolithiasis</div><p style="font-size:13px">Castrated males are at highest risk, because early castration leaves a narrower urethra. Stones lodge at the <strong>urethral process</strong> in goats and sheep and at the <strong>distal sigmoid flexure</strong> in cattle. Grain-heavy rations produce struvite and phosphate stones, legumes produce calcium carbonate, and range grasses produce silica. Tube cystotomy gives the best long-term outcome in pet goats. Prevent with Ca:P 2:1, ammonium chloride, salt, and water.</p></div>
 <div class="card"><div class="card-title">Equine renal quirks</div><p style="font-size:13px">Normal equine urine is cloudy, viscous, and alkaline because of calcium carbonate crystals and mucus. Horses with CKD develop <strong>hypercalcemia and hypophosphatemia</strong>, the reverse of small animals. Adequate USG is ≥1.025. Common nephrotoxins: NSAIDs (papillary necrosis), aminoglycosides, oxytetracycline, pigment, and vitamin K₃. Blister beetle (cantharidin) causes hematuria, hypocalcemia, and GI ulceration.</p></div></div>
@@ -1989,7 +1899,7 @@ function caseBack(){if(caseState.step>0){caseState.step--;renderCases();}}
 // ═══════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════
-(function(){const h=(location.hash||'').slice(1);if(TOPICS.some(t=>t[0]===h)){topic=h;setMode('tools');}else{renderSidebar();render();}})();
+(function(){const h=(location.hash||'').slice(1);if(TOPICS.some(t=>t[0]===h)){topic=h;setMode(TOOL_RENDER[h]?'tools':'reference');}else{renderSidebar();render();}})();
 </script>
 </body>
 </html>
