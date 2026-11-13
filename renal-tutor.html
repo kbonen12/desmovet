@@ -517,6 +517,9 @@ tr:hover td{background:var(--surface2)}
 .nm-rarrow{align-self:center;color:var(--border);font-size:18px}
 .nm-rarrow.on{color:var(--accent)}
 .nm-reff{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px;margin-bottom:8px}
+.fc-deckbtn-row,.mcq-deckbtn-row{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:6px}
+.deck-lbl{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-hint);min-width:96px}
+.deck-lbl.drug{color:var(--accent)}
 .nm-subhead{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-hint);margin:14px 6px 6px}
 .nm-tgf{font-size:12.5px;line-height:1.55;padding:9px 12px;border-left:3px solid var(--warn-border);background:var(--warn-bg);border-radius:var(--r);margin-bottom:10px}
 @media(max-width:1000px){.nm-grid{grid-template-columns:1fr}.nm-side{max-height:none}}
@@ -625,6 +628,7 @@ const TOPICS=[
   ['obstruction','⊗','Obstruction & K⁺','Hyperkalemia ECG'],
   ['uroabdomen','◍','Uroabdomen',null],
   ['largeanimal','🐄','Large animal','Large animal fill-in'],
+  ['drugs','💊','Renal pharmacology',null],
 ];
 let mode='home', topic='physiology';
 let gScore={c:0,t:0};
@@ -668,8 +672,8 @@ function render(){
 // HOME
 // ═══════════════════════════════════════════════════════
 function renderHome(){
-  const nQ=Object.values(MCQ_BANKS).reduce((a,b)=>a+b.questions.length,0);
-  const nF=Object.values(FC_DECKS).reduce((a,b)=>a+b.cards.length,0);
+  const nQ=Object.entries(MCQ_BANKS).filter(([k])=>k!=='drug_all').reduce((a,[,b])=>a+b.questions.length,0);
+  const nF=Object.entries(FC_DECKS).filter(([k])=>k!=='drug_moa').reduce((a,[,b])=>a+b.cards.length,0);
   const cards=[
     ['nephron','≋','Nephron molecule map','Animated cell-by-cell map: which transporters move which molecules, and where ADH, aldosterone, PTH and diuretics act. Follow one molecule along the whole nephron.'],
     ['ckd','▤','IRIS staging calculator','Creatinine, SDMA, UPC, and blood pressure in, stage, substage, and stage-specific management out.'],
@@ -695,6 +699,7 @@ function renderHome(){
   </div>
   <div class="home-section-label">Study modes</div>
   <div class="home-tools">
+    <div class="home-card" onclick="setMode('flashcards');fcDeck('drug_moa')"><div class="hc-icon">💊</div><div class="hc-tag hc-tag-new">New</div><div class="hc-title">Drug MOA drills</div><div class="hc-desc">${DRUGS.length} renal drugs drilled from every angle: class, mechanism, use, and what to watch for. Missed cards come back until they stick.</div></div>
     <div class="home-card" onclick="setMode('flashcards')"><div class="hc-icon">🃏</div><div class="hc-tag hc-tag-ref">Study</div><div class="hc-title">Flashcards</div><div class="hc-desc">${Object.keys(FC_DECKS).length} decks, with Got it / Missed tracking.</div></div>
     <div class="home-card" onclick="setMode('quiz')"><div class="hc-icon">✏️</div><div class="hc-tag hc-tag-ref">Study</div><div class="hc-title">Board-style quiz</div><div class="hc-desc">Case-based MCQs with explanations, in ${Object.keys(MCQ_BANKS).length} banks.</div></div>
     <div class="home-card" onclick="setMode('match')"><div class="hc-icon">🧩</div><div class="hc-tag hc-tag-ref">Study</div><div class="hc-title">Drag & match</div><div class="hc-desc">Match diuretics to segments, stones to features, and azotemia to its cause.</div></div>
@@ -1853,32 +1858,6 @@ const FC_DECKS={
     {q:'Causative agent of bovine pyelonephritis?',a:'The Corynebacterium renale group (also E. coli).',hint:'Postpartum dairy cows'},
   ]},
 };
-let fcState={deck:'phys',idx:0,flipped:false,got:0,missed:0,seen:new Set()};
-function renderFlashcards(){
-  const deck=FC_DECKS[fcState.deck],card=deck.cards[fcState.idx],total=deck.cards.length;
-  const deckBtns=Object.keys(FC_DECKS).map(k=>`<button class="fc-deckbtn${fcState.deck===k?' active':''}" onclick="fcDeck('${k}')">${FC_DECKS[k].name}</button>`).join('');
-  $('main').innerHTML=`
-<div class="sh"><h2>Flashcards</h2><p>Click a card to flip it. Mark each one to track your progress.</p></div>
-<div class="fc-deckbar">${deckBtns}</div>
-<div class="fc-click-hint">Click the card to reveal the answer</div>
-<div class="fc-wrap"><div class="fc-card${fcState.flipped?' flipped':''}" onclick="fcFlip()">
-  <div class="fc-front"><div class="fc-lbl">Question ${fcState.idx+1} of ${total}</div><div class="fc-q">${card.q}</div></div>
-  <div class="fc-back"><div class="fc-a">${card.a}</div>${card.hint?`<div class="fc-hint">Hint: ${card.hint}</div>`:''}</div>
-</div></div>
-<div class="fc-ctrl">
-  <button class="fc-btn miss" onclick="fcMark(false)" ${!fcState.flipped?'disabled':''}>✗ Missed</button>
-  <button class="fc-btn" onclick="fcPrev()">← Prev</button>
-  <div class="fc-prog">${fcState.idx+1} / ${total}</div>
-  <button class="fc-btn" onclick="fcNext()">Next →</button>
-  <button class="fc-btn got" onclick="fcMark(true)" ${!fcState.flipped?'disabled':''}>✓ Got it</button>
-</div>
-<div class="fc-stats"><span style="color:var(--success)">✓ ${fcState.got}</span><span style="color:var(--danger)">✗ ${fcState.missed}</span><span style="color:var(--text-hint)">Seen: ${fcState.seen.size}/${total}</span></div>`;
-}
-function fcFlip(){fcState.flipped=!fcState.flipped;renderFlashcards();}
-function fcNext(){const d=FC_DECKS[fcState.deck];fcState.seen.add(fcState.idx);fcState.idx=(fcState.idx+1)%d.cards.length;fcState.flipped=false;renderFlashcards();}
-function fcPrev(){const d=FC_DECKS[fcState.deck];fcState.idx=(fcState.idx-1+d.cards.length)%d.cards.length;fcState.flipped=false;renderFlashcards();}
-function fcMark(c){fcState.seen.add(fcState.idx);if(c)fcState.got++;else fcState.missed++;addScore(c?1:0,1);fcNext();}
-function fcDeck(k){fcState={deck:k,idx:0,flipped:false,got:0,missed:0,seen:new Set()};renderFlashcards();}
 
 // ═══════════════════════════════════════════════════════
 // MCQ
@@ -1926,23 +1905,6 @@ const MCQ_BANKS={
     {q:'Range cattle in the western US with obstructive urolithiasis most likely have which stone?',opts:['Struvite','Calcium carbonate','Silica','Cystine'],correct:2,explain:'Silica stones come from silica-rich range grasses. Feedlot (grain) cattle form struvite and phosphate stones, and cattle on legume pasture form calcium carbonate.'},
   ]},
 };
-let mcqState={deck:'phys',idx:0,answered:false,chosen:null,correct:false,score:0,total:0};
-function renderQuiz(){
-  const bank=MCQ_BANKS[mcqState.deck],q=bank.questions[mcqState.idx],total=bank.questions.length;
-  const deckBtns=Object.keys(MCQ_BANKS).map(k=>`<button class="mcq-deckbtn${mcqState.deck===k?' active':''}" onclick="mcqDeck('${k}')">${MCQ_BANKS[k].name}</button>`).join('');
-  const opts=q.opts.map((o,i)=>{let cls='mcq-opt';if(mcqState.answered){if(i===q.correct)cls+=' reveal';else if(mcqState.chosen===i)cls+=' wrong';}
-    return `<button class="${cls}" onclick="mcqAnswer(${i})" ${mcqState.answered?'disabled':''}><span class="opt-let">${String.fromCharCode(65+i)}.</span>${o}</button>`;}).join('');
-  $('main').innerHTML=`
-<div class="sh"><h2>Board-style quiz</h2><p>Select the best answer.</p></div>
-<div class="mcq-deckbar">${deckBtns}</div>
-<div class="mcq-card"><div class="mcq-qnum">Question ${mcqState.idx+1} of ${total} · ${bank.name}</div><div class="mcq-q">${q.q}</div><div class="mcq-opts">${opts}</div>
-<div class="mcq-exp${mcqState.answered?' show':''}">${mcqState.answered?`<strong>${mcqState.correct?'✓ Correct!':'✗ Incorrect.'}</strong> ${q.explain}`:''}</div></div>
-<div class="mcq-nav"><button class="mcq-nav-btn" onclick="mcqPrev()">← Back</button>${mcqState.answered?`<button class="mcq-nav-btn primary" onclick="mcqNext()">Next →</button>`:''}<span class="mcq-counter">Score: ${mcqState.score} / ${mcqState.total}</span></div>`;
-}
-function mcqAnswer(i){if(mcqState.answered)return;const q=MCQ_BANKS[mcqState.deck].questions[mcqState.idx];mcqState.answered=true;mcqState.chosen=i;mcqState.correct=(i===q.correct);mcqState.total++;if(mcqState.correct)mcqState.score++;addScore(mcqState.correct?1:0,1);renderQuiz();}
-function mcqNext(){const b=MCQ_BANKS[mcqState.deck];mcqState.idx=(mcqState.idx+1)%b.questions.length;mcqState.answered=false;mcqState.chosen=null;renderQuiz();}
-function mcqPrev(){const b=MCQ_BANKS[mcqState.deck];mcqState.idx=(mcqState.idx-1+b.questions.length)%b.questions.length;mcqState.answered=false;mcqState.chosen=null;renderQuiz();}
-function mcqDeck(k){mcqState={deck:k,idx:0,answered:false,chosen:null,correct:false,score:0,total:0};renderQuiz();}
 
 // ═══════════════════════════════════════════════════════
 // DRAG & MATCH
@@ -2039,6 +2001,175 @@ function caseGo(i){if(i<=caseState.step||(caseState.revealed[caseState.idx]||[])
 function caseReveal(){if(!caseState.revealed[caseState.idx])caseState.revealed[caseState.idx]=[];caseState.revealed[caseState.idx][caseState.step]=true;renderCases();}
 function caseNext(){if(caseState.step<CASES[caseState.idx].steps.length-1){caseState.step++;renderCases();}}
 function caseBack(){if(caseState.step>0){caseState.step--;renderCases();}}
+
+function studyShuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function deckBar(obj,cur,fn,cls){
+  const btn=k=>`<button class="${cls}${cur===k?' active':''}" onclick="${fn}('${k}')">${obj[k].name}</button>`;
+  const topic=Object.keys(obj).filter(k=>!obj[k].drug),drug=Object.keys(obj).filter(k=>obj[k].drug);
+  return `<div class="${cls}-row"><span class="deck-lbl">Topics</span>${topic.map(btn).join('')}</div>`+
+    (drug.length?`<div class="${cls}-row"><span class="deck-lbl drug">💊 Drug drills</span>${drug.map(btn).join('')}</div>`:'');
+}
+// ---- flashcards: shuffle + missed cards come back 4 cards later ----
+let fcState=null;
+function fcInit(k){const d=FC_DECKS[k],idx=d.cards.map((_,i)=>i);fcState={deck:k,order:d.shuffle?studyShuffle(idx):idx,pos:0,flipped:false,got:0,missed:0,seen:new Set(),requeued:0};}
+function renderFlashcards(){
+  if(!fcState)fcInit('phys');
+  const deck=FC_DECKS[fcState.deck],ci=fcState.order[fcState.pos],card=deck.cards[ci];
+  $('main').innerHTML=`
+<div class="sh"><h2>Flashcards</h2><p>Click a card to flip it. Cards you mark <b>Missed</b> come back a few cards later, so the hard ones get repeated.</p></div>
+<div class="fc-deckbar" style="flex-direction:column;align-items:stretch">${deckBar(FC_DECKS,fcState.deck,'fcDeck','fc-deckbtn')}</div>
+<div class="fc-click-hint">Click the card to reveal the answer</div>
+<div class="fc-wrap"><div class="fc-card${fcState.flipped?' flipped':''}" onclick="fcFlip()">
+  <div class="fc-front"><div class="fc-lbl">${deck.drug?'💊 ':''}${deck.name} · card ${fcState.pos+1} of ${fcState.order.length}</div><div class="fc-q">${card.q}</div></div>
+  <div class="fc-back"><div class="fc-a">${card.a}</div>${card.hint?`<div class="fc-hint">${deck.drug?'':'Hint: '}${card.hint}</div>`:''}</div>
+</div></div>
+<div class="fc-ctrl">
+  <button class="fc-btn miss" onclick="fcMark(false)" ${!fcState.flipped?'disabled':''}>✗ Missed</button>
+  <button class="fc-btn" onclick="fcPrev()">← Prev</button>
+  <div class="fc-prog">${fcState.pos+1} / ${fcState.order.length}</div>
+  <button class="fc-btn" onclick="fcNext()">Next →</button>
+  <button class="fc-btn got" onclick="fcMark(true)" ${!fcState.flipped?'disabled':''}>✓ Got it</button>
+</div>
+<div class="fc-stats"><span style="color:var(--success)">✓ ${fcState.got}</span><span style="color:var(--danger)">✗ ${fcState.missed}</span><span style="color:var(--text-hint)">Seen: ${fcState.seen.size}/${deck.cards.length}</span><button class="nm-mini" onclick="fcShuffle()">🔀 Shuffle</button></div>`;
+}
+function fcFlip(){fcState.flipped=!fcState.flipped;renderFlashcards();}
+function fcNext(){fcState.seen.add(fcState.order[fcState.pos]);fcState.pos=(fcState.pos+1)%fcState.order.length;fcState.flipped=false;renderFlashcards();}
+function fcPrev(){fcState.pos=(fcState.pos-1+fcState.order.length)%fcState.order.length;fcState.flipped=false;renderFlashcards();}
+function fcMark(c){
+  const ci=fcState.order[fcState.pos];fcState.seen.add(ci);
+  if(c)fcState.got++;else{fcState.missed++;fcState.order.splice(Math.min(fcState.pos+5,fcState.order.length),0,ci);}
+  addScore(c?1:0,1);fcNext();
+}
+function fcShuffle(){const d=FC_DECKS[fcState.deck];fcState.order=studyShuffle(d.cards.map((_,i)=>i));fcState.pos=0;fcState.flipped=false;renderFlashcards();}
+function fcDeck(k){fcInit(k);renderFlashcards();}
+// ---- quiz: shuffle; missed questions come back later ----
+let mcqState=null;
+function mcqInit(k){const b=MCQ_BANKS[k],idx=b.questions.map((_,i)=>i);mcqState={deck:k,order:b.shuffle?studyShuffle(idx):idx,idx:0,answered:false,chosen:null,correct:false,score:0,total:0};}
+function renderQuiz(){
+  if(!mcqState)mcqInit('phys');
+  const bank=MCQ_BANKS[mcqState.deck],q=bank.questions[mcqState.order[mcqState.idx]],total=mcqState.order.length;
+  const opts=q.opts.map((o,i)=>{let cls='mcq-opt';if(mcqState.answered){if(i===q.correct)cls+=' reveal';else if(mcqState.chosen===i)cls+=' wrong';}
+    return `<button class="${cls}" onclick="mcqAnswer(${i})" ${mcqState.answered?'disabled':''}><span class="opt-let">${String.fromCharCode(65+i)}.</span>${o}</button>`;}).join('');
+  $('main').innerHTML=`
+<div class="sh"><h2>Board-style quiz</h2><p>Select the best answer. In the 💊 drug drills, questions you miss come back later in the set.</p></div>
+<div class="mcq-deckbar" style="flex-direction:column;align-items:stretch">${deckBar(MCQ_BANKS,mcqState.deck,'mcqDeck','mcq-deckbtn')}</div>
+<div class="mcq-card"><div class="mcq-qnum">Question ${mcqState.idx+1} of ${total} · ${bank.drug?'💊 ':''}${bank.name}</div><div class="mcq-q">${q.q}</div><div class="mcq-opts">${opts}</div>
+<div class="mcq-exp${mcqState.answered?' show':''}">${mcqState.answered?`<strong>${mcqState.correct?'✓ Correct!':'✗ Incorrect.'}</strong> ${q.explain}`:''}</div></div>
+<div class="mcq-nav"><button class="mcq-nav-btn" onclick="mcqPrev()">← Back</button>${mcqState.answered?`<button class="mcq-nav-btn primary" onclick="mcqNext()">Next →</button>`:''}<span class="mcq-counter">Score: ${mcqState.score} / ${mcqState.total}</span><button class="nm-mini" onclick="mcqShuffle()">🔀 Shuffle</button></div>`;
+}
+function mcqAnswer(i){
+  if(mcqState.answered)return;const bank=MCQ_BANKS[mcqState.deck],qi=mcqState.order[mcqState.idx],q=bank.questions[qi];
+  mcqState.answered=true;mcqState.chosen=i;mcqState.correct=(i===q.correct);mcqState.total++;if(mcqState.correct)mcqState.score++;
+  if(!mcqState.correct&&bank.drug)mcqState.order.splice(Math.min(mcqState.idx+6,mcqState.order.length),0,qi);
+  addScore(mcqState.correct?1:0,1);renderQuiz();
+}
+function mcqNext(){mcqState.idx=(mcqState.idx+1)%mcqState.order.length;mcqState.answered=false;mcqState.chosen=null;renderQuiz();}
+function mcqPrev(){mcqState.idx=(mcqState.idx-1+mcqState.order.length)%mcqState.order.length;mcqState.answered=false;mcqState.chosen=null;renderQuiz();}
+function mcqShuffle(){const b=MCQ_BANKS[mcqState.deck];mcqState.order=studyShuffle(b.questions.map((_,i)=>i));mcqState.idx=0;mcqState.answered=false;mcqState.chosen=null;renderQuiz();}
+function mcqDeck(k){mcqInit(k);renderQuiz();}
+
+// ═══════════════════════════════════════════════════════
+// RENAL PHARMACOLOGY — one dataset drives the drug flashcards, quiz banks and reference page
+// ═══════════════════════════════════════════════════════
+const DRUG_GROUPS={
+  raas:['RAAS, BP & proteinuria','RAAS & BP'],
+  diur:['Diuretics & tubular drugs','Diuretics'],
+  ckd:['CKD supportive care','CKD support'],
+  emerg:['Emergency, toxicology & nephrotoxins','Emergency & tox'],
+  uro:['Urinary tract & uroliths','Urinary & stones'],
+};
+const DRUGS=[
+ // RAAS, BP & proteinuria
+ {n:"Benazepril",g:"raas",fam:"acei",cls:"ACE inhibitor",moa:"Blocks angiotensin-converting enzyme, so less angiotensin II forms. The efferent arteriole dilates and glomerular pressure falls.",use:"First-line antiproteinuric drug in CKD (dogs and cats); also used in canine heart failure.",watch:"Creatinine (a rise under ~30% is expected), potassium and blood pressure. Don't start it in a dehydrated or unstable AKI patient.",pearl:"Cleared largely in bile, so it needs little or no dose change in CKD, unlike enalapril."},
+ {n:"Enalapril",g:"raas",fam:"acei",cls:"ACE inhibitor",moa:"Blocks angiotensin-converting enzyme, lowering angiotensin II and aldosterone.",use:"Proteinuria, hypertension and heart failure in dogs.",watch:"Creatinine, potassium and BP. Renally excreted, so it can accumulate in azotemic patients."},
+ {n:"Telmisartan",g:"raas",cls:"Angiotensin receptor blocker (ARB)",moa:"Blocks the AT1 receptor, so angiotensin II cannot constrict the efferent arteriole, release aldosterone or vasoconstrict.",use:"Proteinuria and systemic hypertension in cats (licensed); off-label for proteinuria in dogs.",watch:"Creatinine, potassium and BP; hypotension, especially when combined with amlodipine."},
+ {n:"Amlodipine",g:"raas",cls:"Calcium channel blocker (dihydropyridine)",moa:"Blocks L-type calcium channels in arteriolar smooth muscle, causing vasodilation and lowering blood pressure.",use:"First-line drug for systemic hypertension in cats; an add-on to a RAAS inhibitor in dogs.",watch:"Hypotension and gingival hyperplasia (dogs). On its own in dogs it can dilate the afferent arteriole and raise glomerular pressure, so pair it with an ACEi or ARB."},
+ {n:"Clopidogrel",g:"raas",cls:"Antiplatelet (P2Y12 ADP-receptor antagonist)",moa:"Irreversibly blocks the platelet P2Y12 ADP receptor, reducing platelet aggregation.",use:"Thromboprophylaxis in dogs with protein-losing glomerular disease, which are hypercoagulable from urinary antithrombin loss.",watch:"Bleeding risk, vomiting and hyporexia; tablets are very bitter for cats."},
+ // Diuretics & tubular drugs
+ {n:"Furosemide",g:"diur",fam:"loop",cls:"Loop diuretic",moa:"Blocks the Na⁺-K⁺-2Cl⁻ cotransporter (NKCC2) in the thick ascending limb.",use:"CHF and pulmonary edema; hypercalcemia (after rehydration); a trial in volume-replete oliguric AKI.",watch:"Hypokalemia, hypochloremic metabolic alkalosis, dehydration with prerenal azotemia, hypomagnesemia; ototoxicity at high IV doses."},
+ {n:"Torsemide",g:"diur",fam:"loop",cls:"Loop diuretic (long-acting)",moa:"Blocks NKCC2 in the thick ascending limb, with a longer action and greater potency than furosemide.",use:"Chronic or refractory CHF in dogs, given once or twice daily.",watch:"Same problems as furosemide but stronger: azotemia, dehydration and hypokalemia. Recheck renal values after starting."},
+ {n:"Hydrochlorothiazide",g:"diur",cls:"Thiazide diuretic",moa:"Blocks the Na⁺-Cl⁻ cotransporter (NCC) in the distal convoluted tubule.",use:"Preventing recurrent calcium oxalate uroliths in dogs by lowering urinary calcium; paradoxically reduces urine volume in nephrogenic DI.",watch:"Hypokalemia, mild hypercalcemia and dehydration."},
+ {n:"Spironolactone",g:"diur",cls:"Aldosterone antagonist (K⁺-sparing diuretic)",moa:"Blocks the mineralocorticoid (aldosterone) receptor in the collecting duct, so Na⁺ is lost and K⁺ is retained.",use:"Add-on therapy in canine CHF; ascites from liver disease.",watch:"Hyperkalemia (especially combined with an ACEi or ARB); ulcerative facial dermatitis has been reported in cats."},
+ {n:"Mannitol",g:"diur",cls:"Osmotic diuretic",moa:"Freely filtered but not reabsorbed, so it holds water in the PCT and descending limb by osmosis.",use:"Raised intracranial pressure and acute glaucoma; its use in oliguric AKI is controversial.",watch:"Contraindicated in fluid overload or anuria, because it expands plasma volume first. Causes dehydration and electrolyte shifts."},
+ {n:"Acetazolamide",g:"diur",cls:"Carbonic anhydrase inhibitor",moa:"Inhibits carbonic anhydrase in the PCT, so filtered HCO₃⁻ is not reclaimed.",use:"Glaucoma (reduces aqueous humor; dorzolamide is the topical equivalent); a weak diuretic.",watch:"Metabolic acidosis and hypokalemia."},
+ {n:"Bexagliflozin / velagliflozin",g:"diur",cls:"SGLT2 inhibitor",moa:"Blocks SGLT2 in the PCT, so filtered glucose spills into the urine and blood glucose falls.",use:"Once-daily oral treatment for newly diagnosed diabetic cats that have not been on insulin.",watch:"Euglycemic diabetic ketoacidosis (check ketones before and after starting). Glucosuria is expected, so urine glucose cannot be used to monitor."},
+ {n:"Desmopressin (DDAVP)",g:"diur",cls:"Synthetic ADH (V2 receptor agonist)",moa:"Activates V2 receptors on collecting-duct principal cells, inserting aquaporin-2 so water is reabsorbed.",use:"Treating central diabetes insipidus; a response trial separates central from nephrogenic DI.",watch:"Hyponatremia (water intoxication) if the patient keeps drinking heavily; no effect in nephrogenic DI."},
+ // CKD supportive care
+ {n:"Aluminum hydroxide",g:"ckd",fam:"pbind",cls:"Intestinal phosphate binder",moa:"Binds dietary phosphate in the gut so it is lost in feces rather than absorbed.",use:"Hyperphosphatemia in CKD when a renal diet alone does not reach the IRIS phosphate target.",watch:"Must be mixed into every meal to work; constipation; aluminum accumulation at high doses."},
+ {n:"Lanthanum carbonate",g:"ckd",fam:"pbind",cls:"Intestinal phosphate binder (calcium- and aluminum-free)",moa:"Lanthanum binds dietary phosphate in the gut into an insoluble complex that is excreted.",use:"Hyperphosphatemia in CKD, especially when calcium-based binders cause hypercalcemia.",watch:"Must be given with food; vomiting and constipation."},
+ {n:"Calcitriol",g:"ckd",cls:"Active vitamin D (1,25-dihydroxycholecalciferol)",moa:"Activates vitamin D receptors, increasing calcium absorption and directly suppressing PTH secretion.",use:"Renal secondary hyperparathyroidism in dogs with CKD, once phosphate is controlled.",watch:"Hypercalcemia and hyperphosphatemia causing soft-tissue mineralization. Monitor ionized calcium and phosphate."},
+ {n:"Darbepoetin",g:"ckd",cls:"Erythropoiesis-stimulating agent (ESA)",moa:"A long-acting erythropoietin analog that stimulates red cell production in the bone marrow.",use:"Non-regenerative anemia of CKD that is affecting quality of life.",watch:"Hypertension, iron deficiency (supplement iron) and seizures. It is less likely than human epoetin alfa to trigger anti-EPO antibodies and pure red cell aplasia."},
+ {n:"Potassium gluconate",g:"ckd",cls:"Oral potassium supplement",moa:"Replaces potassium lost in the urine.",use:"Hypokalemia in cats with CKD (weakness, cervical ventroflexion, poor appetite).",watch:"Recheck K⁺; GI upset; hyperkalemia if renal excretion is very poor."},
+ {n:"Maropitant",g:"ckd",cls:"Antiemetic (NK1 receptor antagonist)",moa:"Blocks substance P at NK1 receptors in the vomiting center and chemoreceptor trigger zone.",use:"Uremic vomiting in CKD and AKI; motion sickness.",watch:"SC injection stings; use with caution in hepatic dysfunction."},
+ {n:"Ondansetron",g:"ckd",cls:"Antiemetic (5-HT3 antagonist)",moa:"Blocks serotonin 5-HT3 receptors in the chemoreceptor trigger zone and on vagal afferents in the gut.",use:"Nausea and vomiting from uremia or chemotherapy, often added when maropitant alone isn't enough.",watch:"Usually well tolerated; constipation; QT prolongation is rarely relevant."},
+ {n:"Mirtazapine",g:"ckd",cls:"Appetite stimulant (tetracyclic antidepressant)",moa:"Antagonizes α2-adrenergic and 5-HT2/5-HT3 receptors, stimulating appetite and reducing nausea.",use:"Hyporexia and weight loss in cats with CKD (oral or transdermal ointment).",watch:"Vocalization, agitation and tremors if overdosed. Cats with CKD clear it slowly, so they need lower or less frequent doses."},
+ {n:"Capromorelin",g:"ckd",cls:"Ghrelin receptor agonist",moa:"Mimics ghrelin at the growth hormone secretagogue receptor, triggering hunger.",use:"Weight loss in cats with CKD (licensed); appetite stimulation in dogs.",watch:"Hypersalivation and vomiting; can raise blood glucose, so use with caution in diabetics."},
+ // Emergency, toxicology & nephrotoxins
+ {n:"Calcium gluconate (10%)",g:"emerg",cls:"Calcium salt (cardioprotectant)",moa:"Raises the threshold potential, restoring the gap from the resting membrane potential, so the heart is less excitable in hyperkalemia.",use:"Hyperkalemia with ECG changes (blocked cat, Addisonian crisis, uroabdomen); hypocalcemia.",watch:"It does NOT lower K⁺. Give slowly IV with ECG monitoring and stop if bradycardia develops. Don't mix with bicarbonate."},
+ {n:"Regular insulin + dextrose",g:"emerg",cls:"K⁺-shifting therapy",moa:"Insulin stimulates Na⁺/K⁺-ATPase, moving K⁺ into cells; dextrose prevents hypoglycemia.",use:"Moderate to severe hyperkalemia while the underlying cause (e.g., obstruction) is corrected.",watch:"Hypoglycemia for hours afterwards: check glucose every 1–2 h and add dextrose to fluids. K⁺ is moved into cells, not removed from the body."},
+ {n:"Sodium bicarbonate",g:"emerg",cls:"Alkalinizing agent",moa:"Buffers H⁺ and raises blood pH; as H⁺ leaves cells, K⁺ moves in.",use:"Severe metabolic acidosis; an adjunct for hyperkalemia.",watch:"Lowers ionized calcium, causes hypernatremia, and can cause paradoxical CSF acidosis. It precipitates with calcium in the same line."},
+ {n:"Fomepizole",g:"emerg",cls:"Alcohol dehydrogenase inhibitor",moa:"Competitively blocks alcohol dehydrogenase, so ethylene glycol is not converted to its toxic metabolites (glycolate, oxalate).",use:"Ethylene glycol toxicosis, started early (within about 8 h in dogs and 3 h in cats).",watch:"Cats need a much higher dose than dogs. It doesn't help once the EG has already been metabolized and the patient is azotemic."},
+ {n:"Doxycycline",g:"emerg",fam:"abx30",cls:"Tetracycline antibiotic",moa:"Binds the 30S ribosomal subunit and blocks tRNA attachment, stopping bacterial protein synthesis (bacteriostatic).",use:"Leptospirosis in dogs: clears both the bacteremia and the renal carrier state (14-day course).",watch:"In cats, follow tablets with water or food to prevent esophagitis and strictures; GI upset."},
+ {n:"NSAIDs (meloxicam, robenacoxib)",g:"emerg",cls:"COX inhibitor (nephrotoxic risk)",moa:"Inhibit cyclooxygenase, reducing prostaglandins, including the renal prostaglandins that dilate the afferent arteriole.",use:"Pain and inflammation; the risk must be weighed carefully in any renal patient.",watch:"AKI and renal papillary necrosis when renal perfusion is low (dehydration, anesthesia, CKD). Never combine with corticosteroids."},
+ {n:"Gentamicin / amikacin",g:"emerg",fam:"abx30",cls:"Aminoglycoside (nephrotoxic)",moa:"Bind the 30S ribosomal subunit and cause mRNA misreading; bactericidal, with concentration-dependent killing.",use:"Serious gram-negative infections.",watch:"They accumulate in PCT cells and cause tubular necrosis. Dose once daily and check the UA for granular casts and glucosuria, which appear before azotemia. Avoid in food animals (long tissue residues)."},
+ // Urinary tract & uroliths
+ {n:"Allopurinol",g:"uro",cls:"Xanthine oxidase inhibitor",moa:"Blocks xanthine oxidase, so less hypoxanthine and xanthine is converted to uric acid.",use:"Dissolving and preventing urate uroliths (e.g., Dalmatians), together with a low-purine diet.",watch:"Xanthine uroliths form if purine intake isn't restricted; reduce the dose in renal or hepatic disease."},
+ {n:"Tiopronin (2-MPG)",g:"uro",cls:"Thiol drug (cystine-binding)",moa:"Swaps disulfide bonds with cystine, forming a complex that is far more soluble than cystine.",use:"Dissolving and preventing cystine uroliths, with an alkalinizing, lower-protein diet.",watch:"Proteinuria, cytopenias and skin lesions. Castration also helps in androgen-dependent breeds."},
+ {n:"Potassium citrate",g:"uro",cls:"Urinary alkalinizer / citrate supplement",moa:"Citrate binds urinary calcium into a soluble complex, and its metabolism alkalinizes the urine.",use:"Preventing calcium oxalate uroliths; alkalinizing urine for urate and cystine stones.",watch:"GI upset; hyperkalemia if renal excretion is poor. Monitor urine pH."},
+ {n:"Prazosin",g:"uro",cls:"α1-adrenergic antagonist",moa:"Blocks α1 receptors on urethral smooth muscle, relaxing the proximal urethra.",use:"Reducing urethral spasm after a urethral obstruction is relieved in cats (evidence is mixed).",watch:"Hypotension, especially after the first dose."},
+ {n:"Phenylpropanolamine",g:"uro",cls:"α-adrenergic agonist",moa:"Stimulates α receptors in urethral smooth muscle, increasing urethral sphincter tone.",use:"Urethral sphincter mechanism incompetence (spay incontinence) in female dogs.",watch:"Hypertension, restlessness and anorexia. Check BP, especially in dogs with CKD or heart disease."},
+ {n:"Estriol",g:"uro",cls:"Estrogen",moa:"Makes urethral α receptors more sensitive and supports the urethral mucosa, improving urethral closure.",use:"Urethral sphincter mechanism incompetence in spayed female dogs.",watch:"Signs of estrus (vulvar swelling, attracting males); bone marrow suppression is rare at labeled doses."},
+ {n:"Bethanechol",g:"uro",cls:"Muscarinic (cholinergic) agonist",moa:"Activates muscarinic receptors on the detrusor muscle, strengthening bladder contraction.",use:"Detrusor atony after prolonged bladder overdistension (e.g., following urethral obstruction).",watch:"SLUD signs (salivation, lacrimation, urination, defecation/diarrhea). Never use when the urethra is obstructed; pair with a urethral relaxant."},
+];
+function drugRng(seed){let s=(seed*9301+49297)%233280||1;return ()=>{s=(s*9301+49297)%233280;return s/233280;};}
+function drugShuffle(a,rnd){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function drugSameFam(a,b){return a===b||(a.fam&&a.fam===b.fam);}
+function drugPick(d,n,rnd,ok){
+  // distractors: other drugs, same group first (harder to tell apart), never the same drug family
+  const pool=DRUGS.filter(x=>!drugSameFam(x,d)&&(!ok||ok(x)));
+  const same=drugShuffle(pool.filter(x=>x.g===d.g),rnd),other=drugShuffle(pool.filter(x=>x.g!==d.g),rnd);
+  return same.concat(other).slice(0,n);
+}
+function drugFamNames(d){return d.fam?DRUGS.filter(x=>x.fam===d.fam).map(x=>x.n).join(' or '):d.n;}
+function drugCards(list){
+  const cards=[];
+  list.forEach(d=>{
+    cards.push({q:`<b>${d.n}</b>: what drug class?`,a:d.cls,hint:DRUG_GROUPS[d.g][0]});
+    cards.push({q:`<b>${d.n}</b>: mechanism of action?`,a:d.moa,hint:d.cls});
+    cards.push({q:`<b>${d.n}</b>: why use it?`,a:d.use,hint:d.cls});
+    cards.push({q:`<b>${d.n}</b>: what do you watch for?`,a:d.watch,hint:d.cls});
+    cards.push({q:`Name the drug: <i>${d.moa}</i>`,a:`${drugFamNames(d)} (${d.cls})`,hint:DRUG_GROUPS[d.g][0]});
+    if(d.pearl)cards.push({q:`<b>${d.n}</b>: clinical pearl?`,a:d.pearl,hint:d.cls});
+  });
+  return cards;
+}
+function drugQuestions(list){
+  const qs=[];
+  list.forEach(d=>{
+    const i=DRUGS.indexOf(d),rnd=drugRng(i+7);
+    const mk=(q,correct,wrong,explain)=>{const opts=drugShuffle([correct,...wrong],rnd);qs.push({q,opts,correct:opts.indexOf(correct),explain});};
+    const exp=`<b>${d.n}</b> (${d.cls}): ${d.moa}<br><b>Used for:</b> ${d.use}<br><b>Watch for:</b> ${d.watch}`;
+    mk(`<b>${d.n}</b> works by:`,d.moa,drugPick(d,3,rnd).map(x=>x.moa),exp);
+    mk(`Which drug is in this class: <b>${d.cls}</b>?`,d.n,drugPick(d,3,rnd,x=>x.cls!==d.cls).map(x=>x.n),exp);
+    mk(`Key adverse effect or monitoring point for <b>${d.n}</b>?`,d.watch,drugPick(d,3,rnd).map(x=>x.watch),exp);
+  });
+  return qs;
+}
+(function buildDrugStudy(){
+  Object.entries(DRUG_GROUPS).forEach(([g,[name,short]])=>{
+    const list=DRUGS.filter(d=>d.g===g);
+    FC_DECKS['drug_'+g]={name:short,drug:true,cards:drugCards(list)};
+    MCQ_BANKS['drug_'+g]={name:short,drug:true,shuffle:true,questions:drugQuestions(list)};
+  });
+  FC_DECKS.drug_moa={name:'All drugs: MOA only',drug:true,shuffle:true,cards:DRUGS.flatMap(d=>[{q:`<b>${d.n}</b>: mechanism of action?`,a:d.moa,hint:d.cls},{q:`Name the drug: <i>${d.moa}</i>`,a:`${drugFamNames(d)} (${d.cls})`,hint:DRUG_GROUPS[d.g][0]}])};
+  MCQ_BANKS.drug_all={name:'All drugs mixed',drug:true,shuffle:true,questions:drugQuestions(DRUGS)};
+  REF.drugs=`<div class="sh"><h2>Renal pharmacology</h2><p>Every drug in the tutor in one place: what it is, how it works, why we use it, and what to watch for. Drill these with the 💊 flashcard decks and quiz banks.</p></div>
+  <div class="fit-actions" style="margin:-6px 0 14px"><button class="fit-btn primary" onclick="setMode('flashcards');fcDeck('drug_moa')">🃏 Drill MOAs (flashcards)</button><button class="fit-btn" onclick="setMode('quiz');mcqDeck('drug_all')">✏️ Drug quiz (mixed)</button></div>`+
+  Object.entries(DRUG_GROUPS).map(([g,[name]])=>`<div class="card" style="padding:0;margin-bottom:14px"><div class="card-title" style="padding:14px 16px 4px">${name}</div><table>
+  <tr><th style="width:15%">Drug</th><th style="width:16%">Class</th><th style="width:27%">Mechanism</th><th style="width:20%">Renal use</th><th>Watch for</th></tr>
+  ${DRUGS.filter(d=>d.g===g).map(d=>`<tr><td><b>${d.n}</b></td><td>${d.cls}</td><td>${d.moa}</td><td>${d.use}</td><td>${d.watch}${d.pearl?`<br><i>${d.pearl}</i>`:''}</td></tr>`).join('')}</table></div>`).join('')+
+  `<div class="disclaimer" style="margin-top:0">Doses are left out on purpose. Check every dose in a current formulary.</div>`;
+})();
 
 // ═══════════════════════════════════════════════════════
 // INIT
