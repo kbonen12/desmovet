@@ -189,6 +189,9 @@
     .tutoring-cta{width:100%;text-align:center;}
     .navlinks{gap:16px;font-size:0.85rem;}
   }
+  @media (max-width:480px){
+    .navlinks .nav-updates{display:none;}
+  }
 
   /* FOOTER */
   footer{border-top:1px solid var(--line);padding:36px 0;text-align:center;color:var(--sub);font-size:0.85rem;}
@@ -209,7 +212,8 @@
     <a href="#top" class="brand">desmoVet</a>
     <div class="navlinks">
       <a href="#tools">Tools</a>
-      <a href="#updates">Updates</a>
+      <a href="/articles/">Articles</a>
+      <a href="#updates" class="nav-updates">Updates</a>
       <a href="tutoring.html" class="tutoring">Tutoring</a>
       <a href="#story">About</a>
     </div>

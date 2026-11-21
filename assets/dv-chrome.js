@@ -107,7 +107,7 @@
       document.body.insertBefore(el(
         '<div class="dv-bar" role="navigation" aria-label="desmoVet">' +
           '<a class="dv-brand" href="/">desmoVet <span>Free tools for vets &amp; vet students</span></a>' +
-          '<div class="dv-bar-links"><a href="/#tools">All tools</a><a href="#dv-footer">Report an error</a></div>' +
+          '<div class="dv-bar-links"><a href="/#tools">All tools</a><a href="/articles/">Articles</a><a href="#dv-footer">Report an error</a></div>' +
         '</div>'), document.body.firstChild);
     }
 
@@ -130,7 +130,7 @@
     var signupRow = '<div class="dv-su-row">' + signupHTML('') + '</div>';
     var siteRow = infoOnly ? '' :
       '<div class="dv-site">' +
-        '<div class="dv-links" role="navigation" aria-label="desmoVet links"><a href="/">desmoVet home</a><a href="/#tools">All tools</a><a href="/tutoring.html">Peer tutoring</a><a href="mailto:' + EMAIL + '">' + EMAIL + '</a></div>' +
+        '<div class="dv-links" role="navigation" aria-label="desmoVet links"><a href="/">desmoVet home</a><a href="/#tools">All tools</a><a href="/articles/">Articles</a><a href="/tutoring.html">Peer tutoring</a><a href="mailto:' + EMAIL + '">' + EMAIL + '</a></div>' +
         '<div>© ' + new Date().getFullYear() + ' KB Enterprises LLC</div>' +
         '<div class="dv-disc">Study and calculation aids for veterinary professionals and students. They do not replace clinical judgment, a current formulary or specialist advice. Verify every dose before using it in a patient.</div>' +
       '</div>';
