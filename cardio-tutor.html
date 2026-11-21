@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://desmovet.com/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f7f4f0;
@@ -70,7 +70,7 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
   body {
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: 'Instrument Sans', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
@@ -100,7 +100,7 @@
   .nav-btn {
     padding: 6px 14px; border-radius: 20px;
     border: 1px solid transparent;
-    background: transparent; font-family: 'DM Sans', sans-serif;
+    background: transparent; font-family: 'Instrument Sans', sans-serif;
     font-size: 13px; font-weight: 500;
     color: var(--text-muted); cursor: pointer;
     transition: all 0.15s;
@@ -225,7 +225,7 @@
   .phase-btn {
     padding: 8px 18px; border-radius: 8px;
     border: 1px solid var(--border); background: var(--surface);
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    font-family: 'Instrument Sans', sans-serif; font-size: 13px; font-weight: 500;
     color: var(--text-muted); cursor: pointer; transition: all 0.15s;
     box-shadow: var(--shadow);
   }
@@ -255,7 +255,7 @@
   .quiz-opt {
     padding: 0.8rem 1.1rem; border: 1px solid var(--border);
     border-radius: var(--radius-sm); cursor: pointer;
-    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    font-family: 'Instrument Sans', sans-serif; font-size: 14px;
     background: var(--surface); color: var(--text);
     transition: all 0.15s; text-align: left;
     box-shadow: var(--shadow);
@@ -271,7 +271,7 @@
   .quiz-next {
     margin-top: 1.25rem; padding: 10px 24px;
     border-radius: 8px; border: 1px solid var(--border);
-    background: var(--surface); font-family: 'DM Sans', sans-serif;
+    background: var(--surface); font-family: 'Instrument Sans', sans-serif;
     font-size: 14px; font-weight: 500; cursor: pointer;
     color: var(--text); transition: all 0.15s; display: none;
     box-shadow: var(--shadow);
@@ -348,7 +348,7 @@
     display: flex; align-items: center; gap: 8px;
     padding: 10px 20px; border-radius: var(--radius-sm);
     border: 1px solid var(--border); background: var(--surface);
-    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    font-family: 'Instrument Sans', sans-serif; font-size: 14px; font-weight: 500;
     color: var(--text); cursor: pointer; transition: all 0.15s;
     box-shadow: var(--shadow);
   }
@@ -1558,7 +1558,7 @@ function drawPV(){
   for(let v=40;v<=200;v+=40) ctx.fillText(v,xp(v),pad.t+ch+14);
   ctx.textAlign='right';
   for(let p=0;p<=160;p+=40) ctx.fillText(p,pad.l-8,yp(p)+4);
-  ctx.fillStyle=C.text; ctx.font='11px DM Sans, sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle=C.text; ctx.font='11px Instrument Sans, sans-serif'; ctx.textAlign='center';
   ctx.fillText('Volume (mL)',pad.l+cw/2,h-6);
   ctx.save(); ctx.translate(13,pad.t+ch/2); ctx.rotate(-Math.PI/2); ctx.fillText('LV Pressure (mmHg)',0,0); ctx.restore();
 
@@ -1619,7 +1619,7 @@ function drawPV(){
     const labelV = Math.min(maxV - 10, 130);
     const labelP = ees * (labelV - V0);
     if (labelP < maxP - 10) {
-      ctx.fillStyle = greenColor; ctx.font = 'bold 10px DM Sans,sans-serif';
+      ctx.fillStyle = greenColor; ctx.font = 'bold 10px Instrument Sans,sans-serif';
       ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
       ctx.fillText('ESPVR (Ees=' + ees.toFixed(1) + ')', xp(labelV) + 4, yp(labelP) - 2);
     }
@@ -1681,7 +1681,7 @@ function drawPV(){
   ctx.strokeStyle=C.amber+'99'; ctx.lineWidth=1; ctx.setLineDash([4,3]);
   ctx.beginPath(); ctx.moveTo(pad.l,yp(aodp)); ctx.lineTo(pad.l+cw,yp(aodp)); ctx.stroke();
   ctx.setLineDash([]);
-  ctx.fillStyle=C.amber; ctx.font='10px DM Sans,sans-serif';
+  ctx.fillStyle=C.amber; ctx.font='10px Instrument Sans,sans-serif';
   ctx.textAlign='right'; ctx.textBaseline='bottom';
   ctx.fillText('AoDP '+aodp+'mmHg', pad.l+cw-4, yp(aodp)-2);
 
@@ -1694,7 +1694,7 @@ function drawPV(){
   ctx.beginPath(); ctx.moveTo(xp(res.esv)+2,arrowY); ctx.lineTo(xp(res.esv)+8,arrowY-3); ctx.lineTo(xp(res.esv)+8,arrowY+3); ctx.fill();
   ctx.beginPath(); ctx.moveTo(xp(edv)-2,arrowY); ctx.lineTo(xp(edv)-8,arrowY-3); ctx.lineTo(xp(edv)-8,arrowY+3); ctx.fill();
   const svLabelX=xp((res.esv+edv)/2), svLabelY=arrowY-10;
-  ctx.font='bold 10px DM Sans,sans-serif';
+  ctx.font='bold 10px Instrument Sans,sans-serif';
   const svTw=ctx.measureText('SV = '+sv+' mL').width;
   ctx.fillStyle=isDark2?'#1e1b18':'#ffffff';
   ctx.fillRect(svLabelX-svTw/2-3,svLabelY-7,svTw+6,13);
@@ -1764,7 +1764,7 @@ function drawFS(){
   ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ch); ctx.lineTo(pad.l+cw,pad.t+ch); ctx.stroke();
 
   // Axis labels
-  ctx.fillStyle=C.text; ctx.font='12px DM Sans,sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle=C.text; ctx.font='12px Instrument Sans,sans-serif'; ctx.textAlign='center';
   ctx.fillText('Preload (EDV)', pad.l+cw/2, h-6);
   ctx.save(); ctx.translate(16, pad.t+ch/2); ctx.rotate(-Math.PI/2);
   ctx.fillText('Stroke Volume', 0, 0); ctx.restore();
@@ -1803,7 +1803,7 @@ function drawFS(){
   // Contractility label
   const contLabel = contFrac>1.3?'↑↑ High contractility':contFrac>1.1?'↑ Increased contractility':
                     contFrac<0.7?'↓↓ Low contractility (HF)':contFrac<0.9?'↓ Decreased contractility':'Normal contractility';
-  ctx.fillStyle=curveColor; ctx.font='bold 11px DM Sans,sans-serif';
+  ctx.fillStyle=curveColor; ctx.font='bold 11px Instrument Sans,sans-serif';
   ctx.textAlign='right'; ctx.textBaseline='top';
   ctx.fillText(contLabel, pad.l+cw-4, pad.t+4);
 
@@ -1878,17 +1878,17 @@ function drawFiber() {
     // Z-disk labels (only on outer disks to avoid clutter)
     if (i === 0) {
       ctx.fillStyle = isDark?'rgba(255,255,255,0.6)':'rgba(0,0,0,0.5)';
-      ctx.font = 'bold 8px DM Sans,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+      ctx.font = 'bold 8px Instrument Sans,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
       ctx.fillText('Z', sx, midY-sacH/2-6);
     }
     if (i === nSarc-1) {
       ctx.fillStyle = isDark?'rgba(255,255,255,0.6)':'rgba(0,0,0,0.5)';
-      ctx.font = 'bold 8px DM Sans,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+      ctx.font = 'bold 8px Instrument Sans,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
       ctx.fillText('Z', sx+sarcW, midY-sacH/2-6);
     }
     // Middle shared Z-disk label
     ctx.fillStyle = isDark?'rgba(255,255,255,0.6)':'rgba(0,0,0,0.5)';
-    ctx.font = 'bold 8px DM Sans,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.font = 'bold 8px Instrument Sans,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
     if (i === 0) ctx.fillText('Z-disk', sx, midY+sacH/2+16);
 
     // ── Actin — tethered to Z-disks ──
@@ -1916,12 +1916,12 @@ function drawFiber() {
                      overstretched ? '⬆ Over-stretched — overlap lost' :
                      '✓ Optimal cross-bridge overlap';
   const stateColor = underfilled ? '#c07030' : overstretched ? '#d94040' : (C.green||'#2d9a50');
-  ctx.fillStyle=stateColor; ctx.font='bold 10px DM Sans,sans-serif';
+  ctx.fillStyle=stateColor; ctx.font='bold 10px Instrument Sans,sans-serif';
   ctx.textAlign='center'; ctx.textBaseline='top';
   ctx.fillText(stateLabel, w/2, midY+sacH/2+14);
 
   // Legend
-  ctx.font='9px DM Sans,sans-serif'; ctx.textBaseline='middle';
+  ctx.font='9px Instrument Sans,sans-serif'; ctx.textBaseline='middle';
   [[ACTIN_C,'Actin'],[MYOSIN_C,'Myosin'],[ZDISK_C,'Z-disk']].forEach(([col,lbl],i)=>{
     const lx=6+i*(w/3);
     ctx.fillStyle=col; ctx.fillRect(lx,8,16,7);
@@ -2067,7 +2067,7 @@ function drawVR(){
   for(let ra=-4;ra<=12;ra+=4) ctx.fillText(ra,xp(ra),pad.t+ch+18);
   ctx.textAlign='right';
   for(let vr=0;vr<=12;vr+=2) ctx.fillText(vr,pad.l-8,yp(vr)+4);
-  ctx.textAlign='center'; ctx.fillStyle=C.text; ctx.font='11px DM Sans,sans-serif';
+  ctx.textAlign='center'; ctx.fillStyle=C.text; ctx.font='11px Instrument Sans,sans-serif';
   ctx.fillText('Right atrial pressure (mmHg)',pad.l+cw/2,h-6);
   ctx.save(); ctx.translate(13,pad.t+ch/2); ctx.rotate(-Math.PI/2); ctx.fillText('Venous return (L/min)',0,0); ctx.restore();
 
@@ -2087,10 +2087,10 @@ function drawVR(){
   const psfLabelX = pad.l + cw - 4;
   const psfLabelY = pad.t + 14;
   ctx.fillStyle = C.accent + 'cc';
-  ctx.font = 'bold 11px DM Sans,sans-serif'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  ctx.font = 'bold 11px Instrument Sans,sans-serif'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
   ctx.fillText('Psf = ' + psf + ' mmHg', psfLabelX, psfLabelY);
   // baseline label bottom-right
-  ctx.fillStyle = C.gray + 'cc'; ctx.font = '10px DM Sans,sans-serif';
+  ctx.fillStyle = C.gray + 'cc'; ctx.font = '10px Instrument Sans,sans-serif';
   ctx.fillText('Baseline (Psf=7)', psfLabelX, psfLabelY + 16);
 
   let ins=[];
@@ -2425,16 +2425,16 @@ function drawCirc() {
     ctx.closePath(); ctx.fill(); ctx.restore();
   }
   function badge(x, y, label, value, valueColor) {
-    ctx.font = '500 10px DM Sans,sans-serif';
+    ctx.font = '500 10px Instrument Sans,sans-serif';
     const lw = ctx.measureText(label).width;
-    ctx.font = '600 12px DM Sans,sans-serif';
+    ctx.font = '600 12px Instrument Sans,sans-serif';
     const vw = ctx.measureText(value).width;
     const bw = Math.max(lw, vw) + 20, bh = 34;
     rRect(x - bw/2, y - bh/2, bw, bh, 6, SURF, BORD, 0.8);
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = TXTS; ctx.font = '500 10px DM Sans,sans-serif';
+    ctx.fillStyle = TXTS; ctx.font = '500 10px Instrument Sans,sans-serif';
     ctx.fillText(label, x, y - 8);
-    ctx.fillStyle = valueColor || TXTC; ctx.font = '600 12px DM Sans,sans-serif';
+    ctx.fillStyle = valueColor || TXTC; ctx.font = '600 12px Instrument Sans,sans-serif';
     ctx.fillText(value, x, y + 7);
   }
   function resistanceTicks(x, y, color, horizontal) {
@@ -2521,7 +2521,7 @@ function drawCirc() {
   ctx.restore();
 
   // Lung label — ABOVE box
-  ctx.fillStyle = TXTS; ctx.font = '500 10px DM Sans,sans-serif';
+  ctx.fillStyle = TXTS; ctx.font = '500 10px Instrument Sans,sans-serif';
   ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
   ctx.fillText('Pulmonary circulation', cx, lungY - 6);
 
@@ -2541,7 +2541,7 @@ function drawCirc() {
   rRect(chX2, vtY, chW, vtH, 5, ART_LIGHT.replace('f8','ee'), ART, 1.2);
 
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.font = 'bold 10px DM Sans,sans-serif';
+  ctx.font = 'bold 10px Instrument Sans,sans-serif';
   ctx.fillStyle = VEN; ctx.fillText('RA', chX1 + chW/2, atY + atH/2);
   ctx.fillStyle = ART; ctx.fillText('LA', chX2 + chW/2, atY + atH/2);
   ctx.fillStyle = VEN; ctx.fillText('RV', chX1 + chW/2, vtY + vtH/2);
@@ -2555,7 +2555,7 @@ function drawCirc() {
 
   // Heart title — at very bottom of box, below all chambers
   ctx.fillStyle = isDark?'rgba(255,255,255,0.25)':'rgba(150,40,40,0.35)';
-  ctx.font = '500 9px DM Sans,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.font = '500 9px Instrument Sans,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
   ctx.fillText('HEART', cx, hy + heartH - 3);
 
   // ── CARDIAC WORKLOAD GAUGE ───────────────────────────────────────
@@ -2649,11 +2649,11 @@ function drawCirc() {
   ctx.fillStyle = isDark ? '#dddddd' : '#111111';
   ctx.beginPath(); ctx.arc(0, 0, 3.5, 0, Math.PI*2); ctx.fill();
 
-  ctx.fillStyle = TXTS; ctx.font = '600 8px DM Sans,sans-serif';
+  ctx.fillStyle = TXTS; ctx.font = '600 8px Instrument Sans,sans-serif';
   ctx.textAlign = 'center'; ctx.textBaseline = 'top';
   ctx.fillText('CARDIAC WORK', 0, 7);
 
-  ctx.font = '500 7px DM Sans,sans-serif'; ctx.textBaseline = 'middle';
+  ctx.font = '500 7px Instrument Sans,sans-serif'; ctx.textBaseline = 'middle';
   ctx.fillStyle = '#d94040'; ctx.textAlign = 'right';
   ctx.fillText('Hard', -gaugeR - 10, 0);
   ctx.fillStyle = '#3a9a50'; ctx.textAlign = 'left';
@@ -2685,7 +2685,7 @@ function drawCirc() {
   }
 
   // Body label — ABOVE box
-  ctx.fillStyle = TXTS; ctx.font = '500 10px DM Sans,sans-serif';
+  ctx.fillStyle = TXTS; ctx.font = '500 10px Instrument Sans,sans-serif';
   ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
   ctx.fillText('Systemic circulation', cx, bodyY - 6);
 
@@ -2696,7 +2696,7 @@ function drawCirc() {
   const vvrY = (bodyMidY + heartRaY) / 2;
 
   resistanceTicks(artX, svrY, svrColor, false);
-  ctx.fillStyle = svrColor; ctx.font = '600 10px DM Sans,sans-serif';
+  ctx.fillStyle = svrColor; ctx.font = '600 10px Instrument Sans,sans-serif';
   ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
   ctx.fillText('SVR', artX + artT/2 + 6, svrY);
 
@@ -2744,7 +2744,7 @@ function drawPVCirc(m) {
   for(let v=40;v<=200;v+=40) ctx.fillText(v,xp(v),pad.t+ch+12);
   ctx.textAlign='right';
   for(let p=0;p<=160;p+=40) ctx.fillText(p,pad.l-6,yp(p)+3);
-  ctx.fillStyle=C.text; ctx.font='10px DM Sans,sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle=C.text; ctx.font='10px Instrument Sans,sans-serif'; ctx.textAlign='center';
   ctx.fillText('Volume (mL)',pad.l+cw/2,h-4);
   ctx.save(); ctx.translate(12,pad.t+ch/2); ctx.rotate(-Math.PI/2); ctx.fillText('Pressure (mmHg)',0,0); ctx.restore();
 
@@ -2785,7 +2785,7 @@ function drawPVCirc(m) {
   ctx.strokeStyle=C.amber+'99'; ctx.lineWidth=1; ctx.setLineDash([3,3]);
   ctx.beginPath(); ctx.moveTo(pad.l,yp(m.afterload)); ctx.lineTo(pad.l+cw,yp(m.afterload)); ctx.stroke();
   ctx.setLineDash([]);
-  ctx.fillStyle=C.amber; ctx.font='9px DM Sans,sans-serif';
+  ctx.fillStyle=C.amber; ctx.font='9px Instrument Sans,sans-serif';
   ctx.textAlign='right'; ctx.textBaseline='bottom';
   ctx.fillText('AoDP '+m.afterload+'mmHg', pad.l+cw-2, yp(m.afterload)-2);
 
@@ -3003,13 +3003,13 @@ function drawECGHeart(state) {
   // Labels
   function rotLabel(lx,ly,txt,font){
     ctx.save(); ctx.translate(lx,ly); ctx.rotate(-TILT);
-    ctx.fillStyle=LBLC; ctx.font=font||'bold 11px DM Sans,sans-serif';
+    ctx.fillStyle=LBLC; ctx.font=font||'bold 11px Instrument Sans,sans-serif';
     ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(txt,0,0); ctx.restore();
   }
   rotLabel(xL,yA,'RA'); rotLabel(xR,yA,'LA');
   rotLabel(xL,yV,'RV'); rotLabel(xR,yV,'LV');
-  rotLabel(saX+14,saY-22,'SA node','8px DM Sans,sans-serif');
-  rotLabel(16, 2, 'AV', '8px DM Sans,sans-serif');
+  rotLabel(saX+14,saY-22,'SA node','8px Instrument Sans,sans-serif');
+  rotLabel(16, 2, 'AV', '8px Instrument Sans,sans-serif');
 
   // ── NET VECTOR ARROW — origin varies by state, angle in screen-space ────
   const phase = ECG_PHASES.find(p=>p.heartState===state);
@@ -3064,17 +3064,17 @@ function drawECGHeart(state) {
   ctx.beginPath(); ctx.arc(negEx2, negEy2, eR, 0, Math.PI*2);
   ctx.fillStyle=isDark?'#2a1a2a':'#fdf0f2'; ctx.fill();
   ctx.strokeStyle='#c04060'; ctx.lineWidth=2; ctx.stroke();
-  ctx.fillStyle='#c04060'; ctx.font='bold 16px DM Sans,sans-serif';
+  ctx.fillStyle='#c04060'; ctx.font='bold 16px Instrument Sans,sans-serif';
   ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('−', negEx2, negEy2);
-  ctx.fillStyle=LBLC; ctx.font='8px DM Sans,sans-serif'; ctx.fillText('RA', negEx2, negEy2+eR+8);
+  ctx.fillStyle=LBLC; ctx.font='8px Instrument Sans,sans-serif'; ctx.fillText('RA', negEx2, negEy2+eR+8);
 
   // (+) LL
   ctx.beginPath(); ctx.arc(posEx2, posEy2, eR, 0, Math.PI*2);
   ctx.fillStyle=isDark?'#1a2a1a':'#f0fdf2'; ctx.fill();
   ctx.strokeStyle='#208040'; ctx.lineWidth=2; ctx.stroke();
-  ctx.fillStyle='#208040'; ctx.font='bold 16px DM Sans,sans-serif';
+  ctx.fillStyle='#208040'; ctx.font='bold 16px Instrument Sans,sans-serif';
   ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('+', posEx2, posEy2);
-  ctx.fillStyle=LBLC; ctx.font='8px DM Sans,sans-serif'; ctx.fillText('LL', posEx2, posEy2+eR+8);
+  ctx.fillStyle=LBLC; ctx.font='8px Instrument Sans,sans-serif'; ctx.fillText('LL', posEx2, posEy2+eR+8);
 
   // Lead II axis — passes exactly through heart centre
   ctx.strokeStyle=isDark?'rgba(255,255,255,0.18)':'rgba(0,0,0,0.15)';
@@ -3088,10 +3088,10 @@ function drawECGHeart(state) {
     const lx=8+i*(w/3);
     ctx.fillStyle=fill; ctx.fillRect(lx,ly-6,11,11);
     ctx.strokeStyle=isDark?'rgba(255,255,255,0.3)':'rgba(0,0,0,0.25)'; ctx.lineWidth=1; ctx.strokeRect(lx,ly-6,11,11);
-    ctx.fillStyle=LBLC; ctx.font='9px DM Sans,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='middle';
+    ctx.fillStyle=LBLC; ctx.font='9px Instrument Sans,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='middle';
     ctx.fillText(lbl,lx+14,ly);
   });
-  ctx.fillStyle=C.text; ctx.font='500 11px DM Sans,sans-serif';
+  ctx.fillStyle=C.text; ctx.font='500 11px Instrument Sans,sans-serif';
   ctx.textAlign='center'; ctx.textBaseline='top';
   ctx.fillText('Cardiac conduction (Lead II orientation)',w/2,4);
 }
@@ -3115,7 +3115,7 @@ function drawECGTrace(markerPos) {
   ctx.strokeStyle=isDark?'rgba(255,255,255,0.18)':'rgba(0,0,0,0.18)'; ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ch);ctx.stroke();
   ctx.beginPath();ctx.moveTo(pad.l,mid);ctx.lineTo(pad.l+cw,mid);ctx.stroke();
-  ctx.fillStyle=C.text; ctx.font='10px DM Sans,sans-serif';
+  ctx.fillStyle=C.text; ctx.font='10px Instrument Sans,sans-serif';
   ctx.textAlign='center'; ctx.fillText('Time →',pad.l+cw/2,pad.t+ch+18);
   ctx.save();ctx.translate(13,pad.t+ch/2);ctx.rotate(-Math.PI/2);ctx.fillText('Voltage',0,0);ctx.restore();
 
@@ -3169,12 +3169,12 @@ function drawECGTrace(markerPos) {
   if(markerPos>0.30){
     ctx.strokeStyle=isDark?'rgba(255,255,255,0.2)':'rgba(0,0,0,0.2)'; ctx.lineWidth=0.8;
     ctx.fillStyle=isDark?'rgba(255,255,255,0.3)':'rgba(0,0,0,0.35)';
-    ctx.font='9px DM Sans,sans-serif'; ctx.textAlign='center';
+    ctx.font='9px Instrument Sans,sans-serif'; ctx.textAlign='center';
     ctx.beginPath();ctx.moveTo(pad.l+0.10*cw,mid+20);ctx.lineTo(pad.l+0.42*cw,mid+20);ctx.stroke();
     ctx.fillText('PR interval',pad.l+0.26*cw,mid+30);
   }
 
-  ctx.fillStyle=C.text; ctx.font='500 11px DM Sans,sans-serif';
+  ctx.fillStyle=C.text; ctx.font='500 11px Instrument Sans,sans-serif';
   ctx.textAlign='center'; ctx.textBaseline='top'; ctx.setLineDash([]);
   ctx.fillText('Lead II ECG — one cardiac cycle',pad.l+cw/2,6);
 }
@@ -3210,7 +3210,7 @@ function drawDipole() {
   // ── "Outside" / "Inside" side labels ──────────────────────────────────
   const labelX = startX - 8;
   ctx.fillStyle = isDark?'rgba(255,255,255,0.45)':'rgba(0,0,0,0.4)';
-  ctx.font = '8px DM Sans,sans-serif'; ctx.textAlign='right'; ctx.textBaseline='middle';
+  ctx.font = '8px Instrument Sans,sans-serif'; ctx.textAlign='right'; ctx.textBaseline='middle';
   ctx.fillText('Outside', labelX, cellY - 9);
   ctx.fillText('Inside',  labelX, cellY + cellH/2);
   ctx.fillText('Outside', labelX, cellY + cellH + 9);
@@ -3227,7 +3227,7 @@ function drawDipole() {
     const ot=depol?'−':'+', ob=depol?'+':'−';
     const tc=depol?(isDark?'#8888ff':'#4040c0'):'#c04060';
     const bc=depol?'#c04060':(isDark?'#8888ff':'#4040c0');
-    ctx.font='bold 11px DM Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.font='bold 11px Instrument Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
     for(let k=0;k<3;k++){
       const cx3=cx2+10+k*16;
       ctx.fillStyle=tc; ctx.fillText(ot,cx3,cellY-9);
@@ -3236,18 +3236,18 @@ function drawDipole() {
 
     // Inside charges
     const insideCol=depol?'#c04060':(isDark?'#8888ff':'#4040c0');
-    ctx.fillStyle=insideCol; ctx.font='10px DM Sans,sans-serif';
+    ctx.fillStyle=insideCol; ctx.font='10px Instrument Sans,sans-serif';
     ctx.fillText((depol?'+':'-')+' '+(depol?'+':'-')+' '+(depol?'+':'-'),cx2+cellW/2,cellY+cellH/2);
 
     // Cell state label below each cell (Depol. / Resting)
-    ctx.font='7px DM Sans,sans-serif';
+    ctx.font='7px Instrument Sans,sans-serif';
     ctx.fillStyle=depol?(isDark?'#8888ff':'#4040c0'):(isDark?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.35)');
     ctx.fillText(depol?'Depolarised':'Resting', cx2+cellW/2, cellY+cellH+22);
   }
 
   // ── Charge key (top-right corner) ────────────────────────────────────
   const kx=w-8, ky=8;
-  ctx.textAlign='right'; ctx.textBaseline='top'; ctx.font='8px DM Sans,sans-serif';
+  ctx.textAlign='right'; ctx.textBaseline='top'; ctx.font='8px Instrument Sans,sans-serif';
   ctx.fillStyle='#c04060'; ctx.fillText('+ = positive charge', kx, ky);
   ctx.fillStyle=isDark?'#8888ff':'#4040c0'; ctx.fillText('− = negative charge', kx, ky+12);
 
@@ -3260,7 +3260,7 @@ function drawDipole() {
     ctx.fillStyle=isDark?'#88aaff':'#2050d0'; ctx.beginPath();
     ctx.moveTo(wfX+ad*14,ay); ctx.lineTo(wfX+ad*6,ay-5); ctx.lineTo(wfX+ad*6,ay+5); ctx.closePath(); ctx.fill();
     // Label
-    ctx.font='bold 8px DM Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
+    ctx.font='bold 8px Instrument Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
     ctx.fillStyle=isDark?'#88aaff':'#2050d0';
     ctx.fillText('Depolarisation wavefront', wfX, ay-6);
   }
@@ -3270,7 +3270,7 @@ function drawDipole() {
     ctx.beginPath(); ctx.moveTo(ax1,ay); ctx.lineTo(ax2-6,ay); ctx.stroke();
     ctx.fillStyle=isDark?'#88aaff':'#2050d0'; ctx.beginPath();
     ctx.moveTo(ax2,ay); ctx.lineTo(ax2-10,ay-5); ctx.lineTo(ax2-10,ay+5); ctx.closePath(); ctx.fill();
-    ctx.font='bold 8px DM Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
+    ctx.font='bold 8px Instrument Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
     ctx.fillText('Depolarisation wavefront', (ax1+ax2)/2, ay-6);
   }
 
@@ -3280,9 +3280,9 @@ function drawDipole() {
     ctx.beginPath(); ctx.arc(ex,eY,16,0,Math.PI*2);
     ctx.fillStyle=isDark?'#1a1a1a':'#ffffff'; ctx.fill();
     ctx.strokeStyle=col; ctx.lineWidth=2; ctx.stroke();
-    ctx.fillStyle=col; ctx.font='bold 16px DM Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(sym,ex,eY);
+    ctx.fillStyle=col; ctx.font='bold 16px Instrument Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(sym,ex,eY);
     // Small label below electrode
-    ctx.font='7px DM Sans,sans-serif'; ctx.fillStyle=col;
+    ctx.font='7px Instrument Sans,sans-serif'; ctx.fillStyle=col;
     ctx.textBaseline='top';
     lbl.split('\n').forEach((line,li)=>ctx.fillText(line, ex, eY+18+li*9));
   });
@@ -3301,12 +3301,12 @@ function drawDipole() {
   // mV axis label
   ctx.save(); ctx.translate(traceX1-10, traceY); ctx.rotate(-Math.PI/2);
   ctx.fillStyle=isDark?'rgba(255,255,255,0.5)':'rgba(0,0,0,0.45)';
-  ctx.font='8px DM Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font='8px Instrument Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText('mV', 0, 0); ctx.restore();
 
   // Isoelectric label on baseline
   ctx.fillStyle=isDark?'rgba(255,255,255,0.35)':'rgba(0,0,0,0.3)';
-  ctx.font='7px DM Sans,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='bottom';
+  ctx.font='7px Instrument Sans,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='bottom';
   ctx.fillText('isoelectric', traceX1+2, traceY-2);
 
   // ECG curve
@@ -3335,13 +3335,13 @@ function drawDipole() {
     ctx.strokeStyle=isDark?'rgba(100,150,255,0.4)':'rgba(50,80,200,0.35)'; ctx.lineWidth=0.8; ctx.setLineDash([2,2]);
     ctx.beginPath(); ctx.moveTo(traceX1+traceW*0.5, peakY); ctx.lineTo(traceX1+traceW*0.5, traceY); ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle=isDark?'#88aaff':'#2244cc'; ctx.font='bold 8px DM Sans,sans-serif';
+    ctx.fillStyle=isDark?'#88aaff':'#2244cc'; ctx.font='bold 8px Instrument Sans,sans-serif';
     ctx.textAlign='center'; ctx.textBaseline= dir>0?'bottom':'top';
     ctx.fillText(dir>0?'↑ Deflection':'↓ Deflection', traceX1+traceW*0.5, dir>0?peakY-2:peakY+2);
   }
 
   // ECG trace title
-  ctx.fillStyle=C.text; ctx.font='500 9px DM Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
+  ctx.fillStyle=C.text; ctx.font='500 9px Instrument Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
   ctx.fillText('ECG tracing (mV)',w/2,h-2);
 }
 
@@ -3378,7 +3378,7 @@ function drawVector() {
   [[negEx,negEy,'−','#c04060'],[posEx,posEy,'+','#208040']].forEach(([ex,ey,sym,col])=>{
     ctx.beginPath();ctx.arc(ex,ey,14,0,Math.PI*2); ctx.fillStyle=isDark?'#1e1a20':'#ffffff'; ctx.fill();
     ctx.strokeStyle=col; ctx.lineWidth=2; ctx.stroke();
-    ctx.fillStyle=col; ctx.font='bold 16px DM Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(sym,ex,ey);
+    ctx.fillStyle=col; ctx.font='bold 16px Instrument Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(sym,ex,ey);
   });
 
   // Lead II axis — extend the line fully across the canvas through the heart centre
@@ -3393,7 +3393,7 @@ function drawVector() {
   ctx.strokeStyle='#e8a020'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(hcx,hcy); ctx.lineTo(vex,vey); ctx.stroke();
   ctx.save(); ctx.translate(vex,vey); ctx.rotate(vAngle);
   ctx.fillStyle='#e8a020'; ctx.beginPath(); ctx.moveTo(10,0); ctx.lineTo(-5,-5); ctx.lineTo(-5,5); ctx.closePath(); ctx.fill(); ctx.restore();
-  ctx.fillStyle='#e8a020'; ctx.font='bold 9px DM Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
+  ctx.fillStyle='#e8a020'; ctx.font='bold 9px Instrument Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
   ctx.fillText('Depolarization',hcx,hcy-62);
   const traceY=h*0.78, traceH=h*0.18, traceX1=24, traceX2=w-24, traceW2=traceX2-traceX1;
   ctx.strokeStyle=isDark?'rgba(255,150,150,0.08)':'rgba(200,80,80,0.1)'; ctx.lineWidth=0.5;
@@ -3405,7 +3405,7 @@ function drawVector() {
   ctx.beginPath(); ctx.moveTo(traceX1,traceY);
   ctx.bezierCurveTo(traceX1+traceW2*0.25,traceY,pk2x-traceW2*0.1,pk2y,pk2x,pk2y);
   ctx.bezierCurveTo(pk2x+traceW2*0.1,pk2y,traceX2-traceW2*0.25,traceY,traceX2,traceY); ctx.stroke();
-  ctx.fillStyle=C.text; ctx.font='500 10px DM Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
+  ctx.fillStyle=C.text; ctx.font='500 10px Instrument Sans,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
   ctx.fillText('ECG deflection',w/2,h-2);
 }
 
@@ -3522,7 +3522,7 @@ function renderAnatomyPanel() {
             <span style="font-size:12px;font-weight:800;color:${s.color};min-width:20px;text-align:right">${s.id}</span>
             <input id="anat-input-${s.id}" type="text" placeholder="Name this structure…"
               value="${ans ? ans.value : ''}"
-              style="flex:1;padding:5px 8px;border-radius:6px;border:1.5px solid ${bc};background:${bg};color:var(--text);font-family:DM Sans,sans-serif;font-size:12px;outline:none;transition:border-color 0.2s,background 0.2s"
+              style="flex:1;padding:5px 8px;border-radius:6px;border:1.5px solid ${bc};background:${bg};color:var(--text);font-family:Instrument Sans,sans-serif;font-size:12px;outline:none;transition:border-color 0.2s,background 0.2s"
               oninput="checkAnatomyAnswer(${s.id})"
               onkeydown="if(event.key==='Enter'){checkAnatomyAnswer(${s.id});const nx=document.getElementById('anat-input-${Math.min(s.id+1,ANATOMY_STRUCTURES.length)}');if(nx)nx.focus();}"
             >
@@ -3572,7 +3572,7 @@ function drawAnatomy() {
     }
 
     ctx.fillStyle = isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.45)';
-    ctx.font = '500 11px DM Sans,sans-serif';
+    ctx.font = '500 11px Instrument Sans,sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
     ctx.fillText('Cardiac Anatomy — identify each numbered structure', w/2, 4);
   });
@@ -4170,16 +4170,16 @@ function renderECGCharQ() {
           <button
             onclick="ecgCharToggle(${i},${o.ok},this)"
             data-idx="${i}" data-ok="${o.ok}"
-            style="padding:9px 12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);font-size:12px;font-weight:400;color:var(--text);cursor:pointer;text-align:left;transition:all 0.15s;font-family:'DM Sans',sans-serif;line-height:1.4">
+            style="padding:9px 12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);font-size:12px;font-weight:400;color:var(--text);cursor:pointer;text-align:left;transition:all 0.15s;font-family:'Instrument Sans',sans-serif;line-height:1.4">
             ${o.t}
           </button>`).join('')}
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <button onclick="ecgCharCheck()" id="ec-check-btn"
-          style="padding:9px 22px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+          style="padding:9px 22px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
           Check answers
         </button>
-        <button id="ec-next-btn" onclick="ecgCharNext()" style="display:none;padding:9px 20px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-muted);cursor:pointer">
+        <button id="ec-next-btn" onclick="ecgCharNext()" style="display:none;padding:9px 20px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);font-family:'Instrument Sans',sans-serif;font-size:13px;color:var(--text-muted);cursor:pointer">
           Next rhythm →
         </button>
       </div>
@@ -4614,13 +4614,13 @@ function renderDiseaseQuestion() {
       <div id="dq-options" style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
         ${allOptions.map((opt,i)=>`
           <button onclick="toggleDiseaseOpt(${i}, this, ${JSON.stringify(correct.includes(opt))})"
-            style="text-align:left;padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);font-size:12px;color:var(--text-muted);cursor:pointer;transition:all 0.15s;font-family:DM Sans,sans-serif;line-height:1.4">
+            style="text-align:left;padding:8px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);font-size:12px;color:var(--text-muted);cursor:pointer;transition:all 0.15s;font-family:Instrument Sans,sans-serif;line-height:1.4">
             ${opt}
           </button>`).join('')}
       </div>
       <div style="display:flex;gap:8px;margin-top:14px">
-        <button onclick="checkDiseaseAnswers()" style="padding:9px 20px;border-radius:8px;border:none;background:var(--accent);color:white;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Check Answers</button>
-        <button onclick="renderDiseaseQuestion()" style="padding:9px 20px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;color:var(--text-muted)">Next Disease →</button>
+        <button onclick="checkDiseaseAnswers()" style="padding:9px 20px;border-radius:8px;border:none;background:var(--accent);color:white;font-family:Instrument Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Check Answers</button>
+        <button onclick="renderDiseaseQuestion()" style="padding:9px 20px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);font-family:Instrument Sans,sans-serif;font-size:13px;cursor:pointer;color:var(--text-muted)">Next Disease →</button>
       </div>
       <div id="dq-result" style="margin-top:10px"></div>
     </div>`;
@@ -4829,11 +4829,11 @@ function renderDrugQuiz() {
       <p style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:12px">${r.q}</p>
       <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px" id="dq-opts">
         ${r.opts.map((o,i)=>`<button onclick="drugQuizAnswer(${i},${r.ans},this)"
-          style="padding:9px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);font-size:13px;color:var(--text);cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;line-height:1.5;transition:all 0.15s"
+          style="padding:9px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);font-size:13px;color:var(--text);cursor:pointer;text-align:left;font-family:'Instrument Sans',sans-serif;line-height:1.5;transition:all 0.15s"
           onmouseover="if(!this.dataset.locked)this.style.borderColor='var(--accent)'" onmouseout="if(!this.dataset.locked)this.style.borderColor='var(--border)'">${o}</button>`).join('')}
       </div>
       <div id="dq-feedback" style="display:none;padding:11px 14px;border-radius:var(--radius-sm);font-size:13px;line-height:1.6;border-left:3px solid transparent;margin-bottom:10px"></div>
-      <button id="dq-next" onclick="drugQuizNext()" style="display:none;padding:8px 20px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Next question →</button>
+      <button id="dq-next" onclick="drugQuizNext()" style="display:none;padding:8px 20px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',sans-serif">Next question →</button>
     </div>`;
 }
 
@@ -4911,11 +4911,11 @@ function renderDiseaseQuizQ() {
       <p style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:12px">${r.q}</p>
       <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px" id="dsq-opts">
         ${r.opts.map((o,i)=>`<button onclick="diseaseQuizAnswer(${i},${r.ans},this)"
-          style="padding:9px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);font-size:13px;color:var(--text);cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;line-height:1.5;transition:all 0.15s"
+          style="padding:9px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);font-size:13px;color:var(--text);cursor:pointer;text-align:left;font-family:'Instrument Sans',sans-serif;line-height:1.5;transition:all 0.15s"
           onmouseover="if(!this.dataset.locked)this.style.borderColor='var(--accent)'" onmouseout="if(!this.dataset.locked)this.style.borderColor='var(--border)'">${o}</button>`).join('')}
       </div>
       <div id="dsq-feedback" style="display:none;padding:11px 14px;border-radius:var(--radius-sm);font-size:13px;line-height:1.6;border-left:3px solid transparent;margin-bottom:10px"></div>
-      <button id="dsq-next" onclick="diseaseQuizNext()" style="display:none;padding:8px 20px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Next question →</button>
+      <button id="dsq-next" onclick="diseaseQuizNext()" style="display:none;padding:8px 20px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',sans-serif">Next question →</button>
     </div>`;
 }
 
@@ -4993,11 +4993,11 @@ function renderRadioQuiz() {
       <p style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:12px">${r.q}</p>
       <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px" id="rq-opts">
         ${r.opts.map((o,i)=>`<button onclick="radioQuizAnswer(${i},${r.ans},this)"
-          style="padding:9px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);font-size:13px;color:var(--text);cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;line-height:1.5;transition:all 0.15s"
+          style="padding:9px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);font-size:13px;color:var(--text);cursor:pointer;text-align:left;font-family:'Instrument Sans',sans-serif;line-height:1.5;transition:all 0.15s"
           onmouseover="if(!this.dataset.locked)this.style.borderColor='var(--accent)'" onmouseout="if(!this.dataset.locked)this.style.borderColor='var(--border)'">${o}</button>`).join('')}
       </div>
       <div id="rq-feedback" style="display:none;padding:11px 14px;border-radius:var(--radius-sm);font-size:13px;line-height:1.6;border-left:3px solid transparent;margin-bottom:10px"></div>
-      <button id="rq-next" onclick="radioQuizNext()" style="display:none;padding:8px 20px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Next question →</button>
+      <button id="rq-next" onclick="radioQuizNext()" style="display:none;padding:8px 20px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',sans-serif">Next question →</button>
     </div>`;
 }
 
