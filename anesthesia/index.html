@@ -16,7 +16,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://desmovet.com/og-image.png">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -31,12 +31,12 @@
   --green:      #2a7a3b;
   --green-light:#eaf4ec;
   --red:        #b5003c;
-  --gray-50:    #f8fafc;
-  --gray-100:   #f0f4f8;
-  --gray-200:   #dde4ed;
-  --gray-400:   #8fa3b8;
-  --gray-600:   #4a6277;
-  --gray-800:   #1e2e3d;
+  --gray-50:    #faf8f3;
+  --gray-100:   #f5f2eb;
+  --gray-200:   #d4cfc4;
+  --gray-400:   #9e9790;
+  --gray-600:   #6b6560;
+  --gray-800:   #1a1714;
   --white:      #ffffff;
   --radius:     8px;
   --shadow-sm:  0 1px 3px rgba(0,0,0,0.08);
@@ -45,7 +45,7 @@
 }
 
 body {
-  font-family: 'DM Sans', -apple-system, sans-serif;
+  font-family: 'Instrument Sans', -apple-system, sans-serif;
   background: var(--gray-100);
   color: var(--gray-800);
   font-size: 14px;
@@ -53,7 +53,7 @@ body {
 }
 
 /* ── Header ── */
-.site-header { background: var(--navy); color: white; padding: 0 20px; }
+.site-header { background: var(--gray-50); color: var(--gray-800); padding: 0 20px; border-bottom: 1px solid var(--gray-200); }
 .header-inner {
   max-width: 1100px; margin: 0 auto;
   display: flex; align-items: center; justify-content: space-between;
@@ -61,17 +61,17 @@ body {
 }
 .header-brand h1 {
   font-family: 'DM Serif Display', serif;
-  font-size: 1.35rem; font-weight: 400; letter-spacing: 0.01em;
+  font-size: 1.6rem; font-weight: 400; letter-spacing: 0.01em; color: var(--gray-800);
 }
-.header-brand p { font-size: 0.7rem; color: var(--gray-400); margin-top: 2px; letter-spacing: 0.05em; text-transform: uppercase; }
+.header-brand p { font-size: 0.7rem; color: var(--gray-600); margin-top: 2px; letter-spacing: 0.05em; text-transform: uppercase; }
 .header-disclaimer {
-  background: rgba(232,160,0,0.15); border: 1px solid rgba(232,160,0,0.3);
+  background: var(--amber-light); border: 1px solid rgba(232,160,0,0.45);
   border-radius: 6px; padding: 7px 12px; font-size: 0.72rem;
-  color: #ffd166; max-width: 360px; line-height: 1.5;
+  color: #7a4800; max-width: 360px; line-height: 1.5;
 }
 
 /* ── Tabs ── */
-.tab-nav { background: var(--navy-mid); padding: 0 20px; border-bottom: 2px solid var(--teal); }
+.tab-nav { background: var(--gray-50); padding: 0 20px; border-bottom: 1px solid var(--gray-200); }
 .tab-nav-inner { max-width: 1100px; margin: 0 auto; display: flex; gap: 2px; }
 .tab-btn {
   background: none; border: none; color: var(--gray-400);
@@ -80,8 +80,8 @@ body {
   border-bottom: 3px solid transparent; margin-bottom: -2px;
   transition: color 0.15s, border-color 0.15s; white-space: nowrap;
 }
-.tab-btn:hover { color: white; }
-.tab-btn.active { color: white; border-bottom-color: var(--teal); }
+.tab-btn:hover { color: var(--gray-800); }
+.tab-btn.active { color: var(--teal); font-weight: 600; border-bottom-color: var(--teal); }
 
 /* ── Main ── */
 .main-wrap { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
